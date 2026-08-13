@@ -65,8 +65,8 @@ export type ModelStatus =
   | { kind: "error"; message: string };
 
 /**
- * `accurate` — cascade dual (distilled → CF when gated). Eval / offline.
- * `realtime` — distilled+spectral only; overlay must stay snappy (~CF is 1s+ on WASM).
+ * `accurate` — cascade dual (distilled → CF when gated). Eval / overlay refine.
+ * `realtime` — distilled+spectral only (fast first paint; may miss CF recoveries).
  */
 export type AnalyzeSpeedMode = "accurate" | "realtime";
 

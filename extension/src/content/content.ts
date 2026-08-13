@@ -169,6 +169,47 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
   }
 }
 
+/** AI probability from a labeled result (Real badges store 1−p_ai). */
+function aiScoreOf(result: DetectionResult): number {
+  if (result.label.kind === "real") return 1 - result.confidence;
+  if (result.label.kind === "error") return 0.5;
+  return result.confidence;
+}
+
+/**
+ * Distilled-only often underscores StyleGAN / hard gens (~0.5–0.62).
+ * Community Forensics recovers those — refine when the fast pass is ambiguous.
+ */
+function needsForensicsRefine(result: DetectionResult): boolean {
+  if (result.label.kind === "error") return false;
+  if (result.tiers.some((t) => t.tier === "provenance" && t.shortCircuit)) {
+    return false;
+  }
+  if (result.label.kind === "uncertain") return true;
+  const pAi = aiScoreOf(result);
+  return pAi >= 0.3 && pAi < 0.65;
+}
+
+async function requestAnalyze(
+  img: HTMLImageElement,
+  id: string,
+  speedMode: "realtime" | "accurate",
+): Promise<DetectionResult> {
+  const response = (await chrome.runtime.sendMessage({
+    kind: "analyze-image",
+    requestId: newRequestId(),
+    imageId: id,
+    src: imageKey(img),
+    width: img.naturalWidth || img.width,
+    height: img.naturalHeight || img.height,
+    speedMode,
+  })) as AnalyzeImageResponse;
+  if (response.kind !== "analyze-image-result") {
+    throw new Error("analyze-image failed");
+  }
+  return response.result;
+}
+
 async function analyze(img: HTMLImageElement, id: string): Promise<void> {
   const entry = tracked.get(id);
   if (!entry || entry.inFlight) return;
@@ -176,20 +217,19 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
   ensureBadge(img, id);
 
   try {
-    const response = (await chrome.runtime.sendMessage({
-      kind: "analyze-image",
-      requestId: newRequestId(),
-      imageId: id,
-      src: imageKey(img),
-      width: img.naturalWidth || img.width,
-      height: img.naturalHeight || img.height,
-      // Overlay must stay snappy; CF on ORT WASM is ~1s+ per image.
-      speedMode: "realtime",
-    })) as AnalyzeImageResponse;
+    // Fast badge from distilled+spectral, then CF cascade when ambiguous.
+    const quick = await requestAnalyze(img, id, "realtime");
+    entry.result = quick;
+    renderResult(img, quick);
 
-    if (response.kind !== "analyze-image-result") return;
-    entry.result = response.result;
-    renderResult(img, response.result);
+    if (needsForensicsRefine(quick)) {
+      const refined = await requestAnalyze(img, id, "accurate");
+      // Ignore stale refine if the img src changed mid-flight.
+      if (tracked.get(id)?.src === entry.src) {
+        entry.result = refined;
+        renderResult(img, refined);
+      }
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     renderResult(img, {
