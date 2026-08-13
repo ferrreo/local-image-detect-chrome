@@ -6,10 +6,9 @@
  * (unpacked extension in Playwright Chromium: WASM / WebGPU).
  *
  * Usage:
+ *   npm ci
  *   npm run setup:models && npm run setup:ort && npm run build:zig
- *   npm run build
- *   npm run eval:suite                 # full local suite
- *   EVAL_SUITE_LIMIT=8 npm run eval:suite:ci
+ *   npm run eval:suite
  *
  * Env:
  *   EVAL_SUITE_HOST=0           skip host modes
@@ -22,9 +21,11 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
+const require = createRequire(import.meta.url);
 const outDir = path.join(root, "benchmark/eval-suite");
 mkdirSync(outDir, { recursive: true });
 
@@ -37,20 +38,45 @@ function run(cmd, args, env = {}) {
     shell: process.platform === "win32",
   });
   if (res.status !== 0) {
-    throw new Error(`${cmd} exited ${res.status}`);
+    throw new Error(`${cmd} ${args.join(" ")} exited ${res.status}`);
+  }
+}
+
+function hasEsbuild() {
+  try {
+    require.resolve("esbuild/package.json");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function ensureNpmDeps() {
+  if (hasEsbuild()) return;
+  console.log(
+    "\nnode_modules incomplete (esbuild missing). Running npm ci once…",
+  );
+  run("npm", ["ci"]);
+  if (!hasEsbuild()) {
+    throw new Error(
+      "esbuild still missing after npm ci. From the repo root run: npm ci",
+    );
   }
 }
 
 const runHost = process.env.EVAL_SUITE_HOST !== "0";
 const runBrowser = process.env.EVAL_SUITE_BROWSER !== "0";
 
+ensureNpmDeps();
+
 if (!existsSync(path.join(root, "models/ai-image-detect-distilled/model_fp16.onnx"))) {
   run("node", ["scripts/setup-models.mjs"]);
 }
 
 if (runHost) {
+  const hostModes = process.env.EVAL_SUITE_HOST_MODES ?? "zig";
   if (
-    (process.env.EVAL_SUITE_HOST_MODES ?? "zig").includes("zig") &&
+    hostModes.includes("zig") &&
     !existsSync(path.join(root, "native/zig-infer/zig-out/bin/truepixel-infer"))
   ) {
     try {
@@ -63,11 +89,13 @@ if (runHost) {
 }
 
 if (runBrowser) {
-  run("node", ["scripts/generate-icons.mjs"]);
-  run("node", ["scripts/generate-fixtures.mjs"]);
+  // `npm run build` already runs prepare:assets via prebuild — don't duplicate.
   run("npm", ["run", "build"]);
   if (!existsSync(path.join(root, "dist/models"))) {
-    throw new Error("dist/models missing after build — setup:models first");
+    throw new Error("dist/models missing after build — run npm run setup:models");
+  }
+  if (!existsSync(path.join(root, "dist/eval.html"))) {
+    throw new Error("dist/eval.html missing after build");
   }
   const pw = [
     "playwright",

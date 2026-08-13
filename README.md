@@ -109,8 +109,8 @@ Distilled-alone misses hard Krea/Riverflow cases; dual/cascade recover them via 
 Runs the **real unpacked extension** in Playwright Chromium (ORT WebGPU / WASM) plus host Node/Zig matrices, then writes `benchmark/eval-suite/index.html`.
 
 ```bash
+npm ci                             # required once (esbuild, playwright, …)
 npm run setup:models && npm run setup:ort && npm run build:zig
-npm run build
 npm run eval:suite                 # local PC: host + browser wasm/webgpu
 npm run eval:suite:ci              # CI-sized subset (wasm + key host modes)
 # EVAL_SUITE_LIMIT=16 EVAL_SUITE_BROWSER_PROVIDERS=webgpu,wasm npm run eval:suite
