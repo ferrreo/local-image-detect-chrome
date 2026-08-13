@@ -68,7 +68,14 @@ function copyStatic() {
   });
 
   // Bundle onnxruntime WASM assets for extension pages.
-  const ortPkg = path.join(root, "node_modules/onnxruntime-web/dist");
+  // Prefer vendored ORT #29599 build when present (MatMulNBits f32 accumulators).
+  const vendorOrt = path.join(root, "vendor/onnxruntime-web/dist");
+  const npmOrt = path.join(root, "node_modules/onnxruntime-web/dist");
+  const ortPkg = existsSync(
+    path.join(vendorOrt, "ort.webgpu.bundle.min.mjs"),
+  )
+    ? vendorOrt
+    : npmOrt;
   const ortOut = path.join(outdir, "ort");
   mkdirSync(ortOut, { recursive: true });
   if (existsSync(ortPkg)) {
@@ -128,9 +135,23 @@ function copyStatic() {
   }
 }
 
+function ortWebAlias() {
+  const vendorEntry = path.join(
+    root,
+    "vendor/onnxruntime-web/dist/ort.webgpu.bundle.min.mjs",
+  );
+  if (!existsSync(vendorEntry)) return {};
+  console.log("Using vendored onnxruntime-web (PR #29599)");
+  return {
+    "onnxruntime-web": path.join(root, "vendor/onnxruntime-web"),
+    "onnxruntime-web/webgpu": vendorEntry,
+  };
+}
+
 async function buildOnce() {
   rmSync(outdir, { recursive: true, force: true });
   mkdirSync(outdir, { recursive: true });
+  const alias = ortWebAlias();
 
   // Background/content/popup/options must stay free of onnxruntime-web.
   await esbuild.build({
@@ -164,6 +185,9 @@ async function buildOnce() {
     sourcemap: true,
     logLevel: "info",
     loader: { ".wasm": "file" },
+    ...(Object.keys(alias).length
+      ? { alias }
+      : {}),
   });
 
   copyStatic();

@@ -193,10 +193,9 @@ test.describe("Offline extension eval suite", () => {
                 : "onnxruntime-web";
             const modePrefix =
               visualEngine === "zig-ort-wasm" ? "js-ext-zig" : "js-ext";
-            // ort-web: CF is always WASM; distilled follows providerActual.
+            // Distilled EP from suite; CF may be webgpu when #29599 build is used.
             const distilledEp = parsed.providerActual;
-            const forensicsEp =
-              visualEngine === "onnxruntime-web" ? "wasm" : distilledEp;
+            const forensicsEp = distilledEp;
             browserResults.push({
               mode: `${modePrefix}-${provider}-cascade`,
               runtime: "extension-chromium",

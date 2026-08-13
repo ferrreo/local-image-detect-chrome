@@ -78,7 +78,8 @@ export const DISTILLED_MODEL_FP32 = {
  * Source: https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX
  * Labels: softmax index 1 treated as AI/fake for this export.
  *
- * Browser WebGPU EP hangs / OOMs on this export — always run on WASM in-browser.
+ * Browser WebGPU: use ORT #29599 `preferredMatmulAccumulatorPrecision: "f32"`
+ * (vendored via `npm run setup:ort-web-pr29599`). Falls back to WASM otherwise.
  */
 export const FORENSICS_MODEL = {
   id: "community-forensics-deepfake-det",

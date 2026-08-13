@@ -14,6 +14,7 @@
     "setup:models": "node scripts/setup-models.mjs",
     "setup:ort": "node scripts/setup-ort.mjs",
     "setup:ort-wasm": "node scripts/setup-ort-wasm.mjs",
+    "setup:ort-web-pr29599": "node scripts/setup-ort-web-pr29599.mjs",
     "build:zig": "node scripts/build-zig.mjs",
     "build:zig-wasm": "node scripts/build-zig-wasm.mjs",
     "fetch:openrouter": "node scripts/fetch-openrouter-images.mjs",

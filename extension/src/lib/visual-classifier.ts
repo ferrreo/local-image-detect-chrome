@@ -169,6 +169,30 @@ async function providerList(
   return caps.available ? ["webgpu", "wasm"] : ["wasm"];
 }
 
+type EpConfig =
+  | string
+  | {
+      name: string;
+      /**
+       * ORT #29599 — MatMulNBits f32 accumulators (needed for q4 CF on WebGPU).
+       * Ignored on builds that lack the option.
+       */
+      preferredMatmulAccumulatorPrecision?: "f16" | "f32";
+    };
+
+function epConfigs(providers: string[]): EpConfig[] {
+  return providers.map((provider) => {
+    if (provider === "webgpu") {
+      return {
+        name: "webgpu",
+        // Portable strict-rounding fix from microsoft/onnxruntime#29599.
+        preferredMatmulAccumulatorPrecision: "f32",
+      };
+    }
+    return provider;
+  });
+}
+
 async function createOneSession(
   ort: OrtModule,
   model: ModelArtifact,
@@ -183,7 +207,7 @@ async function createOneSession(
   for (const provider of providers) {
     try {
       const session = await ort.InferenceSession.create(modelBytes, {
-        executionProviders: [provider],
+        executionProviders: epConfigs([provider]),
         graphOptimizationLevel: model.graphOptimizationLevel,
       });
       return {
@@ -201,11 +225,12 @@ async function createOneSession(
 
 /**
  * Pick distilled artifact + EP so WebGPU never sees an unsupported graph.
- * - WebGPU + shader-f16 → fp16 on WebGPU
- * - WebGPU without f16 → fp32 on WebGPU (fp16 Transpose requires f16)
+ * - WebGPU + shader-f16 → fp16 on WebGPU (preferred)
+ * - WebGPU without f16 → fp32 on WebGPU (fp16 Transpose requires shader-f16)
  * - WASM → fp16
  *
- * Community Forensics q4 hangs / OOMs on browser WebGPU EP — always WASM.
+ * Community Forensics q4: prefer WebGPU with ORT #29599
+ * `preferredMatmulAccumulatorPrecision: "f32"`, fall back to WASM.
  */
 async function createSessions(ort: OrtModule): Promise<LoadedSession[]> {
   configureWasmPaths(ort);
@@ -222,7 +247,7 @@ async function createSessions(ort: OrtModule): Promise<LoadedSession[]> {
     } else {
       distilledModel = DISTILLED_MODEL_FP32;
       // fp32 on WebGPU; if session create fails, fall back to fp16 WASM.
-      distilledProviders = ["webgpu"];
+      distilledProviders = ["webgpu", "wasm"];
     }
   } else {
     distilledModel = DISTILLED_MODEL;
@@ -254,7 +279,14 @@ async function createSessions(ort: OrtModule): Promise<LoadedSession[]> {
     }
   }
 
-  const forensics = await createOneSession(ort, FORENSICS_MODEL, ["wasm"]);
+  // CF q4 on WebGPU needs #29599 f32 MatMulNBits accumulators; else WASM.
+  const forensicsProviders =
+    wantWebgpu && caps.available ? ["webgpu", "wasm"] : ["wasm"];
+  const forensics = await createOneSession(
+    ort,
+    FORENSICS_MODEL,
+    forensicsProviders,
+  );
   loaded.push({
     model: FORENSICS_MODEL,
     session: forensics.session,
