@@ -126,6 +126,8 @@ const WEBGPU_DISTILLED_MAX_MS = 150;
 const WEBGPU_FORENSICS_MAX_MS = 450;
 
 let wasmThreadCountUsed = 1;
+/** Set after a threaded warm failure so the next init stays single-thread. */
+let forceSingleThread = false;
 
 let ortModulePromise: Promise<OrtModule> | undefined;
 let sessionsPromise: Promise<LoadedSession[]> | undefined;
@@ -223,6 +225,7 @@ async function loadOrt(): Promise<OrtModule> {
 }
 
 function wasmThreadCount(): number {
+  if (forceSingleThread) return 1;
   try {
     if (typeof SharedArrayBuffer === "undefined") return 1;
     if (
@@ -459,7 +462,13 @@ async function getSessions(): Promise<LoadedSession[]> {
   if (!sessionsPromise) {
     sessionsPromise = (async () => {
       const ort = await loadOrt();
-      return createSessions(ort);
+      try {
+        return await createSessions(ort);
+      } catch (error) {
+        // Allow a clean retry (threaded → single-thread, or next warm).
+        sessionsPromise = undefined;
+        throw error;
+      }
     })();
   }
   return sessionsPromise;
@@ -472,7 +481,22 @@ export function getVisualBackend(): InferenceBackend {
 export async function warmVisualClassifier(): Promise<InferenceBackend> {
   // Prime adapter cache before session create so prefer=webgpu is stable.
   await probeWebGpuCapabilities();
-  await getSessions();
+  try {
+    await getSessions();
+  } catch (error) {
+    // Threaded ORT init can fail when offscreen lacks WORKERS / SAB quirks.
+    // Drop the module and retry single-threaded once.
+    if (!forceSingleThread && wasmThreadCountUsed > 1) {
+      forceSingleThread = true;
+      sessionsPromise = undefined;
+      ortModulePromise = undefined;
+      activeBackend = { kind: "none" };
+      forensicsBackend = { kind: "none" };
+      await getSessions();
+    } else {
+      throw error;
+    }
+  }
   return activeBackend;
 }
 
@@ -651,6 +675,7 @@ export function resetVisualClassifierForTests(): void {
   forensicsBackend = { kind: "none" };
   webgpuSkipReason = "";
   wasmThreadCountUsed = 1;
+  forceSingleThread = false;
   gpuCapsPromise = undefined;
 }
 

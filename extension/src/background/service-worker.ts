@@ -25,7 +25,12 @@ import {
 import { asAiConfidence } from "../shared/types";
 
 const OFFSCREEN_URL = "offscreen.html";
-const OFFSCREEN_REASON = "DOM_SCRAPING" as chrome.offscreen.Reason;
+/** ORT wasm threads spawn Workers; blobs used for image/tensor paths. */
+const OFFSCREEN_REASONS = [
+  "DOM_SCRAPING",
+  "WORKERS",
+  "BLOBS",
+] as chrome.offscreen.Reason[];
 
 let optionsCache: ExtensionOptions = { ...DEFAULT_OPTIONS };
 let backendCache: InferenceBackend = { kind: "none" };
@@ -66,9 +71,9 @@ async function ensureOffscreen(): Promise<void> {
   if (existing.length > 0) return;
   await chrome.offscreen.createDocument({
     url: OFFSCREEN_URL,
-    reasons: [OFFSCREEN_REASON],
+    reasons: OFFSCREEN_REASONS,
     justification:
-      "Run ONNX Runtime WebGPU/WASM inference off the service worker.",
+      "Run ONNX Runtime WebGPU/WASM inference (incl. threaded wasm workers) off the service worker.",
   });
   // First message right after createDocument often races the module listener.
   await new Promise((r) => setTimeout(r, 50));
@@ -172,13 +177,18 @@ async function resetViaOffscreen(args: {
     if (
       typeof response === "object" &&
       response !== null &&
-      "kind" in response &&
-      response.kind === "offscreen-reset-result"
+      "kind" in response
     ) {
-      return response as OffscreenResetResponse;
+      if (response.kind === "offscreen-reset-result") {
+        return response as OffscreenResetResponse;
+      }
+      if (response.kind === "error" && "message" in response) {
+        throw new Error(String((response as { message: unknown }).message));
+      }
     }
-  } catch {
-    return undefined;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`offscreen reset failed: ${message}`);
   }
   return undefined;
 }
@@ -403,23 +413,41 @@ async function handleRequest(
     case "reset-visual": {
       const options = await loadOptions();
       const visualEngine = request.visualEngine ?? "auto";
-      let reset = await resetViaOffscreen({
-        requestId: request.requestId,
-        ...(request.warm !== undefined ? { warm: request.warm } : {}),
-        visualProvider: options.visualProvider,
-        visualEngine,
-      });
-      // One retry — first warm after offscreen boot is flaky under headless.
-      if (!reset || reset.backend.kind === "none") {
-        await new Promise((r) => setTimeout(r, 100));
+      let lastError: unknown;
+      let reset: OffscreenResetResponse | undefined;
+      try {
         reset = await resetViaOffscreen({
           requestId: request.requestId,
-          warm: true,
+          ...(request.warm !== undefined ? { warm: request.warm } : {}),
           visualProvider: options.visualProvider,
           visualEngine,
         });
+      } catch (error) {
+        lastError = error;
       }
-      if (reset) {
+      // One retry — first warm after offscreen boot is flaky under headless.
+      if (!reset || reset.backend.kind === "none") {
+        await new Promise((r) => setTimeout(r, 150));
+        try {
+          // Recreate offscreen in case WORKERS/COEP blocked the first document.
+          if (chrome.offscreen?.closeDocument) {
+            try {
+              await chrome.offscreen.closeDocument();
+            } catch {
+              // none open
+            }
+          }
+          reset = await resetViaOffscreen({
+            requestId: request.requestId,
+            warm: true,
+            visualProvider: options.visualProvider,
+            visualEngine,
+          });
+        } catch (error) {
+          lastError = error;
+        }
+      }
+      if (reset && reset.backend.kind !== "none") {
         backendCache = reset.backend;
         gpuAvailableCache = reset.gpuAvailable;
         return {
@@ -430,12 +458,16 @@ async function handleRequest(
           visualEngine: reset.visualEngine,
         };
       }
+      const detail =
+        lastError instanceof Error
+          ? lastError.message
+          : lastError
+            ? String(lastError)
+            : "offscreen warm returned no backend";
       return {
-        kind: "reset-visual-result",
+        kind: "error",
         requestId: request.requestId,
-        backend: backendCache,
-        gpuAvailable: false,
-        visualEngine: "none",
+        message: `reset-visual failed (requested ${visualEngine}): ${detail}`,
       };
     }
     default: {
