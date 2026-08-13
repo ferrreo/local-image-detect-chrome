@@ -36,6 +36,7 @@
     "eval:suite:browser": "EVAL_SUITE_HOST=0 node scripts/eval-suite.mjs",
     "eval:suite:ci": "EVAL_SUITE_LIMIT=8 EVAL_SUITE_BROWSER_PROVIDERS=wasm EVAL_SUITE_XVFB=1 EVAL_SUITE_HOST_MODES=js-node-cpu-distilled,js-node-cpu-dual,zig-cpu-cascade node scripts/eval-suite.mjs",
     "eval:compare": "node scripts/eval-model-compare.mjs",
+    "eval:truthlens": "python3 scripts/eval-truthlens.py",
     "distill:accurate": "python3 scripts/distill-accurate-head.py",
     "ci": "npm run test:all",
     "fetch:lexica": "node scripts/fetch-lexica-images.mjs"

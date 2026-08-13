@@ -46,6 +46,12 @@ npm run distill:accurate
 npm run eval:compare   # includes truepixel-accurate-v1 when the ONNX exists
 ```
 
+TruthLens-named image heads on HF (mostly text detectors under that name) can be scored with:
+
+```bash
+npm run eval:truthlens   # umm-maybe + Medsa → benchmark/model-survey/truthlens-compare.md
+```
+
 Load unpacked:
 
 1. Open `chrome://extensions`
