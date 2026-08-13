@@ -224,27 +224,46 @@ async function harvestSearchHtml(query) {
 }
 
 async function downloadImage(id) {
-  const url = `https://image.lexica.art/full_jpg/${id}`;
-  const res = await fetch(url, {
-    headers: {
-      "User-Agent": UA,
-      Referer: "https://lexica.art/",
-      Accept: "image/jpeg,image/webp,image/png,image/*;q=0.8,*/*;q=0.5",
-    },
-    redirect: "follow",
-  });
-  if (!res.ok) throw new Error(`image HTTP ${res.status}`);
-  const raw = Buffer.from(await res.arrayBuffer());
-  if (raw.byteLength < 1024) throw new Error(`image too small (${raw.byteLength})`);
-  // Lexica's "full_jpg" path sometimes serves WebP/PNG — normalize to JPEG.
-  const isJpeg = raw[0] === 0xff && raw[1] === 0xd8;
-  const buf = isJpeg
-    ? raw
-    : await sharp(raw).jpeg({ quality: 92 }).toBuffer();
-  if (!(buf[0] === 0xff && buf[1] === 0xd8)) {
-    throw new Error("could not decode to jpeg");
+  // Try common CDN variants; HTML search embeds prompt IDs that 404 on images.
+  const urls = [
+    `https://image.lexica.art/full_jpg/${id}`,
+    `https://image.lexica.art/md2/${id}`,
+    `https://image.lexica.art/sm2/${id}`,
+  ];
+  let lastErr = "no url";
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": UA,
+          Referer: "https://lexica.art/",
+          Accept: "image/jpeg,image/webp,image/png,image/*;q=0.8,*/*;q=0.5",
+        },
+        redirect: "follow",
+      });
+      if (!res.ok) {
+        lastErr = `image HTTP ${res.status}`;
+        continue;
+      }
+      const raw = Buffer.from(await res.arrayBuffer());
+      if (raw.byteLength < 1024) {
+        lastErr = `image too small (${raw.byteLength})`;
+        continue;
+      }
+      const isJpeg = raw[0] === 0xff && raw[1] === 0xd8;
+      const buf = isJpeg
+        ? raw
+        : await sharp(raw).jpeg({ quality: 92 }).toBuffer();
+      if (!(buf[0] === 0xff && buf[1] === 0xd8)) {
+        lastErr = "could not decode to jpeg";
+        continue;
+      }
+      return { buf, url };
+    } catch (err) {
+      lastErr = err instanceof Error ? err.message : String(err);
+    }
   }
-  return { buf, url };
+  throw new Error(lastErr);
 }
 
 async function mapPool(items, limit, fn) {
