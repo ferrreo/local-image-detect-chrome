@@ -168,7 +168,8 @@ async function fetchZitacronCandidates(spec) {
   const rows = [];
   const seenIdx = new Set();
   let done = 0;
-  await mapPool(starts, Math.min(8, CONCURRENCY), async (start) => {
+  // Keep listing concurrency modest — HF datasets-server 429s easily.
+  await mapPool(starts, Math.min(4, CONCURRENCY), async (start) => {
     const params = new URLSearchParams({
       dataset: "Zitacron/real-vs-ai-corpus",
       config: "default",
