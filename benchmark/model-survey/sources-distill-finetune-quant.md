@@ -47,10 +47,11 @@ Proofmark’s recipe (for comparison only): freeze `OwensLab/commfor-model-384`,
 | OwensLab/CommunityForensics-Eval | CC BY-NC-SA-4.0 | Held-out eval only | Do not train on this if we want a clean CF-family test. |
 | dragonintelligence/CIFAKE / yanbax CIFAKE | MIT / varies | Optional warm-up | Too easy / outdated for Lexica. |
 | Our `benchmark/openrouter` | mixed fetch | Train (non-Lexica) | Modern OpenRouter gens. |
-| Our `benchmark/openrouter/ai/lexica__feed` | scraped | **Frozen test** | Never train; promotion gate. |
+| Our `benchmark/openrouter/ai/lexica__feed` + `lexica__holdout` | scraped | **Frozen test** | Never train; promotion gate. IDs sealed in `lexica-split.json`. |
+| Our `benchmark/distill-corpus/ai/lexica__train` | scraped | **Train only** | Infinite Lexica cursor; disjoint from holdout IDs. |
 | Our hardcases | local | Frozen FP gate | |
 
-Target scale to match Proofmark: **≥4k train images**, separate calib (~1k), Lexica+hardcases untouched.
+Target scale: **~50k train** via `npm run fetch:corpus50k` (Zitacron + Tiny-GenImage + Lexica train), plus a growing frozen Lexica holdout for the promotion gate. Then `npm run distill:loop`.
 
 ---
 
@@ -70,7 +71,7 @@ Ship rule: only MIT / Apache-2.0 weights in `dist/`. NC datasets OK for local tr
 
 ## 4. Attack plan (beat Proofmark on quality + speed)
 
-1. **Data** — Pull Zitacron stratified sample + Tiny-GenImage validation/train slices into `benchmark/distill-corpus/{ai,real}/…`. Keep Lexica + hardcases out.
+1. **Data** — `npm run fetch:corpus50k` → ~35k Zitacron/Tiny + 15k Lexica **train** + 2k Lexica **holdout**. Hardcases stay frozen.
 2. **Finetune head** — Freeze CommFor-384; train 384→32→1 (and 16/64 sweep) with JPEG/recompress/crop aug + domain weights; calibrate threshold on held-out calib for ≥90% TNR.
 3. **Optional KD** — Mix hard labels with teacher soft labels from Detectra + DF-v2.
 4. **Quant** — Export MatMul-only Q8; also try Q4 and a smaller CF-224 student for speed.

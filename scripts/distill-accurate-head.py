@@ -32,7 +32,7 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CORPUS = ROOT / "benchmark" / "openrouter"
+DEFAULT_CORPUS = ROOT / "benchmark" / "distill-corpus"
 DEFAULT_OUT = ROOT / "models" / "truepixel-accurate-v1"
 DEFAULT_CACHE = ROOT / ".truepixel-cache" / "distill-accurate"
 HF_REPO = "OwensLab/commfor-model-384"
@@ -47,25 +47,55 @@ IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".avif"}
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--corpus", type=Path, default=DEFAULT_CORPUS)
+    p.add_argument(
+        "--corpus",
+        type=Path,
+        default=ROOT / "benchmark" / "distill-corpus",
+        help="Train corpus root with {ai,real}/… (default: benchmark/distill-corpus)",
+    )
+    p.add_argument(
+        "--holdout-corpus",
+        type=Path,
+        default=ROOT / "benchmark" / "openrouter",
+        help="Optional second tree used only for post-export gate "
+        "(default: benchmark/openrouter Lexica holdout + hardcases).",
+    )
     p.add_argument("--output", type=Path, default=DEFAULT_OUT)
     p.add_argument("--cache", type=Path, default=DEFAULT_CACHE)
     p.add_argument("--hidden", type=int, default=32)
     p.add_argument("--epochs", type=int, default=60)
     p.add_argument("--batch-size", type=int, default=32)
+    p.add_argument("--feature-batch-size", type=int, default=16)
     p.add_argument("--lr", type=float, default=1.5e-3)
     p.add_argument("--weight-decay", type=float, default=3e-3)
     p.add_argument("--seed", type=int, default=42)
-    p.add_argument("--val-frac", type=float, default=0.2)
+    p.add_argument("--val-frac", type=float, default=0.1)
     p.add_argument("--augment-views", type=int, default=1)
+    p.add_argument(
+        "--max-train-images",
+        type=int,
+        default=0,
+        help="Optional cap on train-eligible images (0 = all).",
+    )
     p.add_argument(
         "--exclude-substr",
         action="append",
         default=[],
         help="Drop training images whose relative path contains this substring "
-        "(repeatable). Example: --exclude-substr lexica  (use those only for holdout).",
+        "(repeatable). Example: --exclude-substr lexica__holdout",
+    )
+    p.add_argument(
+        "--holdout-substr",
+        action="append",
+        default=["lexica__holdout", "lexica__feed", "hardcase"],
+        help="Paths under --holdout-corpus to score after export (repeatable).",
     )
     p.add_argument("--skip-export", action="store_true")
+    p.add_argument(
+        "--no-feature-cache",
+        action="store_true",
+        help="Recompute backbone features even if npz cache exists.",
+    )
     return p.parse_args()
 
 
@@ -155,24 +185,36 @@ def build_transforms():
         [
             T.RandomResizedCrop(
                 384,
-                scale=(0.75, 1.0),
-                ratio=(0.9, 1.12),
+                scale=(0.7, 1.0),
+                ratio=(0.85, 1.15),
                 interpolation=T.InterpolationMode.BICUBIC,
             ),
             T.RandomHorizontalFlip(),
-            T.ColorJitter(0.12, 0.12, 0.1, 0.02),
+            T.ColorJitter(0.15, 0.15, 0.12, 0.03),
+            T.RandomApply([T.GaussianBlur(kernel_size=3, sigma=(0.1, 1.2))], p=0.2),
             T.ToTensor(),
             T.Normalize(MEAN, STD),
+            T.RandomErasing(p=0.12, scale=(0.02, 0.12), value=0),
         ]
     )
     return exact, aug
 
 
-def load_rgb(path: Path):
+def load_rgb(path: Path, jpeg_aug: bool = False, rng: random.Random | None = None):
+    from io import BytesIO
+
     from PIL import Image, ImageOps
 
     with Image.open(path) as img:
-        return ImageOps.exif_transpose(img).convert("RGB")
+        rgb = ImageOps.exif_transpose(img).convert("RGB")
+    if jpeg_aug and rng is not None and rng.random() < 0.35:
+        quality = rng.randint(55, 92)
+        buf = BytesIO()
+        rgb.save(buf, format="JPEG", quality=quality)
+        buf.seek(0)
+        with Image.open(buf) as recompressed:
+            rgb = recompressed.convert("RGB")
+    return rgb
 
 
 def load_vit_state(checkpoint: Path) -> dict:
@@ -223,25 +265,92 @@ def make_head(hidden: int, nn):
     return nn.Sequential(nn.Linear(384, hidden), nn.GELU(), nn.Linear(hidden, 1))
 
 
-def extract_features(backbone, samples, exact, aug, augment_views, device, torch):
+def feature_cache_path(cache: Path, tag: str) -> Path:
+    return cache / "features" / f"{tag}.npz"
+
+
+def extract_features(
+    backbone,
+    samples,
+    exact,
+    aug,
+    augment_views,
+    device,
+    torch,
+    *,
+    feature_batch_size: int = 16,
+    cache_file: Path | None = None,
+    use_cache: bool = True,
+    jpeg_aug: bool = False,
+    seed: int = 42,
+):
+    if use_cache and cache_file and cache_file.exists():
+        data = np.load(cache_file, allow_pickle=False)
+        print(f"feature cache hit {cache_file} rows={len(data['y'])}")
+        return data["x"], data["y"], data["domains"]
+
     xs: list[np.ndarray] = []
     ys: list[float] = []
     domains: list[str] = []
     backbone.eval()
-    for i, (path, y, domain) in enumerate(samples):
-        images = [exact(load_rgb(path))]
-        for _ in range(augment_views):
-            images.append(aug(load_rgb(path)))
-        batch = torch.stack(images).to(device)
+    rng = random.Random(seed)
+    pending_tensors: list = []
+    pending_meta: list[tuple[float, str]] = []
+
+    def flush():
+        nonlocal pending_tensors, pending_meta
+        if not pending_tensors:
+            return
+        batch = torch.stack(pending_tensors).to(device)
         feats = backbone(batch).detach().cpu().numpy()
-        for row in feats:
+        for row, (y, domain) in zip(feats, pending_meta):
             xs.append(row.astype(np.float32))
             ys.append(y)
             domains.append(domain)
-        if (i + 1) % 10 == 0 or i + 1 == len(samples):
-            print(f"\rfeatures {i + 1}/{len(samples)} ({len(xs)} rows)", end="", flush=True)
+        pending_tensors = []
+        pending_meta = []
+
+    for i, (path, y, domain) in enumerate(samples):
+        views = [exact(load_rgb(path))]
+        for _ in range(augment_views):
+            views.append(aug(load_rgb(path, jpeg_aug=jpeg_aug, rng=rng)))
+        for tensor in views:
+            pending_tensors.append(tensor)
+            pending_meta.append((y, domain))
+            if len(pending_tensors) >= feature_batch_size:
+                flush()
+        if (i + 1) % 25 == 0 or i + 1 == len(samples):
+            print(
+                f"\rfeatures {i + 1}/{len(samples)} ({len(xs) + len(pending_tensors)} rows)",
+                end="",
+                flush=True,
+            )
+    flush()
     print()
-    return np.stack(xs), np.asarray(ys, dtype=np.float32), np.asarray(domains)
+    x = np.stack(xs) if xs else np.zeros((0, 384), np.float32)
+    y_arr = np.asarray(ys, dtype=np.float32)
+    d_arr = np.asarray(domains)
+    if use_cache and cache_file is not None:
+        cache_file.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(cache_file, x=x, y=y_arr, domains=d_arr)
+        print(f"feature cache write {cache_file}")
+    return x, y_arr, d_arr
+
+
+def collect_holdout_samples(
+    holdout_corpus: Path, substrings: list[str]
+) -> list[tuple[Path, float, str]]:
+    if not holdout_corpus or not holdout_corpus.is_dir():
+        return []
+    samples = collect_samples(holdout_corpus)
+    if not substrings:
+        return samples
+    kept = []
+    for path, y, domain in samples:
+        rel = str(path).lower()
+        if any(sub.lower() in rel for sub in substrings):
+            kept.append((path, y, domain))
+    return kept
 
 
 def eval_logits(logits: np.ndarray, y: np.ndarray, threshold: float) -> dict:
@@ -403,17 +512,25 @@ def main() -> None:
         for s in samples
         if any(sub.lower() in str(s[0]).lower() for sub in args.exclude_substr)
     ]
-    eligible = [s for s in samples if s not in excluded] if excluded else samples
+    eligible = [s for s in samples if s not in excluded] if excluded else list(samples)
+    if args.max_train_images and args.max_train_images > 0:
+        rng_cap = random.Random(args.seed)
+        rng_cap.shuffle(eligible)
+        eligible = eligible[: args.max_train_images]
+
     train_s, val_s = split_train_val(eligible, args.val_frac, args.seed)
+    gate_s = collect_holdout_samples(args.holdout_corpus, args.holdout_substr)
+    # Never train on gate images even if someone pointed --corpus at openrouter.
+    gate_ids = {p.resolve() for p, _, _ in gate_s}
+    train_s = [s for s in train_s if s[0].resolve() not in gate_ids]
+    val_s = [s for s in val_s if s[0].resolve() not in gate_ids]
+
+    print(
+        f"corpus {len(samples)}  train-eligible {len(eligible)}  "
+        f"train {len(train_s)}  val {len(val_s)}  gate {len(gate_s)}"
+    )
     if excluded:
-        # Domain holdout: evaluate excluded paths after export (not used in train).
-        val_s = excluded
-        print(
-            f"corpus {len(samples)}  train-eligible {len(eligible)}  "
-            f"excluded-holdout {len(excluded)}  train {len(train_s)}"
-        )
-    else:
-        print(f"corpus {len(samples)}  train {len(train_s)}  val {len(val_s)}")
+        print(f"excluded-from-train {len(excluded)}")
 
     backbone_path = ensure_backbone(args.cache)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -422,12 +539,47 @@ def main() -> None:
     backbone = make_feature_backbone(backbone_path, torch, nn, timm).to(device)
     exact, aug = build_transforms()
 
+    cache_tag = hashlib.sha256(
+        json.dumps(
+            {
+                "corpus": str(args.corpus.resolve()),
+                "train": sorted(str(p) for p, _, _ in train_s),
+                "aug": args.augment_views,
+                "seed": args.seed,
+                "hidden": args.hidden,
+            },
+            sort_keys=True,
+        ).encode()
+    ).hexdigest()[:16]
+
     train_x, train_y, _ = extract_features(
-        backbone, train_s, exact, aug, args.augment_views, device, torch
+        backbone,
+        train_s,
+        exact,
+        aug,
+        args.augment_views,
+        device,
+        torch,
+        feature_batch_size=args.feature_batch_size,
+        cache_file=feature_cache_path(args.cache, f"train-{cache_tag}"),
+        use_cache=not args.no_feature_cache,
+        jpeg_aug=True,
+        seed=args.seed,
     )
     if val_s:
         val_x, val_y, _ = extract_features(
-            backbone, val_s, exact, aug, 0, device, torch
+            backbone,
+            val_s,
+            exact,
+            aug,
+            0,
+            device,
+            torch,
+            feature_batch_size=args.feature_batch_size,
+            cache_file=feature_cache_path(args.cache, f"val-{cache_tag}"),
+            use_cache=not args.no_feature_cache,
+            jpeg_aug=False,
+            seed=args.seed + 1,
         )
     else:
         val_x = np.zeros((0, 384), np.float32)
@@ -447,9 +599,15 @@ def main() -> None:
         "backboneSha256": EXPECTED_BACKBONE_SHA256,
         "hidden": args.hidden,
         "epochs": args.epochs,
+        "lr": args.lr,
+        "weightDecay": args.weight_decay,
+        "augmentViews": args.augment_views,
+        "corpus": str(args.corpus),
         "corpusImages": len(samples),
+        "trainImages": len(train_s),
         "trainRows": int(len(train_y)),
         "valRows": int(len(val_y)),
+        "gateImages": len(gate_s),
         "valAt065": eval_logits(val_logits, eval_y, 0.65),
         "bestValBaDuringTrain": best_ba,
         "preprocess": "short440-center384",
@@ -457,7 +615,7 @@ def main() -> None:
         "outputKind": "logit",
     }
     print(
-        f"held-out BA@0.65={(report['valAt065']['balancedAccuracy'] * 100):.1f}% "
+        f"val BA@0.65={(report['valAt065']['balancedAccuracy'] * 100):.1f}% "
         f"TPR={(report['valAt065']['tpr'] * 100):.1f}% "
         f"TNR={(report['valAt065']['tnr'] * 100):.1f}%"
     )
@@ -466,11 +624,21 @@ def main() -> None:
     (args.output / "train-report.json").write_text(json.dumps(report, indent=2) + "\n")
 
     holdout = {
-        "files": [
+        "valFiles": [
             str(path.relative_to(args.corpus)).replace("\\", "/")
             for path, _, _ in val_s
         ],
-        "note": "Images held out of head training (still used for early-stopping).",
+        "gateFiles": [
+            (
+                str(path.relative_to(args.holdout_corpus)).replace("\\", "/")
+                if args.holdout_corpus in path.parents
+                or path.parent == args.holdout_corpus
+                else str(path)
+            )
+            for path, _, _ in gate_s
+        ],
+        "note": "valFiles = early-stopping split from train corpus. "
+        "gateFiles = frozen Lexica holdout + hardcases (promotion gate).",
     }
     (args.output / "holdout.json").write_text(json.dumps(holdout, indent=2) + "\n")
 
@@ -481,18 +649,37 @@ def main() -> None:
     q8 = export_onnx(backbone_path, head.cpu(), args.output, torch, nn, timm)
     digest = sha256_file(q8)
 
-    # Honest check: ORT on the held-out files only (not the train rows).
-    holdout_metrics = eval_onnx_holdout(q8, val_s, exact, 0.65)
-    report["onnxHoldoutAt065"] = holdout_metrics
+    val_onnx = eval_onnx_holdout(q8, val_s, exact, 0.65)
+    gate_onnx = eval_onnx_holdout(q8, gate_s, exact, 0.65)
+    report["onnxValAt065"] = val_onnx
+    report["onnxHoldoutAt065"] = gate_onnx
+    # Convenience aliases for Lexica-only / hardcase-only slices.
+    lexica_gate = [s for s in gate_s if "lexica" in str(s[0]).lower()]
+    hard_gate = [
+        s
+        for s in gate_s
+        if "hardcase" in str(s[0]).lower() or "hard-case" in str(s[0]).lower()
+    ]
+    if not hard_gate:
+        hard_gate = [s for s in gate_s if s[1] < 0.5]
+    report["onnxLexicaHoldoutAt065"] = eval_onnx_holdout(q8, lexica_gate, exact, 0.65)
+    report["onnxHardcaseAt065"] = eval_onnx_holdout(q8, hard_gate, exact, 0.65)
+
     print(
-        f"ONNX holdout BA@0.65={holdout_metrics['balancedAccuracy'] * 100:.1f}% "
-        f"TPR={holdout_metrics['tpr'] * 100:.1f}% "
-        f"TNR={holdout_metrics['tnr'] * 100:.1f}% "
-        f"n={holdout_metrics['n']}"
+        f"ONNX val BA@0.65={val_onnx['balancedAccuracy'] * 100:.1f}% n={val_onnx['n']}"
     )
     print(
-        "Warning: npm run eval:compare on the full OpenRouter tree includes "
-        "train images — use holdout.json / onnxHoldoutAt065 for promotion decisions."
+        f"ONNX gate BA@0.65={gate_onnx['balancedAccuracy'] * 100:.1f}% "
+        f"TPR={gate_onnx['tpr'] * 100:.1f}% TNR={gate_onnx['tnr'] * 100:.1f}% "
+        f"n={gate_onnx['n']}"
+    )
+    print(
+        f"ONNX Lexica TPR@0.65="
+        f"{report['onnxLexicaHoldoutAt065']['tpr'] * 100:.1f}% "
+        f"n={report['onnxLexicaHoldoutAt065']['n']}  "
+        f"hardcase TNR="
+        f"{report['onnxHardcaseAt065']['tnr'] * 100:.1f}% "
+        f"n={report['onnxHardcaseAt065']['n']}"
     )
 
     manifest = {
@@ -509,9 +696,8 @@ def main() -> None:
     print(f"wrote {q8} ({manifest['bytes']} bytes)")
     print(f"sha256 {digest}")
     print(
-        "Next: point FORENSICS_MODEL at this artifact in "
-        "extension/src/lib/model-manifest.ts only after holdout BA clears the bar "
-        "on a larger shard."
+        "Promote FORENSICS_MODEL only after Lexica holdout TPR + hardcase TNR "
+        "clear the bar vs Community Forensics latency."
     )
 
 

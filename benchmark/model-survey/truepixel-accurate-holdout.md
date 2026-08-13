@@ -25,4 +25,4 @@ Lexica score distribution (held-out model): mean ~0.21, median ~0.014. Most tile
 - Our quant is real and ours (not Proofmark’s).
 - It is **not** ready to replace Community Forensics in the extension.
 - It memorizes the tiny OpenRouter+Lexica tree; it does **not** generalize to Lexica when Lexica is held out.
-- Next: grow train data (more modern generators + more hard reals), keep Lexica (or a Lexica-like shard) as a frozen test, then re-distill and promote only if held-out Lexica TPR clears the bounty bar with sane TNR.
+- Next: `npm run fetch:corpus50k` (~50k train + sealed Lexica holdout), then `npm run distill:loop` until Lexica holdout TPR, hardcase TNR, gate BA, and latency clear the bar vs Community Forensics.

@@ -2,6 +2,9 @@ node_modules/
 dist/
 .truepixel-cache/
 models/
+benchmark/distill-corpus/
+benchmark/openrouter/ai/lexica__holdout/
+benchmark/openrouter/lexica-split.json
 coverage/
 test-results/
 playwright-report/
