@@ -136,6 +136,31 @@ const MODELS = [
     outputKind: "logits2",
     preprocess: "stretch",
   },
+  {
+    // Q8 fine-tune shipped by Dyno-man/Dino-ImageGen-Ext (Proofmark).
+    // Same preprocess family as detectra-v1 (shortest→440, center-crop 384).
+    id: "proofmark-webwild-v3",
+    requested: false,
+    status: "ok",
+    hf: "Proofmark/proofmark-webwild-v3 (vendor: Dyno-man/Dino-ImageGen-Ext)",
+    url: null,
+    localPath: "models/compare/proofmark-webwild-v3/model_quantized.onnx",
+    seedPaths: [
+      "/tmp/Dino-ImageGen-Ext/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
+      path.join(
+        root,
+        "vendor/Dino-ImageGen-Ext/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
+      ),
+    ],
+    sha256:
+      "ed17ceb332bef84d0adcc2fa537eef85ed3ac6fb32c30393c326321fbbe54683",
+    inputSize: 384,
+    mean: [0.485, 0.456, 0.406],
+    std: [0.229, 0.224, 0.225],
+    aiLabelIndex: 0,
+    outputKind: "logit",
+    preprocess: "short440-center384",
+  },
 ];
 
 function softmax2(a, b) {
@@ -161,24 +186,45 @@ function sigmoid(x) {
   return z / (1 + z);
 }
 
+function digestFile(filePath) {
+  return createHash("sha256").update(readFileSync(filePath)).digest("hex");
+}
+
 async function download(model) {
   const outPath = path.join(root, model.localPath);
   mkdirSync(path.dirname(outPath), { recursive: true });
   if (existsSync(outPath)) {
     if (model.sha256) {
-      const digest = createHash("sha256")
-        .update(readFileSync(outPath))
-        .digest("hex");
+      const digest = digestFile(outPath);
       if (digest === model.sha256) {
         console.log(`cached ${model.id}`);
         return outPath;
       }
-      console.log(`checksum mismatch ${model.id}, re-download`);
+      console.log(`checksum mismatch ${model.id}, re-fetch`);
     } else {
       console.log(`cached ${model.id}`);
       return outPath;
     }
   }
+
+  // Local-only / vendored weights (e.g. Proofmark Q8 from Dino-ImageGen-Ext).
+  for (const seed of model.seedPaths ?? []) {
+    if (!seed || !existsSync(seed)) continue;
+    if (model.sha256 && digestFile(seed) !== model.sha256) continue;
+    writeFileSync(outPath, readFileSync(seed));
+    console.log(`seeded ${model.id} ← ${seed}`);
+    return outPath;
+  }
+
+  if (!model.url) {
+    throw new Error(
+      `no weights for ${model.id}: place ONNX at ${model.localPath}` +
+        (model.seedPaths?.length
+          ? ` or one of seedPaths (${model.seedPaths.join(", ")})`
+          : ""),
+    );
+  }
+
   console.log(`download ${model.id} ← ${model.url}`);
   const res = await fetch(model.url, { redirect: "follow" });
   if (!res.ok || !res.body) {
@@ -187,9 +233,7 @@ async function download(model) {
   const tmp = `${outPath}.partial`;
   await pipeline(Readable.fromWeb(res.body), createWriteStream(tmp));
   if (model.sha256) {
-    const digest = createHash("sha256")
-      .update(readFileSync(tmp))
-      .digest("hex");
+    const digest = digestFile(tmp);
     if (digest !== model.sha256) {
       throw new Error(
         `checksum ${model.id}: expected ${model.sha256}, got ${digest}`,
@@ -298,6 +342,8 @@ function summarize(rows, threshold) {
   let sum = 0;
   let hardFp = 0;
   let hardN = 0;
+  let lexicaTp = 0;
+  let lexicaN = 0;
   for (const r of rows) {
     sum += r.inferMs + r.preprocessMs;
     const predAi = r.confidence >= threshold;
@@ -309,6 +355,10 @@ function summarize(rows, threshold) {
     if (r.hardCase) {
       hardN += 1;
       if (predAi) hardFp += 1;
+    }
+    if (r.file.includes("lexica")) {
+      lexicaN += 1;
+      if (predAi) lexicaTp += 1;
     }
   }
   const tpr = tp + fn === 0 ? 0 : tp / (tp + fn);
@@ -323,6 +373,9 @@ function summarize(rows, threshold) {
     totalMs: sum,
     hardCaseFp: hardFp,
     hardCaseN: hardN,
+    lexicaTp,
+    lexicaN,
+    lexicaTpr: lexicaN === 0 ? null : lexicaTp / lexicaN,
   };
 }
 
@@ -429,11 +482,13 @@ const ranked = [...results].sort(
     a.at065.avgMsPerImage - b.at065.avgMsPerImage,
 );
 
+const lexicaCount = images.filter((i) => i.file.includes("lexica")).length;
 const report = {
   generatedAt: new Date().toISOString(),
   corpusImages: images.length,
   hardCases: images.filter((i) => i.hardCase).length,
-  note: "Two requested models lacked usable detector ONNX weights; substitutes noted below. Soylent hardcase is a local proxy (original screenshot bytes were not available to the agent).",
+  lexicaImages: lexicaCount,
+  note: "Two requested models lacked usable detector ONNX weights; substitutes noted below. Soylent hardcase is a local proxy (original screenshot bytes were not available to the agent). proofmark-webwild-v3 is the Q8 ONNX shipped by Dyno-man/Dino-ImageGen-Ext.",
   unavailable: unavailable.map((m) => ({
     id: m.id,
     reason: m.reason,
@@ -447,6 +502,7 @@ const report = {
     tpr: r.at065.tpr,
     tnr: r.at065.tnr,
     hardCaseFp: r.at065.hardCaseFp,
+    lexicaTpr: r.at065.lexicaTpr,
     substituteFor: r.substituteFor,
   })),
   models: results,
@@ -460,7 +516,9 @@ writeFileSync(jsonPath, JSON.stringify(report, null, 2) + "\n");
 const md = [];
 md.push("# Model compare report (OpenRouter + hardcases)");
 md.push("");
-md.push(`Generated \`${report.generatedAt}\` · **${report.corpusImages}** images · **${report.hardCases}** hardcases`);
+md.push(
+  `Generated \`${report.generatedAt}\` · **${report.corpusImages}** images · **${report.hardCases}** hardcases · **${report.lexicaImages}** Lexica AI`,
+);
 md.push("");
 md.push(report.note);
 md.push("");
@@ -472,13 +530,25 @@ for (const u of report.unavailable) {
 md.push("");
 md.push("## Ranking @ 65% threshold (bounty)");
 md.push("");
-md.push("| Rank | Model | BA | TPR | TNR | Avg ms/img | Total s | Hardcase FP | Notes |");
-md.push("|-----:|-------|---:|----:|----:|-----------:|--------:|------------:|-------|");
+md.push(
+  "| Rank | Model | BA | TPR | TNR | Lexica TPR | Avg ms/img | Total s | Hardcase FP | Notes |",
+);
+md.push(
+  "|-----:|-------|---:|----:|----:|-----------:|-----------:|--------:|------------:|-------|",
+);
 for (const r of report.rankingAt065) {
   const full = results.find((x) => x.id === r.id);
-  const note = r.substituteFor ? `sub for ${r.substituteFor}` : "requested";
+  const note = r.substituteFor
+    ? `sub for ${r.substituteFor}`
+    : r.id === "proofmark-webwild-v3"
+      ? "Proofmark vendor Q8"
+      : "requested";
+  const lex =
+    full.at065.lexicaTpr == null
+      ? "—"
+      : `${(full.at065.lexicaTpr * 100).toFixed(1)}% (${full.at065.lexicaTp}/${full.at065.lexicaN})`;
   md.push(
-    `| ${r.rank} | \`${r.id}\` | ${(r.ba * 100).toFixed(1)}% | ${(full.at065.tpr * 100).toFixed(1)}% | ${(full.at065.tnr * 100).toFixed(1)}% | ${r.avgMsPerImage.toFixed(1)} | ${r.totalWallSec.toFixed(1)} | ${r.hardCaseFp}/${full.at065.hardCaseN} | ${note} |`,
+    `| ${r.rank} | \`${r.id}\` | ${(r.ba * 100).toFixed(1)}% | ${(full.at065.tpr * 100).toFixed(1)}% | ${(full.at065.tnr * 100).toFixed(1)}% | ${lex} | ${r.avgMsPerImage.toFixed(1)} | ${r.totalWallSec.toFixed(1)} | ${r.hardCaseFp}/${full.at065.hardCaseN} | ${note} |`,
   );
 }
 md.push("");

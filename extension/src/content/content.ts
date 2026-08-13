@@ -16,8 +16,12 @@ const OVERLAY_ATTR = "data-truepixel-id";
 const STATE_ATTR = "data-truepixel-state";
 const BADGE_CLASS = "truepixel-badge";
 const VEIL_CLASS = "truepixel-veil";
-/** Proofmark-style page budget — keeps WASM from thrashing on image-heavy feeds. */
-const MAX_IMAGES_PER_PAGE = 40;
+/**
+ * Soft budget for in-memory tracked entries. Lexica-style infinite feeds
+ * recycle DOM nodes — we prune disconnected / offscreen entries instead of
+ * hard-stopping (the old hard cap made blur+badges vanish after ~40 images).
+ */
+const MAX_TRACKED = 80;
 const MAX_CONTENT_IN_FLIGHT = 2;
 
 type TrackedImage = {
@@ -376,20 +380,61 @@ function armLoadRescore(img: HTMLImageElement, id: string): void {
   });
 }
 
+function forgetEntry(id: string): void {
+  const entry = tracked.get(id);
+  if (!entry) return;
+  removeVeil(id);
+  document
+    .querySelectorAll(`.${BADGE_CLASS}[${OVERLAY_ATTR}="${id}"]`)
+    .forEach((node) => node.remove());
+  entry.element.removeAttribute(OVERLAY_ATTR);
+  entry.element.removeAttribute(STATE_ATTR);
+  intersectionObserver?.unobserve(entry.element);
+  observed.delete(entry.element);
+  tracked.delete(id);
+}
+
+/** Drop detached DOM nodes (virtualized feeds) and free budget for new ones. */
+function pruneTracked(preferKeep?: HTMLImageElement): void {
+  for (const [id, entry] of tracked) {
+    if (entry.element === preferKeep) continue;
+    if (!entry.element.isConnected && !entry.inFlight) {
+      forgetEntry(id);
+    }
+  }
+  if (tracked.size < MAX_TRACKED) return;
+  // Evict completed off-viewport entries first (oldest Map order).
+  for (const [id, entry] of tracked) {
+    if (tracked.size < MAX_TRACKED) break;
+    if (entry.element === preferKeep || entry.inFlight) continue;
+    const rect = entry.element.getBoundingClientRect();
+    const margin = 400;
+    const onscreen =
+      rect.bottom >= -margin &&
+      rect.top <= window.innerHeight + margin &&
+      rect.right >= -margin &&
+      rect.left <= window.innerWidth + margin;
+    if (!onscreen) forgetEntry(id);
+  }
+}
+
 function trackAndMaybeAnalyze(img: HTMLImageElement): void {
   if (!options.autoScan) return;
   if (!isEligible(img)) return;
-  if (tracked.size >= MAX_IMAGES_PER_PAGE && !img.getAttribute(OVERLAY_ATTR)) {
+  pruneTracked(img);
+  if (tracked.size >= MAX_TRACKED && !img.getAttribute(OVERLAY_ATTR)) {
+    // Still over budget after prune — skip this one; next scroll will retry.
     return;
   }
   const src = imageKey(img);
   let id = img.getAttribute(OVERLAY_ATTR);
   if (!id) {
-    id = `tp_${Math.random().toString(16).slice(2)}_${tracked.size}`;
+    id = `tp_${Math.random().toString(16).slice(2)}_${Date.now().toString(36)}`;
     img.setAttribute(OVERLAY_ATTR, id);
   }
   const existing = tracked.get(id);
   if (existing && existing.src === src && existing.result && !existing.inFlight) {
+    // Parent may have been recreated by the site — re-paint overlays.
     renderResult(img, existing.result);
     return;
   }
@@ -413,7 +458,9 @@ function trackAndMaybeAnalyze(img: HTMLImageElement): void {
     applyConcealment(entry);
     entry.inFlight = false;
   }
-  void analyze(img, id);
+  void analyze(img, id).catch(() => {
+    // Keep the content script alive if a single image fails.
+  });
 }
 
 function observeImage(img: HTMLImageElement): void {
@@ -425,6 +472,7 @@ function observeImage(img: HTMLImageElement): void {
 
 function discover(root: ParentNode = document): void {
   if (!options.autoScan) return;
+  pruneTracked();
   if (root instanceof HTMLImageElement) {
     observeImage(root);
     return;
@@ -435,7 +483,9 @@ function discover(root: ParentNode = document): void {
 }
 
 function reapplyAllResults(): void {
+  pruneTracked();
   for (const entry of tracked.values()) {
+    if (!entry.element.isConnected) continue;
     applyConcealment(entry);
     if (entry.result) renderResult(entry.element, entry.result);
   }
@@ -497,20 +547,53 @@ function start(): void {
   );
 
   mutationObserver = new MutationObserver((mutations) => {
+    let removed = false;
     for (const mutation of mutations) {
       if (
         mutation.type === "attributes" &&
         mutation.target instanceof HTMLImageElement
       ) {
-        observed.delete(mutation.target);
-        observeImage(mutation.target);
+        const img = mutation.target;
+        observed.delete(img);
+        // Src change on a recycled tile — drop stale result and re-analyze.
+        // IntersectionObserver will not re-fire for an already-visible tile.
+        const id = img.getAttribute(OVERLAY_ATTR);
+        if (id) {
+          const entry = tracked.get(id);
+          if (entry && entry.src !== imageKey(img)) {
+            delete entry.result;
+            entry.src = imageKey(img);
+            entry.revealed = false;
+            entry.inFlight = false;
+            removeVeil(id);
+          }
+        }
+        observeImage(img);
+        trackAndMaybeAnalyze(img);
         continue;
+      }
+      for (const node of mutation.removedNodes) {
+        if (node instanceof HTMLImageElement) {
+          const id = node.getAttribute(OVERLAY_ATTR);
+          if (id) forgetEntry(id);
+          else observed.delete(node);
+          removed = true;
+        } else if (node instanceof Element) {
+          for (const img of node.querySelectorAll("img")) {
+            if (!(img instanceof HTMLImageElement)) continue;
+            const id = img.getAttribute(OVERLAY_ATTR);
+            if (id) forgetEntry(id);
+            else observed.delete(img);
+            removed = true;
+          }
+        }
       }
       for (const node of mutation.addedNodes) {
         if (node instanceof HTMLImageElement) observeImage(node);
         else if (node instanceof Element) discover(node);
       }
     }
+    if (removed) pruneTracked();
   });
   mutationObserver.observe(document.documentElement, {
     childList: true,
@@ -521,6 +604,11 @@ function start(): void {
   discover();
   window.addEventListener("scroll", scheduleScan, { passive: true });
   window.addEventListener("resize", scheduleScan);
+  // Infinite feeds keep mutating; periodic prune + rediscover keeps budget open.
+  window.setInterval(() => {
+    pruneTracked();
+    discover();
+  }, 2000);
 
   void refreshOptions().then(() => {
     discover();
