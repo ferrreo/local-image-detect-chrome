@@ -99,7 +99,7 @@ export async function detectAiImage(
       const visual = await classify(decoded.bitmap, classifyOpts);
       visualScore = visual.score;
       visualSecondary = visual.secondaryScore;
-      visualDetail = `${visual.detail}${useZig ? ",engine=zig-wasm" : ",engine=ort-web"}`;
+      visualDetail = `${visual.detail}${useZig ? ",engine=zig-ort-wasm" : ",engine=ort-web"}`;
       backend = visual.backend;
 
       // Defense in depth: if a backend returned only distilled, apply the same gate.

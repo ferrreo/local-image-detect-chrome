@@ -120,11 +120,32 @@ function createSession(
   }
 }
 
+let lastLoadError: string | undefined;
+
+export function getZigWasmLoadError(): string | undefined {
+  return lastLoadError;
+}
+
 export async function isZigWasmOrtReady(): Promise<boolean> {
   try {
+    // Fast path: packaged artifacts must exist before we claim ready.
+    if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
+      const probe = await fetch(chrome.runtime.getURL("wasm/truepixel_infer.wasm"), {
+        method: "HEAD",
+      }).catch(() => null);
+      if (!probe?.ok) {
+        lastLoadError = "dist/wasm/truepixel_infer.wasm missing";
+        return false;
+      }
+    }
     const m = await loadModule();
-    return m._tp_has_ort_session() === 1;
-  } catch {
+    const ok = m._tp_has_ort_session() === 1;
+    if (!ok) lastLoadError = "tp_has_ort_session!=1";
+    else lastLoadError = undefined;
+    return ok;
+  } catch (error) {
+    lastLoadError = error instanceof Error ? error.message : String(error);
+    modulePromise = undefined;
     return false;
   }
 }

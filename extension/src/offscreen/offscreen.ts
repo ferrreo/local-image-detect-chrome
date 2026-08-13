@@ -7,6 +7,7 @@ import {
   warmVisualClassifier,
 } from "../lib/visual-classifier";
 import {
+  getZigWasmLoadError,
   isZigWasmOrtReady,
   resetVisualZigWasm,
   warmVisualZigWasm,
@@ -72,6 +73,10 @@ async function handleReset(
     if (await isZigWasmOrtReady()) {
       backend = await warmVisualZigWasm();
     } else {
+      const zigErr = getZigWasmLoadError();
+      if (zigErr) {
+        console.warn("Zig+ORT WASM unavailable, using onnxruntime-web:", zigErr);
+      }
       backend = await warmVisualClassifier();
     }
   }

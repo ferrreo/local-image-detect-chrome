@@ -262,7 +262,12 @@ async function runEval() {
           totalMs,
           elapsedMs: result.elapsedMs,
           tiers: result.tiers
-            .map((t) => `${t.tier}:${Number(t.aiScore).toFixed(3)}`)
+            .map((t) => {
+              const score = `${t.tier}:${Number(t.aiScore).toFixed(3)}`;
+              return t.detail && t.tier === "visual"
+                ? `${score}[${t.detail}]`
+                : score;
+            })
             .join("|"),
         };
         rows.push(row);
