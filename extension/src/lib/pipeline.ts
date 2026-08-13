@@ -84,24 +84,6 @@ export async function detectAiImage(
     const decoded = await decodeImageBytes(options.bytes, mimeType);
     decodeMs = performance.now() - tDecode;
     try {
-      const tSpectral = performance.now();
-      const spectralImage = await rasterizeForSpectral(decoded.bitmap);
-      const spectral = analyzeSpectral(spectralImage);
-      spectralMs = performance.now() - tSpectral;
-      spectralScore = spectral.score;
-      spectralDetail = spectral.detail;
-      spectralFeatures = spectral.features;
-
-      const classifyOpts = {
-        stub: options.stubVisual === true,
-        cascade,
-        spectral: {
-          score: spectral.score,
-          laplacianVariance: spectral.features.laplacianVariance,
-          chromaFlatness: spectral.features.chromaFlatness,
-        },
-      };
-
       const prefer =
         options.visualEngine ??
         (typeof globalThis !== "undefined" &&
@@ -114,20 +96,39 @@ export async function detectAiImage(
         (prefer === "auto" && (await isZigWasmOrtReady()));
       const classify = useZig ? classifyVisualZigWasm : classifyVisual;
 
-      const visual = await classify(decoded.bitmap, classifyOpts);
-      visualScore = visual.score;
-      visualSecondary = visual.secondaryScore;
-      visualDetail = `${visual.detail}${useZig ? ",engine=zig-ort-wasm" : ",engine=ort-web"}`;
-      backend = visual.backend;
-      preprocessMs = visual.preprocessMs ?? 0;
-      distilledMs = visual.distilledMs ?? 0;
-      forensicsMs = visual.forensicsMs ?? 0;
-      ranForensics = visualSecondary !== undefined;
+      // Overlap spectral CPU with distilled infer — gate CF after both finish.
+      const spectralPromise = (async () => {
+        const t0 = performance.now();
+        const spectralImage = await rasterizeForSpectral(decoded.bitmap);
+        const result = analyzeSpectral(spectralImage);
+        spectralMs = performance.now() - t0;
+        return result;
+      })();
+      const distilledPromise =
+        options.stubVisual === true
+          ? classify(decoded.bitmap, { stub: true, cascade: false })
+          : classify(decoded.bitmap, {
+              cascade: false,
+              runDistilled: true,
+              runForensics: false,
+            });
 
-      // Defense in depth: if a backend returned only distilled, apply the same gate.
+      const [spectral, distilledVisual] = await Promise.all([
+        spectralPromise,
+        distilledPromise,
+      ]);
+      distilledMs = distilledVisual.distilledMs ?? 0;
+      preprocessMs = distilledVisual.preprocessMs ?? 0;
+
+      spectralScore = spectral.score;
+      spectralDetail = spectral.detail;
+      spectralFeatures = spectral.features;
+      visualScore = distilledVisual.score;
+      visualDetail = `${distilledVisual.detail}${useZig ? ",engine=zig-ort-wasm" : ",engine=ort-web"}`;
+      backend = distilledVisual.backend;
+
       if (
         cascade &&
-        visualSecondary === undefined &&
         !options.stubVisual &&
         spectralFeatures &&
         needsForensicsCascade({
@@ -143,7 +144,7 @@ export async function detectAiImage(
           runDistilled: false,
           runForensics: true,
         });
-        forensicsMs += performance.now() - tCf;
+        forensicsMs = performance.now() - tCf;
         ranForensics = true;
         visualSecondary =
           forensicsOnly.secondaryScore ?? forensicsOnly.score;

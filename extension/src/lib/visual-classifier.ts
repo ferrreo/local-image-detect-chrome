@@ -236,7 +236,7 @@ function wasmThreadCount(): number {
   }
   const hc =
     typeof navigator !== "undefined" ? (navigator.hardwareConcurrency ?? 2) : 2;
-  return Math.max(1, Math.min(4, hc));
+  return Math.max(1, Math.min(8, hc));
 }
 
 function configureOrt(ort: OrtModule): void {
