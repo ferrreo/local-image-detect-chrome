@@ -48,7 +48,9 @@ async function refresh(): Promise<void> {
   if (modelStatusEl) modelStatusEl.textContent = formatModels(response.models);
   if (backendStatusEl) backendStatusEl.textContent = response.backend.kind;
   if (thresholdStatusEl) {
-    thresholdStatusEl.textContent = `${Math.round(response.threshold * 100)}%`;
+    const aiPct = (response.threshold * 100).toFixed(2);
+    const realPct = ((response.realThreshold ?? 0.4099) * 100).toFixed(2);
+    thresholdStatusEl.textContent = `AI ≥${aiPct}% · Real ≤${realPct}%`;
   }
   if (autoScanEl) autoScanEl.checked = response.autoScan;
   if (aiConcealEl) {

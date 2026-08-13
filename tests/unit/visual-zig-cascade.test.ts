@@ -5,7 +5,7 @@ describe("needsForensicsCascade", () => {
   it("skips forensics only when distilled is already decisive", () => {
     expect(
       needsForensicsCascade({
-        distilled: 0.75,
+        distilled: 0.88,
         spectral: 0.4,
         laplacianVariance: 900,
         chromaFlatness: 0.5,
@@ -13,10 +13,10 @@ describe("needsForensicsCascade", () => {
     ).toBe(false);
   });
 
-  it("asks forensics to confirm near-threshold distilled scores", () => {
+  it("asks forensics to confirm elevated distilled scores", () => {
     expect(
       needsForensicsCascade({
-        distilled: 0.69,
+        distilled: 0.81,
         spectral: 0.42,
         laplacianVariance: 900,
         chromaFlatness: 0.5,

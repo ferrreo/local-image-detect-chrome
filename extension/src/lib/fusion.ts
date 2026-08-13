@@ -1,6 +1,8 @@
 import {
   asAiConfidence,
+  AI_LABEL_THRESHOLD,
   EVAL_CONFIDENCE_THRESHOLD,
+  REAL_LABEL_THRESHOLD,
   type AiConfidence,
   type DetectionLabel,
   type TierSignal,
@@ -20,7 +22,10 @@ export type FusionInput = {
   /** Optional secondary visual model (Community Forensics). */
   visualSecondary?: TierSignal;
   spectralFeatures?: SpectralFusionFeatures;
+  /** AI label threshold (product default 69.51%; eval often passes 0.65). */
   threshold?: number;
+  /** Real label threshold (product default 40.99%). */
+  realThreshold?: number;
 };
 
 export type FusionOutput = {
@@ -29,15 +34,18 @@ export type FusionOutput = {
   tiers: TierSignal[];
 };
 
+/** Cap for mild dual-head holds — stays under the product AI label floor. */
+const MILD_HOLD_CAP = 0.69;
+
 /**
- * Calibrated fusion for the bounty evaluation threshold (default 65%).
- * Provenance short-circuits when generators declare themselves.
- * Distilled visual is primary; Community Forensics + spectral texture/flatness
- * gates recover modern generators that fool a single head without flipping
- * smooth real photos that CF over-scores.
+ * Calibrated fusion for product labels (AI ≥ 69.51%, real ≤ 40.99%) while
+ * remaining usable at the bounty 65% eval point.
+ * Distilled is primary; Community Forensics recovers StyleGAN-class misses
+ * only when decisive — mild dual agreement was FPing real photos at ~72–81%.
  */
 export function fuseDetection(input: FusionInput): FusionOutput {
-  const threshold = input.threshold ?? EVAL_CONFIDENCE_THRESHOLD;
+  const threshold = input.threshold ?? AI_LABEL_THRESHOLD;
+  const realThreshold = input.realThreshold ?? REAL_LABEL_THRESHOLD;
   const tiers = [
     input.provenance,
     input.spectral,
@@ -49,7 +57,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     const confidence = input.provenance.aiScore;
     return {
       confidence,
-      label: labelFor(confidence, threshold),
+      label: labelFor(confidence, threshold, realThreshold),
       tiers: [
         ...tiers,
         {
@@ -74,55 +82,62 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   );
 
   if (
-    // Both heads mid/high but not decisive — the group-selfie FP band
-    // (observed AI 72% blur on real restaurant photos). Hold under threshold.
+    // Both heads elevated but not decisive — real indoor / product / group
+    // photos land here (observed AI 72% and AI 81% FPs).
+    // Keep distilled < 0.6 free for StyleGAN / TPDNE CF recovery.
     forensics !== undefined &&
     distilled >= 0.6 &&
-    distilled < 0.75 &&
-    forensics >= 0.6 &&
-    forensics < 0.8
+    distilled < 0.88 &&
+    forensics >= 0.55 &&
+    forensics < 0.88
   ) {
-    confidence = asAiConfidence(Math.min(baseline, 0.64));
+    confidence = asAiConfidence(Math.min(baseline, MILD_HOLD_CAP));
     detail = "dual-mild-hold";
   } else if (
-    // Strong distilled alone — only when clearly over the eval line.
-    distilled >= 0.75 &&
-    spectral <= 0.43
+    // Busy natural scenes with only a strong distilled head.
+    feats &&
+    feats.laplacianVariance >= 900 &&
+    distilled >= 0.6 &&
+    distilled < 0.9 &&
+    (forensics === undefined || forensics < 0.88)
   ) {
-    confidence = asAiConfidence(Math.max(distilled, 0.66));
+    confidence = asAiConfidence(Math.min(baseline, MILD_HOLD_CAP));
+    detail = "busy-scene-hold";
+  } else if (distilled >= 0.88 && spectral <= 0.4) {
+    confidence = asAiConfidence(Math.max(distilled, threshold));
     detail = "distilled-near-threshold";
   } else if (
     forensics !== undefined &&
     feats &&
-    forensics >= 0.8 &&
+    forensics >= 0.88 &&
     distilled >= 0.3 &&
     feats.laplacianVariance >= 580 &&
     feats.chromaFlatness >= 0.34 &&
     feats.chromaFlatness <= 0.7
   ) {
-    confidence = asAiConfidence(Math.max(forensics, 0.66));
+    confidence = asAiConfidence(Math.max(forensics, threshold));
     detail = "forensics-flatness-band";
   } else if (
     forensics !== undefined &&
     feats &&
     distilled >= 0.62 &&
-    forensics >= 0.8 &&
+    forensics >= 0.88 &&
     feats.chromaFlatness >= 0.74 &&
     feats.laplacianVariance >= 700
   ) {
-    confidence = asAiConfidence(0.68);
+    confidence = asAiConfidence(Math.max(0.7, threshold));
     detail = "distilled-forensics-flatness";
   } else if (
     forensics !== undefined &&
     feats &&
-    forensics >= 0.8 &&
+    forensics >= 0.88 &&
     distilled >= 0.4 &&
     feats.laplacianVariance >= 800 &&
     feats.chromaFlatness >= 0.6 &&
     feats.chromaFlatness <= 0.72 &&
     spectral <= 0.38
   ) {
-    confidence = asAiConfidence(Math.max(forensics, 0.66));
+    confidence = asAiConfidence(Math.max(forensics, threshold));
     detail = "forensics-high-flat-texture";
   } else if (
     // StyleGAN / TPDNE: distilled stuck mid-low + decisive CF.
@@ -130,12 +145,12 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     feats &&
     distilled >= 0.5 &&
     distilled < 0.6 &&
-    forensics >= 0.8 &&
-    forensics >= distilled + 0.2 &&
+    forensics >= 0.88 &&
+    forensics >= distilled + 0.25 &&
     feats.laplacianVariance >= 600 &&
     feats.chromaFlatness <= 0.58
   ) {
-    confidence = asAiConfidence(Math.max(forensics, 0.66));
+    confidence = asAiConfidence(Math.max(forensics, threshold));
     detail = "forensics-ambiguous-distilled";
   } else {
     confidence = asAiConfidence(baseline);
@@ -144,7 +159,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
 
   return {
     confidence,
-    label: labelFor(confidence, threshold),
+    label: labelFor(confidence, threshold, realThreshold),
     tiers: [
       ...tiers,
       {
@@ -164,12 +179,13 @@ function calibrate(score: AiConfidence): number {
 
 export function labelFor(
   confidence: AiConfidence,
-  threshold = EVAL_CONFIDENCE_THRESHOLD,
+  aiThreshold: number = AI_LABEL_THRESHOLD,
+  realThreshold: number = REAL_LABEL_THRESHOLD,
 ): DetectionLabel {
-  if (confidence >= threshold) {
+  if (confidence >= aiThreshold) {
     return { kind: "ai", confidence };
   }
-  if (confidence <= 1 - threshold) {
+  if (confidence <= realThreshold) {
     return { kind: "real", confidence: asAiConfidence(1 - confidence) };
   }
   return { kind: "uncertain", confidence };
@@ -177,7 +193,7 @@ export function labelFor(
 
 export function isAiAtThreshold(
   confidence: AiConfidence,
-  threshold = EVAL_CONFIDENCE_THRESHOLD,
+  threshold: number = AI_LABEL_THRESHOLD,
 ): boolean {
   return confidence >= threshold;
 }

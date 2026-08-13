@@ -45,10 +45,19 @@ async function loadOptions(): Promise<ExtensionOptions> {
     typeof raw === "object" && raw !== null
       ? (raw as Partial<ExtensionOptions>)
       : {};
+  // Migrate pre-asymmetric installs that still have the old 65% single band.
+  const migrated = { ...partial };
+  if (
+    migrated.realThreshold === undefined &&
+    (migrated.threshold === undefined || migrated.threshold === 0.65)
+  ) {
+    migrated.threshold = DEFAULT_OPTIONS.threshold;
+    migrated.realThreshold = DEFAULT_OPTIONS.realThreshold;
+  }
   const merged: ExtensionOptions = {
     ...DEFAULT_OPTIONS,
-    ...partial,
-    aiConceal: parseAiConcealMode(partial.aiConceal),
+    ...migrated,
+    aiConceal: parseAiConcealMode(migrated.aiConceal),
   };
   if (stored.stubInference === true) merged.stubInference = true;
   optionsCache = merged;
@@ -215,12 +224,13 @@ async function resetViaOffscreen(args: {
 
 function relabel(
   confidence: ReturnType<typeof asAiConfidence>,
-  threshold: number,
+  aiThreshold: number,
+  realThreshold: number,
 ) {
-  if (confidence >= threshold) {
+  if (confidence >= aiThreshold) {
     return { kind: "ai" as const, confidence };
   }
-  if (confidence <= 1 - threshold) {
+  if (confidence <= realThreshold) {
     return {
       kind: "real" as const,
       confidence: asAiConfidence(1 - confidence),
@@ -241,6 +251,7 @@ async function detectFromBytes(args: {
       bytes: args.bytes,
       mimeType: args.mimeType,
       threshold: options.threshold,
+      realThreshold: options.realThreshold,
     });
     backendCache = result.backend;
     return result;
@@ -256,7 +267,11 @@ async function detectFromBytes(args: {
     backendCache = offscreen.result.backend;
     return {
       ...offscreen.result,
-      label: relabel(offscreen.result.confidence, options.threshold),
+      label: relabel(
+        offscreen.result.confidence,
+        options.threshold,
+        options.realThreshold,
+      ),
     };
   }
 
@@ -297,7 +312,11 @@ async function analyzeImage(
         requestId: request.requestId,
         result: {
           ...offscreen.result,
-          label: relabel(offscreen.result.confidence, options.threshold),
+          label: relabel(
+            offscreen.result.confidence,
+            options.threshold,
+            options.realThreshold,
+          ),
         },
       };
     }
@@ -404,6 +423,7 @@ async function handleRequest(
         backend: backendCache,
         autoScan: options.autoScan,
         threshold: options.threshold,
+        realThreshold: options.realThreshold,
         visualProvider: options.visualProvider,
         gpuAvailable: gpuAvailableCache,
         aiConceal: options.aiConceal,
@@ -416,6 +436,9 @@ async function handleRequest(
           : {}),
         ...(request.threshold !== undefined
           ? { threshold: request.threshold }
+          : {}),
+        ...(request.realThreshold !== undefined
+          ? { realThreshold: request.realThreshold }
           : {}),
         ...(request.debug !== undefined ? { debug: request.debug } : {}),
         ...(request.visualProvider !== undefined

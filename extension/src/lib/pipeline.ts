@@ -27,6 +27,7 @@ export type PipelineOptions = {
   bytes: ArrayBuffer;
   mimeType?: string;
   threshold?: number;
+  realThreshold?: number;
   stubVisual?: boolean;
   /**
    * Distilled → optional Community Forensics (default true).
@@ -185,6 +186,9 @@ export async function detectAiImage(
       : {}),
     ...(spectralFeatures !== undefined ? { spectralFeatures } : {}),
     ...(options.threshold !== undefined ? { threshold: options.threshold } : {}),
+    ...(options.realThreshold !== undefined
+      ? { realThreshold: options.realThreshold }
+      : {}),
   });
   const fuseMs = performance.now() - tFuse;
   const totalMs = performance.now() - started;

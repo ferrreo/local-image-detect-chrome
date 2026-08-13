@@ -415,6 +415,9 @@ async function refreshOptions(): Promise<void> {
         threshold:
           Number((response as { threshold?: unknown }).threshold) ||
           DEFAULT_OPTIONS.threshold,
+        realThreshold:
+          Number((response as { realThreshold?: unknown }).realThreshold) ||
+          DEFAULT_OPTIONS.realThreshold,
         aiConceal,
       };
     }

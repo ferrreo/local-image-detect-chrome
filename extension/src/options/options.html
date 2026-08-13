@@ -16,21 +16,33 @@
 
       <form id="form">
         <label>
-          Confidence threshold
+          AI label threshold
           <input
             id="threshold"
             name="threshold"
             type="number"
             min="0.5"
             max="0.95"
-            step="0.01"
-            value="0.65"
+            step="0.0001"
+            value="0.6951"
+          />
+        </label>
+        <label>
+          Real label threshold
+          <input
+            id="realThreshold"
+            name="realThreshold"
+            type="number"
+            min="0.05"
+            max="0.5"
+            step="0.0001"
+            value="0.4099"
           />
         </label>
         <p class="hint">
-          Bounty evaluation uses 65%. Images at or above this AI confidence are
-          labeled AI. Raising the threshold is stricter (fewer AI labels).
-          Blur / blank only hide images labeled AI — not uncertain (?).
+          Default: ≤40.99% → Real, ≥69.51% → AI, between → uncertain (?).
+          Bounty evaluation still scores at 65%. Blur / blank only hide AI
+          labels — not uncertain.
         </p>
 
         <label class="row">

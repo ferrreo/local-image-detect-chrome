@@ -5,7 +5,12 @@ import {
   isAiAtThreshold,
   labelFor,
 } from "../../extension/src/lib/fusion";
-import { asAiConfidence } from "../../extension/src/shared/types";
+import {
+  AI_LABEL_THRESHOLD,
+  asAiConfidence,
+  EVAL_CONFIDENCE_THRESHOLD,
+  REAL_LABEL_THRESHOLD,
+} from "../../extension/src/shared/types";
 
 function tier(
   id: "provenance" | "spectral" | "visual",
@@ -39,12 +44,15 @@ describe("fuseDetection", () => {
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.2),
       visual: tier("visual", 0.9),
+      threshold: EVAL_CONFIDENCE_THRESHOLD,
     });
     expect(out.confidence).toBeGreaterThan(0.65);
-    expect(isAiAtThreshold(out.confidence)).toBe(true);
+    expect(isAiAtThreshold(out.confidence, EVAL_CONFIDENCE_THRESHOLD)).toBe(
+      true,
+    );
   });
 
-  it("labels low scores as real at the 65% threshold", () => {
+  it("labels low scores as real at the product real threshold", () => {
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.3),
@@ -58,7 +66,7 @@ describe("fuseDetection", () => {
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.3),
       visual: tier("visual", 0.4),
-      visualSecondary: tier("visual", 0.82),
+      visualSecondary: tier("visual", 0.9),
       spectralFeatures: {
         highFreqEnergyRatio: 0.3,
         laplacianVariance: 800,
@@ -66,7 +74,7 @@ describe("fuseDetection", () => {
         blockiness: 0.25,
       },
     });
-    expect(out.confidence).toBeGreaterThanOrEqual(0.65);
+    expect(out.confidence).toBeGreaterThanOrEqual(AI_LABEL_THRESHOLD);
     expect(out.tiers.at(-1)?.detail).toMatch(/forensics/);
   });
 
@@ -83,7 +91,7 @@ describe("fuseDetection", () => {
         blockiness: 0.25,
       },
     });
-    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
   });
 
   it("uses strong CF when distilled is stuck mid-band (StyleGAN / TPDNE)", () => {
@@ -91,7 +99,7 @@ describe("fuseDetection", () => {
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.5),
       visual: tier("visual", 0.55),
-      visualSecondary: tier("visual", 0.82),
+      visualSecondary: tier("visual", 0.9),
       spectralFeatures: {
         highFreqEnergyRatio: 0.35,
         laplacianVariance: 900,
@@ -99,7 +107,7 @@ describe("fuseDetection", () => {
         blockiness: 0.2,
       },
     });
-    expect(out.confidence).toBeGreaterThanOrEqual(0.65);
+    expect(out.confidence).toBeGreaterThanOrEqual(AI_LABEL_THRESHOLD);
     expect(out.label.kind).toBe("ai");
     expect(out.tiers.at(-1)?.detail).toMatch(/forensics/);
   });
@@ -109,18 +117,17 @@ describe("fuseDetection", () => {
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.5),
       visual: tier("visual", 0.56),
-      visualSecondary: tier("visual", 0.82),
+      visualSecondary: tier("visual", 0.9),
     });
     expect(out.tiers.at(-1)?.detail).not.toBe("forensics-ambiguous-distilled");
   });
 
-  it("holds mild dual agreement under threshold (group selfie AI 72% FP)", () => {
-    // Observed: real group photo blurred as AI 72% after CF "confirmation".
+  it("holds mild dual agreement under AI label (group selfie / Soylent FPs)", () => {
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.42),
-      visual: tier("visual", 0.68),
-      visualSecondary: tier("visual", 0.74),
+      visual: tier("visual", 0.72),
+      visualSecondary: tier("visual", 0.81),
       spectralFeatures: {
         highFreqEnergyRatio: 0.4,
         laplacianVariance: 1600,
@@ -128,9 +135,26 @@ describe("fuseDetection", () => {
         blockiness: 0.2,
       },
     });
-    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toBe("dual-mild-hold");
+  });
+
+  it("holds busy real product photos even with strong distilled alone", () => {
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.4),
+      visual: tier("visual", 0.81),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.42,
+        laplacianVariance: 1400,
+        chromaFlatness: 0.48,
+        blockiness: 0.2,
+      },
+    });
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toBe("busy-scene-hold");
   });
 
   it("does not promote mild CF (~72%) on busy real photos", () => {
@@ -146,7 +170,7 @@ describe("fuseDetection", () => {
         blockiness: 0.22,
       },
     });
-    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
     expect(out.label.kind).not.toBe("ai");
   });
 
@@ -163,12 +187,11 @@ describe("fuseDetection", () => {
         blockiness: 0.18,
       },
     });
-    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
     expect(out.label.kind).not.toBe("ai");
   });
 
   it("does not promote kitchen-style mild dual scores (prefer no FP)", () => {
-    // Same score shape as the real group-selfie FP — hold, don't boost.
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.423),
@@ -181,50 +204,27 @@ describe("fuseDetection", () => {
         blockiness: 0.2,
       },
     });
-    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toBe("dual-mild-hold");
-  });
-
-  it("does not solo-promote ~70% distilled group-photo scores", () => {
-    const out = fuseDetection({
-      provenance: tier("provenance", 0.5),
-      spectral: tier("spectral", 0.42),
-      visual: tier("visual", 0.695),
-      spectralFeatures: {
-        highFreqEnergyRatio: 0.41,
-        laplacianVariance: 1600,
-        chromaFlatness: 0.48,
-        blockiness: 0.2,
-      },
-    });
-    expect(out.confidence).toBeLessThan(0.7);
-    expect(out.label.kind).not.toBe("ai");
-  });
-
-  it("does not promote near-threshold distilled when CF disagrees", () => {
-    const out = fuseDetection({
-      provenance: tier("provenance", 0.5),
-      spectral: tier("spectral", 0.42),
-      visual: tier("visual", 0.69),
-      visualSecondary: tier("visual", 0.55),
-      spectralFeatures: {
-        highFreqEnergyRatio: 0.4,
-        laplacianVariance: 1500,
-        chromaFlatness: 0.5,
-        blockiness: 0.2,
-      },
-    });
-    expect(out.confidence).toBeLessThan(0.65);
-    expect(out.label.kind).not.toBe("ai");
   });
 });
 
 describe("labelFor / balancedAccuracy", () => {
-  it("uses 65% operating point by default", () => {
-    expect(labelFor(asAiConfidence(0.65)).kind).toBe("ai");
-    expect(labelFor(asAiConfidence(0.64)).kind).toBe("uncertain");
-    expect(labelFor(asAiConfidence(0.35)).kind).toBe("real");
+  it("uses asymmetric product bands by default (≤40.99% real, ≥69.51% AI)", () => {
+    expect(labelFor(asAiConfidence(0.6951)).kind).toBe("ai");
+    expect(labelFor(asAiConfidence(0.695)).kind).toBe("uncertain");
+    expect(labelFor(asAiConfidence(0.5)).kind).toBe("uncertain");
+    expect(labelFor(asAiConfidence(0.4099)).kind).toBe("real");
+    expect(labelFor(asAiConfidence(0.41)).kind).toBe("uncertain");
+    expect(REAL_LABEL_THRESHOLD).toBeCloseTo(0.4099);
+    expect(AI_LABEL_THRESHOLD).toBeCloseTo(0.6951);
+  });
+
+  it("still supports bounty 65% eval threshold when passed", () => {
+    expect(labelFor(asAiConfidence(0.65), 0.65, 0.35).kind).toBe("ai");
+    expect(labelFor(asAiConfidence(0.64), 0.65, 0.35).kind).toBe("uncertain");
+    expect(labelFor(asAiConfidence(0.35), 0.65, 0.35).kind).toBe("real");
   });
 
   it("computes balanced accuracy", () => {

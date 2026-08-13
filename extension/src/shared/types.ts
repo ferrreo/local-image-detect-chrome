@@ -112,7 +112,10 @@ export type GetStatusResponse = {
   models: ModelStatus;
   backend: InferenceBackend;
   autoScan: boolean;
+  /** AI label floor (P(AI) ≥ this → AI). */
   threshold: number;
+  /** Real label ceiling (P(AI) ≤ this → real). */
+  realThreshold: number;
   visualProvider: VisualProvider["kind"];
   gpuAvailable: boolean;
   aiConceal: AiConcealMode;
@@ -123,6 +126,7 @@ export type SetOptionsRequest = {
   requestId: string;
   autoScan?: boolean;
   threshold?: number;
+  realThreshold?: number;
   debug?: boolean;
   visualProvider?: VisualProvider["kind"];
   stubInference?: boolean;
@@ -244,8 +248,13 @@ export type OffscreenResetResponse = {
 
 export type ExtensionOptions = {
   autoScan: boolean;
-  /** Evaluation threshold; default 0.65 per bounty brief. */
+  /**
+   * Product AI label threshold: P(AI) ≥ this → AI.
+   * Bounty eval harnesses still score at {@link EVAL_CONFIDENCE_THRESHOLD}.
+   */
   threshold: number;
+  /** Product real label threshold: P(AI) ≤ this → real. */
+  realThreshold: number;
   debug: boolean;
   /** When true, skip network model fetch and use deterministic stub. */
   stubInference: boolean;
@@ -257,7 +266,8 @@ export type ExtensionOptions = {
 
 export const DEFAULT_OPTIONS = {
   autoScan: true,
-  threshold: 0.65,
+  threshold: 0.6951,
+  realThreshold: 0.4099,
   debug: false,
   stubInference: false,
   visualProvider: "auto",
@@ -269,7 +279,14 @@ export function parseAiConcealMode(value: unknown): AiConcealMode {
   return DEFAULT_OPTIONS.aiConceal;
 }
 
+/** Bounty evaluation operating point (held-out BA @ 65%). */
 export const EVAL_CONFIDENCE_THRESHOLD = 0.65;
+
+/** Product overlay: label AI at or above this P(AI). */
+export const AI_LABEL_THRESHOLD = DEFAULT_OPTIONS.threshold;
+
+/** Product overlay: label real at or below this P(AI). */
+export const REAL_LABEL_THRESHOLD = DEFAULT_OPTIONS.realThreshold;
 
 export function asAiConfidence(value: number): AiConfidence {
   if (!Number.isFinite(value)) {
