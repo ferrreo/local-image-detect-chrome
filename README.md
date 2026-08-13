@@ -92,7 +92,7 @@ npm run eval:local                       # prefers Zig+ORT host when built
 # TRUEPIXEL_STUB=1 npm run eval:local
 ```
 
-On that corpus the fused path reports **100% balanced accuracy @ 65%**. The Zig host tries WebGPU → Vulkan → XNNPACK → CPU (AVX2 via `x86_64_v3` / ORT MLAS); stock Linux ORT is CPU-only and falls through immediately. Eval cascades Community Forensics only when spectral gates can use it, so average latency stays below the old always-dual Node path (~137 ms).
+On that corpus the Zig+cascade path reports **100% balanced accuracy @ 65%** at roughly **~80 ms/image** (14/76 forensics runs), vs ~137 ms for always-dual Node. The host tries WebGPU → Vulkan → XNNPACK → CPU (AVX2 via `x86_64_v3` / ORT MLAS); stock Linux ORT is CPU-only and falls through immediately.
 
 Refresh that corpus incrementally when OpenRouter adds models (needs `OPENROUTER_API_KEY` in `.env`):
 
