@@ -52,10 +52,15 @@ async function loadInferBytes(
   request: OffscreenInferRequest,
 ): Promise<{ bytes: ArrayBuffer; mimeType: string }> {
   if (request.src) {
+    // Prefer HTTP cache for static CDN URLs (Dyno/Proofmark pattern).
+    // Bust cache for known dynamic same-URL generators.
+    const dynamicUrl =
+      /thispersondoesnotexist|random|uuid=|timestamp=|nocache/i.test(
+        request.src,
+      );
     const response = await fetch(request.src, {
       credentials: "omit",
-      // Dynamic URLs (e.g. TPDNE) must match the pixels on screen — not HTTP cache.
-      cache: "no-cache",
+      cache: dynamicUrl ? "no-cache" : "force-cache",
     });
     if (!response.ok) {
       throw new Error(`Offscreen image fetch failed (${response.status})`);

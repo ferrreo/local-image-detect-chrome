@@ -138,9 +138,9 @@ export async function rasterizeForSpectral(
   }
 
   // Browser ImageBitmap: read native pixels then box-downsample.
-  // Do NOT pre-shrink (old 768 cap depressed laplacianVariance and skipped
-  // Community Forensics on Riverflow cases → 97.4% BA vs host 100%).
-  const maxNative = 4096;
+  // Cap below full native (was 4096) for latency; 1536 keeps laplacian /
+  // cascade gates stable vs the old 768-cap regression.
+  const maxNative = 1536;
   const nativeScale = Math.min(
     1,
     maxNative / Math.max(bitmap.width, bitmap.height),

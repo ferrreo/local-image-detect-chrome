@@ -16,6 +16,9 @@ const OVERLAY_ATTR = "data-truepixel-id";
 const STATE_ATTR = "data-truepixel-state";
 const BADGE_CLASS = "truepixel-badge";
 const VEIL_CLASS = "truepixel-veil";
+/** Proofmark-style page budget — keeps WASM from thrashing on image-heavy feeds. */
+const MAX_IMAGES_PER_PAGE = 40;
+const MAX_CONTENT_IN_FLIGHT = 2;
 
 type TrackedImage = {
   id: string;
@@ -28,9 +31,28 @@ type TrackedImage = {
 };
 
 const tracked = new Map<string, TrackedImage>();
+const observed = new WeakSet<HTMLImageElement>();
 let options: ExtensionOptions = { ...DEFAULT_OPTIONS };
-let observer: MutationObserver | undefined;
+let mutationObserver: MutationObserver | undefined;
+let intersectionObserver: IntersectionObserver | undefined;
 let scanTimer: number | undefined;
+let contentInFlight = 0;
+const contentWaiters: Array<() => void> = [];
+
+async function withContentSlot<T>(fn: () => Promise<T>): Promise<T> {
+  if (contentInFlight >= MAX_CONTENT_IN_FLIGHT) {
+    await new Promise<void>((resolve) => {
+      contentWaiters.push(resolve);
+    });
+  }
+  contentInFlight += 1;
+  try {
+    return await fn();
+  } finally {
+    contentInFlight -= 1;
+    contentWaiters.shift()?.();
+  }
+}
 
 function imageKey(img: HTMLImageElement): string {
   return img.currentSrc || img.src || "";
@@ -260,6 +282,8 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
 async function requestAnalyze(
   img: HTMLImageElement,
   id: string,
+  speedMode: "realtime" | "accurate",
+  bypassCache = false,
 ): Promise<DetectionResult> {
   const response = (await chrome.runtime.sendMessage({
     kind: "analyze-image",
@@ -268,9 +292,8 @@ async function requestAnalyze(
     src: imageKey(img),
     width: img.naturalWidth || img.width,
     height: img.naturalHeight || img.height,
-    // Always cascade (distilled → CF when gated). Realtime-only misses
-    // StyleGAN/TPDNE that Community Forensics recovers.
-    speedMode: "accurate",
+    speedMode,
+    ...(bypassCache ? { bypassCache: true } : {}),
   })) as AnalyzeImageResponse;
   if (response.kind !== "analyze-image-result") {
     throw new Error("analyze-image failed");
@@ -278,7 +301,20 @@ async function requestAnalyze(
   return response.result;
 }
 
-async function analyze(img: HTMLImageElement, id: string): Promise<void> {
+/** Mid-band / uncertain first paint → pay for Community Forensics refine. */
+function needsAccurateRefine(result: DetectionResult): boolean {
+  if (result.label.kind === "error") return false;
+  if (result.label.kind === "uncertain") return true;
+  if (result.timing?.ranForensics) return false;
+  const c = result.confidence;
+  return c >= 0.48 && c < options.threshold;
+}
+
+async function analyze(
+  img: HTMLImageElement,
+  id: string,
+  bypassCache = false,
+): Promise<void> {
   const entry = tracked.get(id);
   if (!entry || entry.inFlight) return;
   entry.inFlight = true;
@@ -290,13 +326,20 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
   applyConcealment(entry);
 
   try {
-    const result = await requestAnalyze(img, id);
-    if (tracked.get(id)?.src !== entry.src) return;
-    entry.inFlight = false;
-    entry.result = result;
-    renderResult(img, result);
+    await withContentSlot(async () => {
+      // Fast path first (distilled-only), like Proofmark's single-head latency.
+      const fast = await requestAnalyze(img, id, "realtime", bypassCache);
+      if (tracked.get(id)?.src !== entry.src) return;
+      entry.result = fast;
+      renderResult(img, fast);
+
+      if (!needsAccurateRefine(fast)) return;
+      const accurate = await requestAnalyze(img, id, "accurate", bypassCache);
+      if (tracked.get(id)?.src !== entry.src) return;
+      entry.result = accurate;
+      renderResult(img, accurate);
+    });
   } catch (error) {
-    entry.inFlight = false;
     const message = error instanceof Error ? error.message : String(error);
     renderResult(img, {
       imageId: id,
@@ -329,13 +372,16 @@ function armLoadRescore(img: HTMLImageElement, id: string): void {
     entry.src = imageKey(img);
     delete entry.result;
     entry.revealed = false;
-    void analyze(img, id);
+    void analyze(img, id, true);
   });
 }
 
 function trackAndMaybeAnalyze(img: HTMLImageElement): void {
   if (!options.autoScan) return;
   if (!isEligible(img)) return;
+  if (tracked.size >= MAX_IMAGES_PER_PAGE && !img.getAttribute(OVERLAY_ATTR)) {
+    return;
+  }
   const src = imageKey(img);
   let id = img.getAttribute(OVERLAY_ATTR);
   if (!id) {
@@ -361,7 +407,7 @@ function trackAndMaybeAnalyze(img: HTMLImageElement): void {
   };
   tracked.set(id, entry);
   armLoadRescore(img, id);
-  // Blur immediately on discovery — before analyze round-trip.
+  // Blur immediately when entering the analyze path — before round-trip.
   if (!entry.result) {
     entry.inFlight = true;
     applyConcealment(entry);
@@ -370,10 +416,21 @@ function trackAndMaybeAnalyze(img: HTMLImageElement): void {
   void analyze(img, id);
 }
 
-function discover(): void {
+function observeImage(img: HTMLImageElement): void {
   if (!options.autoScan) return;
-  for (const img of document.querySelectorAll("img")) {
-    if (img instanceof HTMLImageElement) trackAndMaybeAnalyze(img);
+  if (observed.has(img)) return;
+  observed.add(img);
+  intersectionObserver?.observe(img);
+}
+
+function discover(root: ParentNode = document): void {
+  if (!options.autoScan) return;
+  if (root instanceof HTMLImageElement) {
+    observeImage(root);
+    return;
+  }
+  for (const img of root.querySelectorAll("img")) {
+    if (img instanceof HTMLImageElement) observeImage(img);
   }
 }
 
@@ -427,24 +484,35 @@ async function refreshOptions(): Promise<void> {
 }
 
 function start(): void {
-  // Blur ASAP (document_start); options refresh in parallel.
-  observer = new MutationObserver((mutations) => {
+  // Viewport-gated analysis (Proofmark): only spend inference near the fold.
+  intersectionObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        if (!(entry.target instanceof HTMLImageElement)) continue;
+        trackAndMaybeAnalyze(entry.target);
+      }
+    },
+    { rootMargin: "180px 0px", threshold: 0.01 },
+  );
+
+  mutationObserver = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
-      if (mutation.type === "attributes" && mutation.target instanceof HTMLImageElement) {
-        trackAndMaybeAnalyze(mutation.target);
+      if (
+        mutation.type === "attributes" &&
+        mutation.target instanceof HTMLImageElement
+      ) {
+        observed.delete(mutation.target);
+        observeImage(mutation.target);
         continue;
       }
       for (const node of mutation.addedNodes) {
-        if (node instanceof HTMLImageElement) trackAndMaybeAnalyze(node);
-        else if (node instanceof Element) {
-          for (const img of node.querySelectorAll("img")) {
-            if (img instanceof HTMLImageElement) trackAndMaybeAnalyze(img);
-          }
-        }
+        if (node instanceof HTMLImageElement) observeImage(node);
+        else if (node instanceof Element) discover(node);
       }
     }
   });
-  observer.observe(document.documentElement, {
+  mutationObserver.observe(document.documentElement, {
     childList: true,
     subtree: true,
     attributes: true,
@@ -471,7 +539,9 @@ chrome.runtime.onMessage.addListener((message: unknown) => {
       entry.inFlight = false;
       removeVeil(entry.id);
       entry.element.removeAttribute(STATE_ATTR);
+      observed.delete(entry.element);
     }
+    tracked.clear();
     scheduleScan();
     return;
   }

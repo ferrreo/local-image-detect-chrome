@@ -79,6 +79,8 @@ export type AnalyzeImageRequest = {
   width: number;
   height: number;
   speedMode?: AnalyzeSpeedMode;
+  /** Skip SW result cache (dynamic same-URL images / load rescore). */
+  bypassCache?: boolean;
 };
 
 export type AnalyzeImageResponse = {

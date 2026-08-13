@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-13T13:08:01.012Z",
+  "updatedAt": "2026-08-13T21:09:01.029Z",
   "images": [
     {
       "id": "picsum_10",
@@ -380,6 +380,92 @@
       "picsumId": 823,
       "sha256": "8416d0ca86a9f0367d4861e4fcd201c8a9f07c54781c31a74ab180be5e4ba740",
       "bytes": 85658
+    },
+    {
+      "id": "hard_boxes_bedroom",
+      "file": "real/hardcases/hard_boxes_bedroom.jpg",
+      "label": "real",
+      "license": "Unsplash License (via Lorem Picsum)",
+      "sourceUrl": "https://picsum.photos/...",
+      "hardCase": true,
+      "tags": [
+        "hardcase",
+        "group-or-indoor"
+      ],
+      "sha256": "ef5279fe263fed99acd1a3e3c1c10779b9d82a09be6be9f06f73fe4ca64e7b2c",
+      "bytes": 76290
+    },
+    {
+      "id": "hard_group_indoor",
+      "file": "real/hardcases/hard_group_indoor.jpg",
+      "label": "real",
+      "license": "Unsplash License (via Lorem Picsum)",
+      "sourceUrl": "https://picsum.photos/...",
+      "hardCase": true,
+      "tags": [
+        "hardcase",
+        "group-or-indoor"
+      ],
+      "sha256": "7625644636f93948061448311818743024d0d5f88f9a33c996b9122c774056a3",
+      "bytes": 200255
+    },
+    {
+      "id": "hard_indoor_objects",
+      "file": "real/hardcases/hard_indoor_objects.jpg",
+      "label": "real",
+      "license": "Unsplash License (via Lorem Picsum)",
+      "sourceUrl": "https://picsum.photos/...",
+      "hardCase": true,
+      "tags": [
+        "hardcase",
+        "group-or-indoor"
+      ],
+      "sha256": "720f9315e3d0b281245934c2a38b82e6235815ea812897f6cabf8458cd182335",
+      "bytes": 118047
+    },
+    {
+      "id": "hard_people_table",
+      "file": "real/hardcases/hard_people_table.jpg",
+      "label": "real",
+      "license": "Unsplash License (via Lorem Picsum)",
+      "sourceUrl": "https://picsum.photos/...",
+      "hardCase": true,
+      "tags": [
+        "hardcase",
+        "group-or-indoor"
+      ],
+      "sha256": "2981c7fe914b213f6408032919787a6468668ae0066273780f4290f95388bece",
+      "bytes": 77888
+    },
+    {
+      "id": "hard_product_shelf",
+      "file": "real/hardcases/hard_product_shelf.jpg",
+      "label": "real",
+      "license": "Unsplash License (via Lorem Picsum)",
+      "sourceUrl": "https://picsum.photos/...",
+      "hardCase": true,
+      "tags": [
+        "hardcase",
+        "group-or-indoor"
+      ],
+      "sha256": "e7b932b183a6c0773000e23f4e30c0d644cd0dc0c5c52dc2713fcce600a30fe4",
+      "bytes": 90138
+    },
+    {
+      "id": "hard_soylent_boxes_bedroom",
+      "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+      "label": "real",
+      "license": "Synthetic hard-case proxy (original user screenshot bytes unavailable in agent); for FP regression",
+      "sourceUrl": "local-hardcase-proxy:soylent-boxes-bedroom",
+      "hardCase": true,
+      "tags": [
+        "false-positive",
+        "product-boxes",
+        "indoor",
+        "soylent-proxy"
+      ],
+      "sha256": "a639aff8c60365abeaddfa476daef0eb953f613df5a4a6feb60589aa15bf95e8",
+      "bytes": 92477
     }
   ]
 }

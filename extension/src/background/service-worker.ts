@@ -37,6 +37,54 @@ let optionsCache: ExtensionOptions = { ...DEFAULT_OPTIONS };
 let backendCache: InferenceBackend = { kind: "none" };
 let modelStatusCache: ModelStatus = { kind: "missing" };
 let gpuAvailableCache = false;
+/** Deduped offscreen create (Proofmark pattern — no fixed sleep race). */
+let creatingOffscreen: Promise<void> | undefined;
+/** LRU-ish result cache: src|WxH|speedMode → DetectionResult */
+const resultCache = new Map<
+  string,
+  import("../shared/types").DetectionResult
+>();
+const RESULT_CACHE_MAX = 150;
+/** Limit concurrent offscreen infers to avoid WASM thrash. */
+const MAX_INFER_IN_FLIGHT = 2;
+let inferInFlight = 0;
+const inferWaiters: Array<() => void> = [];
+
+async function withInferSlot<T>(fn: () => Promise<T>): Promise<T> {
+  if (inferInFlight >= MAX_INFER_IN_FLIGHT) {
+    await new Promise<void>((resolve) => {
+      inferWaiters.push(resolve);
+    });
+  }
+  inferInFlight += 1;
+  try {
+    return await fn();
+  } finally {
+    inferInFlight -= 1;
+    inferWaiters.shift()?.();
+  }
+}
+
+function cacheKey(
+  src: string,
+  width: number,
+  height: number,
+  speedMode: AnalyzeSpeedMode | undefined,
+): string {
+  return `${src}|${width}x${height}|${speedMode ?? "accurate"}`;
+}
+
+function rememberResult(
+  key: string,
+  result: import("../shared/types").DetectionResult,
+): void {
+  if (result.label.kind === "error") return;
+  resultCache.set(key, result);
+  if (resultCache.size > RESULT_CACHE_MAX) {
+    const first = resultCache.keys().next().value;
+    if (first !== undefined) resultCache.delete(first);
+  }
+}
 
 async function loadOptions(): Promise<ExtensionOptions> {
   const stored = await chrome.storage.local.get(["options", "stubInference"]);
@@ -98,14 +146,30 @@ async function ensureOffscreen(): Promise<void> {
     contextTypes: ["OFFSCREEN_DOCUMENT"],
   });
   if (existing.length > 0) return;
-  await chrome.offscreen.createDocument({
-    url: OFFSCREEN_URL,
-    reasons: OFFSCREEN_REASONS,
-    justification:
-      "Run ONNX Runtime WebGPU/WASM inference (incl. threaded wasm workers) off the service worker.",
-  });
-  // First message right after createDocument often races the module listener.
-  await new Promise((r) => setTimeout(r, 50));
+  if (!creatingOffscreen) {
+    creatingOffscreen = chrome.offscreen
+      .createDocument({
+        url: OFFSCREEN_URL,
+        reasons: OFFSCREEN_REASONS,
+        justification:
+          "Run ONNX Runtime WebGPU/WASM inference (incl. threaded wasm workers) off the service worker.",
+      })
+      .then(async () => {
+        // Brief yield so the module listener registers after createDocument.
+        await new Promise((r) => setTimeout(r, 0));
+      })
+      .finally(() => {
+        creatingOffscreen = undefined;
+      });
+  }
+  await creatingOffscreen;
+}
+
+function fetchCacheMode(src: string): RequestCache {
+  if (/thispersondoesnotexist|random|uuid=|timestamp=|nocache/i.test(src)) {
+    return "no-cache";
+  }
+  return "force-cache";
 }
 
 async function fetchImageBytes(
@@ -113,7 +177,7 @@ async function fetchImageBytes(
 ): Promise<{ bytes: ArrayBuffer; mimeType: string }> {
   const response = await fetch(src, {
     credentials: "omit",
-    cache: "no-cache",
+    cache: fetchCacheMode(src),
   });
   if (!response.ok) {
     throw new Error(`Image fetch failed (${response.status})`);
@@ -138,8 +202,6 @@ async function inferViaOffscreen(args: {
   if (!chrome.offscreen) return undefined;
   try {
     await ensureOffscreen();
-    // Wait a tick so the offscreen listener is registered after createDocument.
-    await new Promise((r) => setTimeout(r, 0));
     const message: OffscreenInferRequest = {
       kind: "offscreen-infer",
       requestId: args.requestId,
@@ -155,7 +217,9 @@ async function inferViaOffscreen(args: {
             ),
           }),
     };
-    const response: unknown = await chrome.runtime.sendMessage(message);
+    const response: unknown = await withInferSlot(() =>
+      chrome.runtime.sendMessage(message),
+    );
     if (
       typeof response === "object" &&
       response !== null &&
@@ -297,6 +361,30 @@ async function analyzeImage(
 ): Promise<ExtensionResponse> {
   try {
     const options = await loadOptions();
+    const key = cacheKey(
+      request.src,
+      request.width,
+      request.height,
+      request.speedMode,
+    );
+    if (!request.bypassCache) {
+      const cached = resultCache.get(key);
+      if (cached) {
+        return {
+          kind: "analyze-image-result",
+          requestId: request.requestId,
+          result: {
+            ...cached,
+            imageId: request.imageId,
+            label: relabel(
+              cached.confidence,
+              options.threshold,
+              options.realThreshold,
+            ),
+          },
+        };
+      }
+    }
     // Hot path: offscreen fetches `src` itself (no SW fetch + base64 tax).
     const offscreen = await inferViaOffscreen({
       requestId: request.requestId,
@@ -307,17 +395,19 @@ async function analyzeImage(
     });
     if (offscreen && offscreen.result.label.kind !== "error") {
       backendCache = offscreen.result.backend;
+      const result = {
+        ...offscreen.result,
+        label: relabel(
+          offscreen.result.confidence,
+          options.threshold,
+          options.realThreshold,
+        ),
+      };
+      rememberResult(key, result);
       return {
         kind: "analyze-image-result",
         requestId: request.requestId,
-        result: {
-          ...offscreen.result,
-          label: relabel(
-            offscreen.result.confidence,
-            options.threshold,
-            options.realThreshold,
-          ),
-        },
+        result,
       };
     }
     // Fallback: SW fetch + bytes path (content scripts / opaque URLs).

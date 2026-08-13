@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-08-13T13:08:01.198Z",
-  "count": 38,
+  "count": 86,
   "images": [
     {
       "file": "ai/bytedance-seed__seedream-5-0-pro/kitchen_window.jpg",
@@ -305,6 +305,967 @@
       "modelName": "Sourceful: Riverflow V2.5 Pro",
       "promptId": "park_dog",
       "sha256": "4d8d0e4f43031f06872abb9c65cddd932c224dab0dfe3d93e5d457b0387a8b93"
+    },
+    {
+      "id": "161bd610-6a30-402c-ba47-6d00ffcd0dc6",
+      "file": "ai/lexica__feed/161bd610-6a30-402c-ba47-6d00ffcd0dc6.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "263615e6-7711-44f7-be54-048052e067e3",
+      "prompt": "Walmart employee of the month photo of Batman still in full costume but wearing the blue vest and name tag that says \"Bruce\"",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/161bd610-6a30-402c-ba47-6d00ffcd0dc6",
+      "galleryUrl": "https://lexica.art?q=161bd610-6a30-402c-ba47-6d00ffcd0dc6",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "7d8ffcb5cfdd8e21d393df98483d68189c3deaf0b69045996134d6a06b085dc0",
+      "bytes": 456924
+    },
+    {
+      "id": "f527fc34-ad1e-49a8-bc03-d42d0b0116dc",
+      "file": "ai/lexica__feed/f527fc34-ad1e-49a8-bc03-d42d0b0116dc.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "4def6570-1d80-44c2-9e37-f50ec25c3557",
+      "prompt": "Kirby in a business suit sitting in a crowded subway train during rush hour, commuting, sad expressions",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/f527fc34-ad1e-49a8-bc03-d42d0b0116dc",
+      "galleryUrl": "https://lexica.art?q=f527fc34-ad1e-49a8-bc03-d42d0b0116dc",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "0cd62caf393acbd00dd37717bd50850d5c2bf276f6e482906e99d0fa926d4107",
+      "bytes": 294040
+    },
+    {
+      "id": "a56bd531-cf22-46de-8436-bd1216a758aa",
+      "file": "ai/lexica__feed/a56bd531-cf22-46de-8436-bd1216a758aa.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "13cd6208-a4c6-4c16-8dff-1aa1f70d0a93",
+      "prompt": "A 23-year-old Instagram model real world version of Asuka LAngley from Evangelion with characteristic hairstyle, blue eyes, and a confident smile is posing in front of the gym mirror. She’s wearing form-fitting light red leggings and a matching crop top, highlighting her toned physique. Her left hand is holding the phone up to capture the shot, while her right arm rests casually by her side. The gym is clean and spacious with dumbbells, machines, and a water bottle on the floor beside her. Behind her one can see her discarded eva unit 2 plugsuit.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/a56bd531-cf22-46de-8436-bd1216a758aa",
+      "galleryUrl": "https://lexica.art?q=a56bd531-cf22-46de-8436-bd1216a758aa",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "1527725ce4d334705f46e342be347a565ad7659b8d1e1731227b649538c2c724",
+      "bytes": 290155
+    },
+    {
+      "id": "848abab0-1808-4e0b-b8ae-0abb05d3cb37",
+      "file": "ai/lexica__feed/848abab0-1808-4e0b-b8ae-0abb05d3cb37.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "334f5b83-0de1-40a6-9b19-03c6748bba58",
+      "prompt": "anime boy lighting a cigarette, low view looking up, night, green hair, vintage 90's anime akira style.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/848abab0-1808-4e0b-b8ae-0abb05d3cb37",
+      "galleryUrl": "https://lexica.art?q=848abab0-1808-4e0b-b8ae-0abb05d3cb37",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "0bea09be0060c04436959c9f13210f6494a5388644086f21cee9b7b9115ed47e",
+      "bytes": 541680
+    },
+    {
+      "id": "8db84054-e8eb-4680-ad06-f38e12f8ea01",
+      "file": "ai/lexica__feed/8db84054-e8eb-4680-ad06-f38e12f8ea01.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "ef677527-e0fd-43f0-8398-0c2168e6f389",
+      "prompt": "anime aesthetic, illustration, masterpiece, best quality, highly detailed. Medium shot of a beautiful adult woman looking thoughtfully out of a large window",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/8db84054-e8eb-4680-ad06-f38e12f8ea01",
+      "galleryUrl": "https://lexica.art?q=8db84054-e8eb-4680-ad06-f38e12f8ea01",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "3ba206319cd8e43631bef493a7f8d895f1c35a14044cfa83f0c019b4681a51cc",
+      "bytes": 341286
+    },
+    {
+      "id": "5dfff983-7422-4cca-83ab-d2f8c160d745",
+      "file": "ai/lexica__feed/5dfff983-7422-4cca-83ab-d2f8c160d745.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "42460151-a9bd-441e-98d0-33d2d17bcdb4",
+      "prompt": "link cosplayer playing the legend of zelda during christmas, moody photo. analog. fun nostalgia",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/5dfff983-7422-4cca-83ab-d2f8c160d745",
+      "galleryUrl": "https://lexica.art?q=5dfff983-7422-4cca-83ab-d2f8c160d745",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "0199f361e5ddc1c246db43fc6c757d3f75b17ba490fddf8d49ee61d668045808",
+      "bytes": 503500
+    },
+    {
+      "id": "c656b222-fe92-4f1f-abd2-ea4f055327cc",
+      "file": "ai/lexica__feed/c656b222-fe92-4f1f-abd2-ea4f055327cc.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "c2afb73a-3655-4cac-a6dc-380aca7a49a7",
+      "prompt": "Taken picture of a young girl in her early 20's, her build is skinny. She has very pale skin and she does a pose where she is turned away from the camera, showing off her twin tails hair that are fluffy. She has black hair, she wears a white face mask and her eyes are covered with her hair; slightly covering her identity. The aesthetic is raw, imperfect, and spontaneous, with a slight blur and purple lighting. The picture shows an old phone camera vibe and it's realistic. she wears a large black heavy coat and cosplays wearing heavy gothic accessories",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/c656b222-fe92-4f1f-abd2-ea4f055327cc",
+      "galleryUrl": "https://lexica.art?q=c656b222-fe92-4f1f-abd2-ea4f055327cc",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "c634667868d7373fefd40e52b7b708755d537a5f26f511ab80c851bbfb7ee3f5",
+      "bytes": 258030
+    },
+    {
+      "id": "a05b0d48-0b6c-421f-811c-de68c652994d",
+      "file": "ai/lexica__feed/a05b0d48-0b6c-421f-811c-de68c652994d.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "a974800e-e38c-4fb3-85ec-b84365dd3520",
+      "prompt": "hyperrealistic, 8k uhd,  1 petit chien joyeux,  portant un collier en cuir orange, fuchsia et turquoise ",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/a05b0d48-0b6c-421f-811c-de68c652994d",
+      "galleryUrl": "https://lexica.art?q=a05b0d48-0b6c-421f-811c-de68c652994d",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "e98fb400a7852d21f963534bd57e90ef0f113dfe9e69ef0c96ecb052c629a3df",
+      "bytes": 372815
+    },
+    {
+      "id": "7f55fe6c-ed42-4369-a0b3-b3dc034e23a5",
+      "file": "ai/lexica__feed/7f55fe6c-ed42-4369-a0b3-b3dc034e23a5.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "39423af1-50ac-48c1-bff3-1253bba0930a",
+      "prompt": "minion is employee of the month at walmart, his manager gives him a bananana. he is very happy",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/7f55fe6c-ed42-4369-a0b3-b3dc034e23a5",
+      "galleryUrl": "https://lexica.art?q=7f55fe6c-ed42-4369-a0b3-b3dc034e23a5",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "8489a3b1fc732c58d1c86e33c1fb53a4707b62457a1429ba7e037f5ca6ae1a5f",
+      "bytes": 325805
+    },
+    {
+      "id": "9aecb4e8-4e48-4c0e-bb10-1c1d5aeddf30",
+      "file": "ai/lexica__feed/9aecb4e8-4e48-4c0e-bb10-1c1d5aeddf30.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "c00a444b-08b4-4d5d-bae2-770a3c0eb62e",
+      "prompt": "portrait of haute couture beautiful asian fashion model. 90s anime illustration, minimalost masterpiece",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/9aecb4e8-4e48-4c0e-bb10-1c1d5aeddf30",
+      "galleryUrl": "https://lexica.art?q=9aecb4e8-4e48-4c0e-bb10-1c1d5aeddf30",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "c382821ec4098cd8aeaca837f6b71832bba976f3f4f75fd96a16bc30f453c31b",
+      "bytes": 418987
+    },
+    {
+      "id": "896f8015-4ef3-4a48-bc85-b64e1377fe18",
+      "file": "ai/lexica__feed/896f8015-4ef3-4a48-bc85-b64e1377fe18.jpg",
+      "label": "ai",
+      "model": "experimental-v1",
+      "promptId": "3c8dfcad-15dd-40fa-85af-be70937cd05c",
+      "prompt": "1990s anime Supergirl, maximize beauty.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/896f8015-4ef3-4a48-bc85-b64e1377fe18",
+      "galleryUrl": "https://lexica.art?q=896f8015-4ef3-4a48-bc85-b64e1377fe18",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "5f34ca763abe305bfbbf30d4d67e508bd0959681cbb66c4d6686cd08f9f42cb9",
+      "bytes": 379476
+    },
+    {
+      "id": "12d8bc46-2e3c-4d6b-9052-6b3905957ead",
+      "file": "ai/lexica__feed/12d8bc46-2e3c-4d6b-9052-6b3905957ead.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "bb230a59-c8f3-4ff4-adb2-79bf142de8d9",
+      "prompt": "A grungy photo of big bird and Elmo shown during a tour of duty in Vietnam 1968 as they fight",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/12d8bc46-2e3c-4d6b-9052-6b3905957ead",
+      "galleryUrl": "https://lexica.art?q=12d8bc46-2e3c-4d6b-9052-6b3905957ead",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "beb219641128384b11fa57bda8b5c64d09d2e6c26159f722025b548dcf963c81",
+      "bytes": 456974
+    },
+    {
+      "id": "2714302e-ff48-4a33-bbd9-a22bb69bdda5",
+      "file": "ai/lexica__feed/2714302e-ff48-4a33-bbd9-a22bb69bdda5.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "9fcc268e-687c-452d-8e93-463cc1b44ac7",
+      "prompt": "john buscema, wearing intricate black choker, ↑ ★★★★☆ ✦✦✦✦✦, pen and coloured inkwash, inked art, lineart, square image, centered, commision for behance hd, #screenshotsaturday, #myportfolio, pixel perfect, contest winner, 32k huhd",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/2714302e-ff48-4a33-bbd9-a22bb69bdda5",
+      "galleryUrl": "https://lexica.art?q=2714302e-ff48-4a33-bbd9-a22bb69bdda5",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "f8040b82a61a1327e27bd8f850d3147f48d14cfae97bf74e63acf7fd5f4b5723",
+      "bytes": 623587
+    },
+    {
+      "id": "2e21dd4d-707c-4963-854a-8de3dc6a1878",
+      "file": "ai/lexica__feed/2e21dd4d-707c-4963-854a-8de3dc6a1878.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "c00a444b-08b4-4d5d-bae2-770a3c0eb62e",
+      "prompt": "portrait of haute couture beautiful asian fashion model. 90s anime illustration, minimalost masterpiece",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/2e21dd4d-707c-4963-854a-8de3dc6a1878",
+      "galleryUrl": "https://lexica.art?q=2e21dd4d-707c-4963-854a-8de3dc6a1878",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "12a340f94312bb68392f33f165370b8359a2dbb4b9920e16c5a40e68c6c7df16",
+      "bytes": 266286
+    },
+    {
+      "id": "82ac206f-9674-44a9-aaa6-17c562415a9f",
+      "file": "ai/lexica__feed/82ac206f-9674-44a9-aaa6-17c562415a9f.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "d9cfcac6-8f1a-4678-9af3-7bab5b931fbd",
+      "prompt": "princess Zelda and Princess Peach besides giving a peace sign, selfie POV. professional studio quality, video game concept",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/82ac206f-9674-44a9-aaa6-17c562415a9f",
+      "galleryUrl": "https://lexica.art?q=82ac206f-9674-44a9-aaa6-17c562415a9f",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "d8d27e20a88851aed446088381cb243a30b64d1aa05402526e2d3ddbbf5605fa",
+      "bytes": 331774
+    },
+    {
+      "id": "388fc3b8-9abd-4299-b7b3-9e8703e7458c",
+      "file": "ai/lexica__feed/388fc3b8-9abd-4299-b7b3-9e8703e7458c.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "aba5f14e-62ce-4a5e-91ab-ac6e218aa0be",
+      "prompt": "Eve wearing leafs for clothes in the garden of eden reaching for an apple while a snake is coming from all apple tree branch also going for the apple",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/388fc3b8-9abd-4299-b7b3-9e8703e7458c",
+      "galleryUrl": "https://lexica.art?q=388fc3b8-9abd-4299-b7b3-9e8703e7458c",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "edf1e326985ddd7662d2e2d2ff483867c60840c4c1182f7c535ab8fcc811e830",
+      "bytes": 450117
+    },
+    {
+      "id": "35469d04-ff25-4632-99c4-60efd3683a9c",
+      "file": "ai/lexica__feed/35469d04-ff25-4632-99c4-60efd3683a9c.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "86c410e6-09b3-4f12-afda-fbbf5e3bea29",
+      "prompt": "a car on a curved road of a peaceful back neighborhood of the city of Los Angeles in 1980s. It’s night. Car is looking over the city. It’s 1980s. Some liminal vibes. Black ford mustang. Little bit fog. Kodak shot",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/35469d04-ff25-4632-99c4-60efd3683a9c",
+      "galleryUrl": "https://lexica.art?q=35469d04-ff25-4632-99c4-60efd3683a9c",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "b8afb12f8545f557b45dcabe51537ac68a0935d43f1751b82e108f4e4b8bfe90",
+      "bytes": 507986
+    },
+    {
+      "id": "26be2c13-6aef-4692-8f76-ca39894af53d",
+      "file": "ai/lexica__feed/26be2c13-6aef-4692-8f76-ca39894af53d.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "f64143c3-9acb-4000-bb58-e36da11cf4ec",
+      "prompt": "a cat taking a selfie with the chicago bean",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/26be2c13-6aef-4692-8f76-ca39894af53d",
+      "galleryUrl": "https://lexica.art?q=26be2c13-6aef-4692-8f76-ca39894af53d",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "8aa8bba484f228c24a1feb2041ce5fd5543b88e0fd0c4af9132f3cbab3b7874f",
+      "bytes": 545781
+    },
+    {
+      "id": "33cc3996-0f4c-4504-9eee-fb70977c7b92",
+      "file": "ai/lexica__feed/33cc3996-0f4c-4504-9eee-fb70977c7b92.jpg",
+      "label": "ai",
+      "model": "experimental-v1",
+      "promptId": "ecbc0097-6184-4242-be31-3200f8ad0bf0",
+      "prompt": "spongebob and patrick smoking n playin cards in krustykrab",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/33cc3996-0f4c-4504-9eee-fb70977c7b92",
+      "galleryUrl": "https://lexica.art?q=33cc3996-0f4c-4504-9eee-fb70977c7b92",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "a74cdcd538f71c997a936f8562728337d8c8697f48761ba1b90fb2e87a58d102",
+      "bytes": 335810
+    },
+    {
+      "id": "4627315f-8980-4449-b388-2f743ee4daaf",
+      "file": "ai/lexica__feed/4627315f-8980-4449-b388-2f743ee4daaf.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "16c26aaa-415d-40ff-bd6a-52e7bd90b83e",
+      "prompt": "Create a ultra high definition image of a replica of carmen sandiego on a Cargo Ship with aspects of \"secret agent\" settings from a hollywood movie.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/4627315f-8980-4449-b388-2f743ee4daaf",
+      "galleryUrl": "https://lexica.art?q=4627315f-8980-4449-b388-2f743ee4daaf",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "5e58894b5e5cf0cabc897b2e493b324b22f06c1020c90180343de551abba4e37",
+      "bytes": 391264
+    },
+    {
+      "id": "497e2347-b330-4f90-8f86-f294e1e5e99a",
+      "file": "ai/lexica__feed/497e2347-b330-4f90-8f86-f294e1e5e99a.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "05b1e80a-7768-4877-9ac1-08c737c322f2",
+      "prompt": "japanese bathhouse in San Francisco, stunning launch poster design, 8-bit style, 80's pixel art.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/497e2347-b330-4f90-8f86-f294e1e5e99a",
+      "galleryUrl": "https://lexica.art?q=497e2347-b330-4f90-8f86-f294e1e5e99a",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "ff6e80de418f05b029407e64d2c99f1902c2e1da6ff92e033bc9f6479cb754be",
+      "bytes": 395741
+    },
+    {
+      "id": "574115bc-7829-4ed1-96bb-171a57677430",
+      "file": "ai/lexica__feed/574115bc-7829-4ed1-96bb-171a57677430.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "760c3ec4-040f-43e9-9f33-ca94495fc336",
+      "prompt": "엄청A giant tuna sushi is being constructed like a realistic miniature building site. Tiny, hyper-realistic chefs are carefully assembling the sushi piece by piece. Small vehicles, such as mini trucks and forklifts, are driving around. A crane is lifting sushi ingredients. The scene is filled with detailed miniature workers building the sushi like a large construction project, all in a highly realistic and miniature scale.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/574115bc-7829-4ed1-96bb-171a57677430",
+      "galleryUrl": "https://lexica.art?q=574115bc-7829-4ed1-96bb-171a57677430",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "9a73fd4f5ca554b981a94ed814b3ef89c0f8fe56dffc0a8877b65a8c74a5c735",
+      "bytes": 570942
+    },
+    {
+      "id": "78783e44-7a97-415c-b766-a902cfbcceed",
+      "file": "ai/lexica__feed/78783e44-7a97-415c-b766-a902cfbcceed.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "6a41cfeb-614a-416e-84db-81131e204b79",
+      "prompt": "A fully enhanced indoor studio shot of Kermit the Frog wearing a white robe, looking sad and confused, against a blue background, with a close-up shot and a photorealistic, hyper-detailed style.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/78783e44-7a97-415c-b766-a902cfbcceed",
+      "galleryUrl": "https://lexica.art?q=78783e44-7a97-415c-b766-a902cfbcceed",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "c7aa5553c3a6df8840a67a6e19224709a092786ac5917c29167b418cfc0cc0cd",
+      "bytes": 251425
+    },
+    {
+      "id": "83ae3ecf-324a-49b4-9099-9816d077da63",
+      "file": "ai/lexica__feed/83ae3ecf-324a-49b4-9099-9816d077da63.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "8b19eb86-4c58-4941-b15c-eee2a54564d0",
+      "prompt": "Vintage 90s anime, Scratchy pen strokes, blind contour, perspective closeup, pirate ship, stark hatch shaded sketchy scribbly, ink, strong angular shapes, woodcut shading, pen strokes, pouty lips, hungry eyes, minimalist realistic, proportions",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/83ae3ecf-324a-49b4-9099-9816d077da63",
+      "galleryUrl": "https://lexica.art?q=83ae3ecf-324a-49b4-9099-9816d077da63",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "b2fd9c857c56f53095b2bd57355fefe78e5b22bbeb50e0b82880532d159db891",
+      "bytes": 1028585
+    },
+    {
+      "id": "be019e45-0af9-4786-898a-88a0ecb20b71",
+      "file": "ai/lexica__feed/be019e45-0af9-4786-898a-88a0ecb20b71.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "419cbbce-54d6-4975-88b4-ea201371beef",
+      "prompt": "photo of Pacman at a fancy restaurant, taking a perfect overhead photo of his plate with his phone. his plate contains many white dots and a single cherry",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/be019e45-0af9-4786-898a-88a0ecb20b71",
+      "galleryUrl": "https://lexica.art?q=be019e45-0af9-4786-898a-88a0ecb20b71",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "d6b4e0cf5290774fbfe979831dbd39f8ba38c102630523f1b63de763800454a9",
+      "bytes": 265542
+    },
+    {
+      "id": "19bc1ee1-8678-4b5f-b43d-5fea93ca96c3",
+      "file": "ai/lexica__feed/19bc1ee1-8678-4b5f-b43d-5fea93ca96c3.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "9b8e3233-9fd4-42c9-b5db-43d935be3e7d",
+      "prompt": "Please create me a good wallpaer for my pc. it should be dark and include bugatti",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/19bc1ee1-8678-4b5f-b43d-5fea93ca96c3",
+      "galleryUrl": "https://lexica.art?q=19bc1ee1-8678-4b5f-b43d-5fea93ca96c3",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "c2ff7e6120a75a664be078e6c49397b08bad82bcd3e017e696f0f9c899287bfc",
+      "bytes": 220055
+    },
+    {
+      "id": "1ce0e1b3-1388-4b02-b410-2efa89332002",
+      "file": "ai/lexica__feed/1ce0e1b3-1388-4b02-b410-2efa89332002.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "0c7819f9-e27e-4940-a599-74a6ad6ddfcb",
+      "prompt": "a Mc Donalds restaurant interior shot run by anthropomorphic cute little cats wearing McDonalds CHEF themed kitchen clothes. serving Cheeseburger",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/1ce0e1b3-1388-4b02-b410-2efa89332002",
+      "galleryUrl": "https://lexica.art?q=1ce0e1b3-1388-4b02-b410-2efa89332002",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "7c0609506ff9c266ff183dc9aff07696ed68b53e02fe59d5cde2a0614df6940f",
+      "bytes": 394320
+    },
+    {
+      "id": "e1d23df4-b0e9-4936-9d98-8009b5e81ee2",
+      "file": "ai/lexica__feed/e1d23df4-b0e9-4936-9d98-8009b5e81ee2.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "9579e28f-4ee1-45e3-bd52-5a49c98c5085",
+      "prompt": "Tinder profile screenshot of the Hulk attempting to look casual and approachable. He's awkwardly leaning against a wall that's clearly cracking under his weight, forcing a smile, and wearing a shirt that's way too small. His bio reads \"Bruce, 49, likes science and long walks. May have anger issues",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/e1d23df4-b0e9-4936-9d98-8009b5e81ee2",
+      "galleryUrl": "https://lexica.art?q=e1d23df4-b0e9-4936-9d98-8009b5e81ee2",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "3c7b7597d583edaa595626c905c59f28d23d8a23c93f595f3149fd2327e2f7b2",
+      "bytes": 406293
+    },
+    {
+      "id": "3942a0ab-4e22-430e-8a71-2a143db66564",
+      "file": "ai/lexica__feed/3942a0ab-4e22-430e-8a71-2a143db66564.jpg",
+      "label": "ai",
+      "model": "experimental-v1",
+      "promptId": "dc8cf1f8-0874-45f8-8d9d-7a296781a9fc",
+      "prompt": "stunning 90's anime vintage anime screenshot woman sitting on skyscraper night scene, ray tracing, very wide eyes, cute face.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/3942a0ab-4e22-430e-8a71-2a143db66564",
+      "galleryUrl": "https://lexica.art?q=3942a0ab-4e22-430e-8a71-2a143db66564",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "7c64c50e0266c868d8bdf9c77a78a62003e4dcf8979e62a7262ca15290f9d8db",
+      "bytes": 580209
+    },
+    {
+      "id": "880c3895-b9e7-4bb9-bb20-b15f9657d61d",
+      "file": "ai/lexica__feed/880c3895-b9e7-4bb9-bb20-b15f9657d61d.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "fdf2ffc0-fa34-46f5-8257-96fe3441c97e",
+      "prompt": "A group gathers eagerly around a brightly lit 1980s-style arcade cabinet in the middle of a bustling retro arcade. It's the mid-1980s the kids wear authentic vintage clothing—acid-washed jeans, colorful windbreakers, graphic tees, scrunchies, and high-top sneakers. The cabinet stands proudly at the center, styled in boxy 80s fashion with glossy surfaces, chrome trim, and chunky side panels.\n\nHowever, the machine's design features modern Minecraft branding sleek, vibrant stickers of Minecraft characters and logos cover the front and sides, blending the past with the future. Stacks of quarters rest on the control deck, signaling who has the next turn. The screen flashes with modern Minecraft gameplay—bright, colorful, fast-paced action, displayed in sharp contrast against the vintage tech. The screen is central to the image. You can clearly see Minecraft gameplay on the screen. This is the focus of the image.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/880c3895-b9e7-4bb9-bb20-b15f9657d61d",
+      "galleryUrl": "https://lexica.art?q=880c3895-b9e7-4bb9-bb20-b15f9657d61d",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "937496b686da53c0f18be5a79b099145d359b62df8a06711e962aae34d898676",
+      "bytes": 450937
+    },
+    {
+      "id": "9a936827-c7f0-4dc5-8173-ece5088d483c",
+      "file": "ai/lexica__feed/9a936827-c7f0-4dc5-8173-ece5088d483c.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "870eefd5-c546-4eac-9087-5878504ff643",
+      "prompt": "a portrait photo double exposed with a thick white marker single line sketch",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/9a936827-c7f0-4dc5-8173-ece5088d483c",
+      "galleryUrl": "https://lexica.art?q=9a936827-c7f0-4dc5-8173-ece5088d483c",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "307944af52ea8f9d2b054db4070f7277ee1c9a317d9dd1b842e998048e0b4d21",
+      "bytes": 485544
+    },
+    {
+      "id": "aa8be99d-ce20-456c-acc0-cf895755038d",
+      "file": "ai/lexica__feed/aa8be99d-ce20-456c-acc0-cf895755038d.jpg",
+      "label": "ai",
+      "model": "experimental-v1",
+      "promptId": "7e7e167a-6b8e-4b0f-9cdc-9d75a42e315f",
+      "prompt": "a poster for a luxurious traditional japanase bath house in san francisco, minimal, plant aesthetic. natural, sensual. elite.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/aa8be99d-ce20-456c-acc0-cf895755038d",
+      "galleryUrl": "https://lexica.art?q=aa8be99d-ce20-456c-acc0-cf895755038d",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "acd8551c026409c1371c8df6fc091bb86707eb33b0b618d94139a6aee32d4dc3",
+      "bytes": 251393
+    },
+    {
+      "id": "9003ae02-e889-48b4-a8a6-1597322c212e",
+      "file": "ai/lexica__feed/9003ae02-e889-48b4-a8a6-1597322c212e.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "682cd6ad-3357-4a39-b1ca-dab30c32693a",
+      "prompt": "Mom in the kitchen, can't hear ,girls open mouth calling mom Style Gentle, comforting children's book illustration.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/9003ae02-e889-48b4-a8a6-1597322c212e",
+      "galleryUrl": "https://lexica.art?q=9003ae02-e889-48b4-a8a6-1597322c212e",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "68d65e37c6019e7dfd2bad4fd80d3a1b44c7cc257081a2b1e03358705a52bc02",
+      "bytes": 432224
+    },
+    {
+      "id": "d0d5ee39-c6fa-4234-b243-c17e6fc493e8",
+      "file": "ai/lexica__feed/d0d5ee39-c6fa-4234-b243-c17e6fc493e8.jpg",
+      "label": "ai",
+      "model": "experimental-v1",
+      "promptId": "05ffa3ce-d4c8-4763-8a0c-6a761a5e4620",
+      "prompt": "Design an astronaut in Katsuhiro Otomo style flying in dark space.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/d0d5ee39-c6fa-4234-b243-c17e6fc493e8",
+      "galleryUrl": "https://lexica.art?q=d0d5ee39-c6fa-4234-b243-c17e6fc493e8",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "b45d72b3ae41ac492734b430a9409648560082ae53c01ed25881614c57782717",
+      "bytes": 272986
+    },
+    {
+      "id": "9dfce783-dd1e-40e2-a0bc-fd2901f3dfb9",
+      "file": "ai/lexica__feed/9dfce783-dd1e-40e2-a0bc-fd2901f3dfb9.jpg",
+      "label": "ai",
+      "model": "experimental-v1",
+      "promptId": "e9dda026-275b-424e-8a53-929720fae438",
+      "prompt": "90s anime art of Misato Katsuragi from Neon Genesis Evangelion, detailed scene, stunning details, anime, detailed environment,, 8k. anime style!!!! Please ensure this is a mind blowing artwork.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/9dfce783-dd1e-40e2-a0bc-fd2901f3dfb9",
+      "galleryUrl": "https://lexica.art?q=9dfce783-dd1e-40e2-a0bc-fd2901f3dfb9",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "41cf83a1d3bda34e7762820abb60f76706e66a18418f424bf2bf5d18ec0b1240",
+      "bytes": 900533
+    },
+    {
+      "id": "0bf5eab7-9fe1-4469-9a30-a3fdeba1049e",
+      "file": "ai/lexica__feed/0bf5eab7-9fe1-4469-9a30-a3fdeba1049e.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "a9727bde-ef08-4ba9-ad7a-dd968d52dcf6",
+      "prompt": "sailor moon with pink hair at the arcade, stunning anime art by artgerm, 8k",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/0bf5eab7-9fe1-4469-9a30-a3fdeba1049e",
+      "galleryUrl": "https://lexica.art?q=0bf5eab7-9fe1-4469-9a30-a3fdeba1049e",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "5742fbd1a01554d73f03104c3a04ff834ea501d66c654e5166fc34946f5e3727",
+      "bytes": 771656
+    },
+    {
+      "id": "7c9d0760-3b79-48ef-8cb2-6bb5f8ec43dd",
+      "file": "ai/lexica__feed/7c9d0760-3b79-48ef-8cb2-6bb5f8ec43dd.jpg",
+      "label": "ai",
+      "model": "experimental-v1",
+      "promptId": "020256f6-5eaf-4d3c-9541-26ad7ada3e6e",
+      "prompt": "Analog portrait photo of Asuka Langley Soryu, Portra 400, detailed environment, inside the LAB",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/7c9d0760-3b79-48ef-8cb2-6bb5f8ec43dd",
+      "galleryUrl": "https://lexica.art?q=7c9d0760-3b79-48ef-8cb2-6bb5f8ec43dd",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "46ee21a762086a0f0d68ebc127c07141d7c8454efc1c1c13b27038c6d08ad080",
+      "bytes": 614776
+    },
+    {
+      "id": "dfdd827d-c919-4484-bb37-fe2b6184d820",
+      "file": "ai/lexica__feed/dfdd827d-c919-4484-bb37-fe2b6184d820.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "c5b16c20-cf89-452c-a5dc-e762524585d6",
+      "prompt": "Harry Potter in his mid-30s standing in the kitchen of his suburban home trying to unclog a sink drain. Wearing a faded t-shirt with an unrecognizable logo and old sweatpants with a coffee stain. His iconic glasses are slightly smudged, and his hair is disheveled not in the usual charming way but from genuine frustration. He's awkwardly holding a plunger in one hand and a bottle of muggle drain cleaner in the other, looking between them with an expression of bemused uncertainty. A small instruction manual for \"Common Household Fixes\" lies open on the counter nearby.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/dfdd827d-c919-4484-bb37-fe2b6184d820",
+      "galleryUrl": "https://lexica.art?q=dfdd827d-c919-4484-bb37-fe2b6184d820",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "64e3beaa7c2dc91f546c3e37340b61406f91cb5c447ff92ca3fc5aac1bce3652",
+      "bytes": 402760
+    },
+    {
+      "id": "14c103b0-9857-4b1a-866c-df288c824726",
+      "file": "ai/lexica__feed/14c103b0-9857-4b1a-866c-df288c824726.jpg",
+      "label": "ai",
+      "model": "experimental-v1",
+      "promptId": "4c6553e8-32dc-4090-803b-be5f5bddfecb",
+      "prompt": "Courageous incredibly handsome guy, korean k-pop artist, stylish image, dressed in all black, modern stylish image. he stands tall with his arms crossed over his chest. long bangs fall over his eyes, stands against the background of seoul at night, without shadows on her face",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/14c103b0-9857-4b1a-866c-df288c824726",
+      "galleryUrl": "https://lexica.art?q=14c103b0-9857-4b1a-866c-df288c824726",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "022d66fd6c5752a7c903eb388d7ff355cbb1b0a8e5247765a341e66699e1786d",
+      "bytes": 307090
+    },
+    {
+      "id": "ff737a53-901b-4822-8169-a487410dae9e",
+      "file": "ai/lexica__feed/ff737a53-901b-4822-8169-a487410dae9e.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "c6fa1c19-4514-4d57-a09e-2fcd80b24927",
+      "prompt": "A young woman sitting on the ground, hugging a large dog with white fur and gray patches. The dog has a delicate angel halo floating above its head. The woman is wearing a vibrant orange sweater and blue jeans, with brown hair tied back. She is gently leaning against the dog, both of them calm and peaceful. 3D Pixar-style animation, featuring soft lighting, charming and slightly realistic textures. The scene conveys deep feelings of love, home, and comfort. Minimalist, clean background.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/ff737a53-901b-4822-8169-a487410dae9e",
+      "galleryUrl": "https://lexica.art?q=ff737a53-901b-4822-8169-a487410dae9e",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "bd06393f6d7427feb89a0c8c78638fa712a19e3fbf84d98acd65a69e1b6b8982",
+      "bytes": 344798
+    },
+    {
+      "id": "d9cd71cf-e852-4c5e-9d04-2b4d9556425f",
+      "file": "ai/lexica__feed/d9cd71cf-e852-4c5e-9d04-2b4d9556425f.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "7a3af5fa-cf46-4070-b831-b2671f0ef2c6",
+      "prompt": "Dashcam footage of Pikachu road raging in traffic, tiny arms extended from car window, electricity visibly sparking from cheeks, other drivers looking concerned.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/d9cd71cf-e852-4c5e-9d04-2b4d9556425f",
+      "galleryUrl": "https://lexica.art?q=d9cd71cf-e852-4c5e-9d04-2b4d9556425f",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "ad083ee992fba77ecee1b8308d5333ceabe12d7edd0a89aacd6158f14724c1b1",
+      "bytes": 235127
+    },
+    {
+      "id": "bd234279-4dd0-439c-aa81-91cf6c099c2b",
+      "file": "ai/lexica__feed/bd234279-4dd0-439c-aa81-91cf6c099c2b.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "53ef5d31-c2e7-4d23-922b-ab8d0ca7a679",
+      "prompt": "Snow White, gracefully walking across an enchanted royal courtyard, traditional Germanic navy blue and red military uniform with gold accents, apple insignia, polished black boots, dark bobbed hair with red headband, pure and strong expression, full-body view, fairytale castle and forest background, cinematic soft lighting",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/bd234279-4dd0-439c-aa81-91cf6c099c2b",
+      "galleryUrl": "https://lexica.art?q=bd234279-4dd0-439c-aa81-91cf6c099c2b",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "655a68613dc2c48d339202e2351cc17ac205fa10a9a1f4f24e5c38645e4fefba",
+      "bytes": 373842
+    },
+    {
+      "id": "37bf4ba4-929f-4a1b-a276-6f98dbdbb7b4",
+      "file": "ai/lexica__feed/37bf4ba4-929f-4a1b-a276-6f98dbdbb7b4.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "396a81d6-75d4-4b31-8870-86e1a50f6a56",
+      "prompt": "a video of a nuclear mushroom cloud while influencers film themselves for social media and pose in front of it, selfie POV",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/37bf4ba4-929f-4a1b-a276-6f98dbdbb7b4",
+      "galleryUrl": "https://lexica.art?q=37bf4ba4-929f-4a1b-a276-6f98dbdbb7b4",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "3cd6b73e5b219383a40161c6352a5ab2e73824510e34ae4b347bcf289c6a5964",
+      "bytes": 342559
+    },
+    {
+      "id": "07a1c80f-01eb-4c8e-9af9-1bb853008a0c",
+      "file": "ai/lexica__feed/07a1c80f-01eb-4c8e-9af9-1bb853008a0c.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "daf9d73a-c38e-4299-b859-0b3654cab20d",
+      "prompt": "Black and white  line drawing, portrait of a skull wearing chainmail armor with a crown on his head, simple, clean lines, in the style of medieval woodcut illustrations, an ink illustration artist. Isolated background, no shadows, white border around the whole design. Black background.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/07a1c80f-01eb-4c8e-9af9-1bb853008a0c",
+      "galleryUrl": "https://lexica.art?q=07a1c80f-01eb-4c8e-9af9-1bb853008a0c",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "8dd4732ad2e82a84abececf318a47ca09648f737cd0b1b0d36ba7755ca4e67bf",
+      "bytes": 668484
+    },
+    {
+      "id": "04a6b152-2f12-4ad7-890d-480ebc5a596d",
+      "file": "ai/lexica__feed/04a6b152-2f12-4ad7-890d-480ebc5a596d.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "8e7b3e83-5306-4f61-bc4b-20efff8e71c8",
+      "prompt": "tired 22-year-old influencer sitting alone on a city curb late at night, still wearing a cheap sailor girl costume. The costume looks slightly rumpled and deflated — the short navy-blue mini dress is wrinkled and stretched, the white sailor collar is crumpled and askew, and the small, tilted sailor hat sits crookedly atop their tousled hair. She has scuffed skin and faint impressions where high heels once pressed against their feet. Their bare feet are planted on the asphalt beside a pair of discarded high heels. They clutch a greasy slice of pizza in one hand and a half-finished sparkling drink in the other, smiling faintly in a bittersweet, exhausted way. tight angle",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/04a6b152-2f12-4ad7-890d-480ebc5a596d",
+      "galleryUrl": "https://lexica.art?q=04a6b152-2f12-4ad7-890d-480ebc5a596d",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "d4b486cc0b8e6f40702af64d90183ff67686214041b847ebd12ea1134f41009c",
+      "bytes": 365480
+    },
+    {
+      "id": "68c4ecd1-22b6-4e11-8fa1-65d117395499",
+      "file": "ai/lexica__feed/68c4ecd1-22b6-4e11-8fa1-65d117395499.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "2aba0829-fb0e-4cb1-8e51-9b4b49bbef77",
+      "prompt": "A ferret in knight's armor, in a fantasy forest. Keep the ferret's original proportions with long body, short appendages, and tail.",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/68c4ecd1-22b6-4e11-8fa1-65d117395499",
+      "galleryUrl": "https://lexica.art?q=68c4ecd1-22b6-4e11-8fa1-65d117395499",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "289d7a5e36679a3f014bf972aa76034ff9b0a7dc6dd650266f03aae21db75538",
+      "bytes": 516962
+    },
+    {
+      "id": "be4021ab-cd0e-4ae3-85fa-77512437d4e9",
+      "file": "ai/lexica__feed/be4021ab-cd0e-4ae3-85fa-77512437d4e9.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "1a35a1c4-a799-4f59-b074-86b820c13c11",
+      "prompt": "An striking beautiful model wearing a big surreal white green monster fly and green fungi mold and silver melted murcury and deep orange lady bird insect and some ancient horror style glowing lamp chess vibrant burgundy king and queen lamp pieces in her powder blue colored mouth and peach head, the gigantic white butterfly is transfering to a foggy abstract sculpture and blending with the model face skin and make surreal abstract abnormal face feature of the model, vortex eye, twirling, swirling , intertwined green snake with fuchsia cactus flower, psychedlic, hyper realistic, high end haute couture fashion experiements vibrant, crazy features , interplay of surreal noir and mysterious mythological sense, , 50 mm f/1.8 III lense on Canon Eos 5D mark IV camera",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/be4021ab-cd0e-4ae3-85fa-77512437d4e9",
+      "galleryUrl": "https://lexica.art?q=be4021ab-cd0e-4ae3-85fa-77512437d4e9",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "d83be835879c8daecf1ded5a947683f94b206e24db62266d6631701880c4545f",
+      "bytes": 347436
+    },
+    {
+      "id": "6155ff80-43e6-47cc-a228-14ed73dfb283",
+      "file": "ai/lexica__feed/6155ff80-43e6-47cc-a228-14ed73dfb283.jpg",
+      "label": "ai",
+      "model": "experimental-v1-raw",
+      "promptId": "c12e6b1e-af98-4ceb-982b-7bed878cfb17",
+      "prompt": "cute realistic FAT Pikachu at the vet getting weighed on a pet scale, vet looking shocked at weight",
+      "width": 1664,
+      "height": 2496,
+      "sourceUrl": "https://image.lexica.art/full_jpg/6155ff80-43e6-47cc-a228-14ed73dfb283",
+      "galleryUrl": "https://lexica.art?q=6155ff80-43e6-47cc-a228-14ed73dfb283",
+      "hardCase": true,
+      "tags": [
+        "lexica",
+        "feed",
+        "stable-diffusion-family"
+      ],
+      "sha256": "34f507b191b779f81bd72d0bc0af063f36b547a3e9e267a1ad35bbd70ed72fb8",
+      "bytes": 283229
     }
-  ]
+  ],
+  "updatedAt": "2026-08-13T21:22:55.943Z"
 }

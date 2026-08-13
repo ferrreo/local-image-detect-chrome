@@ -1,0 +1,295 @@
+{
+  "updatedAt": "2026-08-13T21:22:55.943Z",
+  "added": 48,
+  "totalLexica": 48,
+  "images": [
+    {
+      "id": "161bd610-6a30-402c-ba47-6d00ffcd0dc6",
+      "file": "ai/lexica__feed/161bd610-6a30-402c-ba47-6d00ffcd0dc6.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "7d8ffcb5cfdd8e21d393df98483d68189c3deaf0b69045996134d6a06b085dc0"
+    },
+    {
+      "id": "f527fc34-ad1e-49a8-bc03-d42d0b0116dc",
+      "file": "ai/lexica__feed/f527fc34-ad1e-49a8-bc03-d42d0b0116dc.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "0cd62caf393acbd00dd37717bd50850d5c2bf276f6e482906e99d0fa926d4107"
+    },
+    {
+      "id": "a56bd531-cf22-46de-8436-bd1216a758aa",
+      "file": "ai/lexica__feed/a56bd531-cf22-46de-8436-bd1216a758aa.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "1527725ce4d334705f46e342be347a565ad7659b8d1e1731227b649538c2c724"
+    },
+    {
+      "id": "848abab0-1808-4e0b-b8ae-0abb05d3cb37",
+      "file": "ai/lexica__feed/848abab0-1808-4e0b-b8ae-0abb05d3cb37.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "0bea09be0060c04436959c9f13210f6494a5388644086f21cee9b7b9115ed47e"
+    },
+    {
+      "id": "8db84054-e8eb-4680-ad06-f38e12f8ea01",
+      "file": "ai/lexica__feed/8db84054-e8eb-4680-ad06-f38e12f8ea01.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "3ba206319cd8e43631bef493a7f8d895f1c35a14044cfa83f0c019b4681a51cc"
+    },
+    {
+      "id": "5dfff983-7422-4cca-83ab-d2f8c160d745",
+      "file": "ai/lexica__feed/5dfff983-7422-4cca-83ab-d2f8c160d745.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "0199f361e5ddc1c246db43fc6c757d3f75b17ba490fddf8d49ee61d668045808"
+    },
+    {
+      "id": "c656b222-fe92-4f1f-abd2-ea4f055327cc",
+      "file": "ai/lexica__feed/c656b222-fe92-4f1f-abd2-ea4f055327cc.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "c634667868d7373fefd40e52b7b708755d537a5f26f511ab80c851bbfb7ee3f5"
+    },
+    {
+      "id": "a05b0d48-0b6c-421f-811c-de68c652994d",
+      "file": "ai/lexica__feed/a05b0d48-0b6c-421f-811c-de68c652994d.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "e98fb400a7852d21f963534bd57e90ef0f113dfe9e69ef0c96ecb052c629a3df"
+    },
+    {
+      "id": "7f55fe6c-ed42-4369-a0b3-b3dc034e23a5",
+      "file": "ai/lexica__feed/7f55fe6c-ed42-4369-a0b3-b3dc034e23a5.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "8489a3b1fc732c58d1c86e33c1fb53a4707b62457a1429ba7e037f5ca6ae1a5f"
+    },
+    {
+      "id": "9aecb4e8-4e48-4c0e-bb10-1c1d5aeddf30",
+      "file": "ai/lexica__feed/9aecb4e8-4e48-4c0e-bb10-1c1d5aeddf30.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "c382821ec4098cd8aeaca837f6b71832bba976f3f4f75fd96a16bc30f453c31b"
+    },
+    {
+      "id": "896f8015-4ef3-4a48-bc85-b64e1377fe18",
+      "file": "ai/lexica__feed/896f8015-4ef3-4a48-bc85-b64e1377fe18.jpg",
+      "model": "experimental-v1",
+      "sha256": "5f34ca763abe305bfbbf30d4d67e508bd0959681cbb66c4d6686cd08f9f42cb9"
+    },
+    {
+      "id": "12d8bc46-2e3c-4d6b-9052-6b3905957ead",
+      "file": "ai/lexica__feed/12d8bc46-2e3c-4d6b-9052-6b3905957ead.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "beb219641128384b11fa57bda8b5c64d09d2e6c26159f722025b548dcf963c81"
+    },
+    {
+      "id": "2714302e-ff48-4a33-bbd9-a22bb69bdda5",
+      "file": "ai/lexica__feed/2714302e-ff48-4a33-bbd9-a22bb69bdda5.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "f8040b82a61a1327e27bd8f850d3147f48d14cfae97bf74e63acf7fd5f4b5723"
+    },
+    {
+      "id": "2e21dd4d-707c-4963-854a-8de3dc6a1878",
+      "file": "ai/lexica__feed/2e21dd4d-707c-4963-854a-8de3dc6a1878.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "12a340f94312bb68392f33f165370b8359a2dbb4b9920e16c5a40e68c6c7df16"
+    },
+    {
+      "id": "82ac206f-9674-44a9-aaa6-17c562415a9f",
+      "file": "ai/lexica__feed/82ac206f-9674-44a9-aaa6-17c562415a9f.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "d8d27e20a88851aed446088381cb243a30b64d1aa05402526e2d3ddbbf5605fa"
+    },
+    {
+      "id": "388fc3b8-9abd-4299-b7b3-9e8703e7458c",
+      "file": "ai/lexica__feed/388fc3b8-9abd-4299-b7b3-9e8703e7458c.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "edf1e326985ddd7662d2e2d2ff483867c60840c4c1182f7c535ab8fcc811e830"
+    },
+    {
+      "id": "35469d04-ff25-4632-99c4-60efd3683a9c",
+      "file": "ai/lexica__feed/35469d04-ff25-4632-99c4-60efd3683a9c.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "b8afb12f8545f557b45dcabe51537ac68a0935d43f1751b82e108f4e4b8bfe90"
+    },
+    {
+      "id": "26be2c13-6aef-4692-8f76-ca39894af53d",
+      "file": "ai/lexica__feed/26be2c13-6aef-4692-8f76-ca39894af53d.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "8aa8bba484f228c24a1feb2041ce5fd5543b88e0fd0c4af9132f3cbab3b7874f"
+    },
+    {
+      "id": "33cc3996-0f4c-4504-9eee-fb70977c7b92",
+      "file": "ai/lexica__feed/33cc3996-0f4c-4504-9eee-fb70977c7b92.jpg",
+      "model": "experimental-v1",
+      "sha256": "a74cdcd538f71c997a936f8562728337d8c8697f48761ba1b90fb2e87a58d102"
+    },
+    {
+      "id": "4627315f-8980-4449-b388-2f743ee4daaf",
+      "file": "ai/lexica__feed/4627315f-8980-4449-b388-2f743ee4daaf.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "5e58894b5e5cf0cabc897b2e493b324b22f06c1020c90180343de551abba4e37"
+    },
+    {
+      "id": "497e2347-b330-4f90-8f86-f294e1e5e99a",
+      "file": "ai/lexica__feed/497e2347-b330-4f90-8f86-f294e1e5e99a.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "ff6e80de418f05b029407e64d2c99f1902c2e1da6ff92e033bc9f6479cb754be"
+    },
+    {
+      "id": "574115bc-7829-4ed1-96bb-171a57677430",
+      "file": "ai/lexica__feed/574115bc-7829-4ed1-96bb-171a57677430.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "9a73fd4f5ca554b981a94ed814b3ef89c0f8fe56dffc0a8877b65a8c74a5c735"
+    },
+    {
+      "id": "78783e44-7a97-415c-b766-a902cfbcceed",
+      "file": "ai/lexica__feed/78783e44-7a97-415c-b766-a902cfbcceed.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "c7aa5553c3a6df8840a67a6e19224709a092786ac5917c29167b418cfc0cc0cd"
+    },
+    {
+      "id": "83ae3ecf-324a-49b4-9099-9816d077da63",
+      "file": "ai/lexica__feed/83ae3ecf-324a-49b4-9099-9816d077da63.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "b2fd9c857c56f53095b2bd57355fefe78e5b22bbeb50e0b82880532d159db891"
+    },
+    {
+      "id": "be019e45-0af9-4786-898a-88a0ecb20b71",
+      "file": "ai/lexica__feed/be019e45-0af9-4786-898a-88a0ecb20b71.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "d6b4e0cf5290774fbfe979831dbd39f8ba38c102630523f1b63de763800454a9"
+    },
+    {
+      "id": "19bc1ee1-8678-4b5f-b43d-5fea93ca96c3",
+      "file": "ai/lexica__feed/19bc1ee1-8678-4b5f-b43d-5fea93ca96c3.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "c2ff7e6120a75a664be078e6c49397b08bad82bcd3e017e696f0f9c899287bfc"
+    },
+    {
+      "id": "1ce0e1b3-1388-4b02-b410-2efa89332002",
+      "file": "ai/lexica__feed/1ce0e1b3-1388-4b02-b410-2efa89332002.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "7c0609506ff9c266ff183dc9aff07696ed68b53e02fe59d5cde2a0614df6940f"
+    },
+    {
+      "id": "e1d23df4-b0e9-4936-9d98-8009b5e81ee2",
+      "file": "ai/lexica__feed/e1d23df4-b0e9-4936-9d98-8009b5e81ee2.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "3c7b7597d583edaa595626c905c59f28d23d8a23c93f595f3149fd2327e2f7b2"
+    },
+    {
+      "id": "3942a0ab-4e22-430e-8a71-2a143db66564",
+      "file": "ai/lexica__feed/3942a0ab-4e22-430e-8a71-2a143db66564.jpg",
+      "model": "experimental-v1",
+      "sha256": "7c64c50e0266c868d8bdf9c77a78a62003e4dcf8979e62a7262ca15290f9d8db"
+    },
+    {
+      "id": "880c3895-b9e7-4bb9-bb20-b15f9657d61d",
+      "file": "ai/lexica__feed/880c3895-b9e7-4bb9-bb20-b15f9657d61d.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "937496b686da53c0f18be5a79b099145d359b62df8a06711e962aae34d898676"
+    },
+    {
+      "id": "9a936827-c7f0-4dc5-8173-ece5088d483c",
+      "file": "ai/lexica__feed/9a936827-c7f0-4dc5-8173-ece5088d483c.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "307944af52ea8f9d2b054db4070f7277ee1c9a317d9dd1b842e998048e0b4d21"
+    },
+    {
+      "id": "aa8be99d-ce20-456c-acc0-cf895755038d",
+      "file": "ai/lexica__feed/aa8be99d-ce20-456c-acc0-cf895755038d.jpg",
+      "model": "experimental-v1",
+      "sha256": "acd8551c026409c1371c8df6fc091bb86707eb33b0b618d94139a6aee32d4dc3"
+    },
+    {
+      "id": "9003ae02-e889-48b4-a8a6-1597322c212e",
+      "file": "ai/lexica__feed/9003ae02-e889-48b4-a8a6-1597322c212e.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "68d65e37c6019e7dfd2bad4fd80d3a1b44c7cc257081a2b1e03358705a52bc02"
+    },
+    {
+      "id": "d0d5ee39-c6fa-4234-b243-c17e6fc493e8",
+      "file": "ai/lexica__feed/d0d5ee39-c6fa-4234-b243-c17e6fc493e8.jpg",
+      "model": "experimental-v1",
+      "sha256": "b45d72b3ae41ac492734b430a9409648560082ae53c01ed25881614c57782717"
+    },
+    {
+      "id": "9dfce783-dd1e-40e2-a0bc-fd2901f3dfb9",
+      "file": "ai/lexica__feed/9dfce783-dd1e-40e2-a0bc-fd2901f3dfb9.jpg",
+      "model": "experimental-v1",
+      "sha256": "41cf83a1d3bda34e7762820abb60f76706e66a18418f424bf2bf5d18ec0b1240"
+    },
+    {
+      "id": "0bf5eab7-9fe1-4469-9a30-a3fdeba1049e",
+      "file": "ai/lexica__feed/0bf5eab7-9fe1-4469-9a30-a3fdeba1049e.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "5742fbd1a01554d73f03104c3a04ff834ea501d66c654e5166fc34946f5e3727"
+    },
+    {
+      "id": "7c9d0760-3b79-48ef-8cb2-6bb5f8ec43dd",
+      "file": "ai/lexica__feed/7c9d0760-3b79-48ef-8cb2-6bb5f8ec43dd.jpg",
+      "model": "experimental-v1",
+      "sha256": "46ee21a762086a0f0d68ebc127c07141d7c8454efc1c1c13b27038c6d08ad080"
+    },
+    {
+      "id": "dfdd827d-c919-4484-bb37-fe2b6184d820",
+      "file": "ai/lexica__feed/dfdd827d-c919-4484-bb37-fe2b6184d820.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "64e3beaa7c2dc91f546c3e37340b61406f91cb5c447ff92ca3fc5aac1bce3652"
+    },
+    {
+      "id": "14c103b0-9857-4b1a-866c-df288c824726",
+      "file": "ai/lexica__feed/14c103b0-9857-4b1a-866c-df288c824726.jpg",
+      "model": "experimental-v1",
+      "sha256": "022d66fd6c5752a7c903eb388d7ff355cbb1b0a8e5247765a341e66699e1786d"
+    },
+    {
+      "id": "ff737a53-901b-4822-8169-a487410dae9e",
+      "file": "ai/lexica__feed/ff737a53-901b-4822-8169-a487410dae9e.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "bd06393f6d7427feb89a0c8c78638fa712a19e3fbf84d98acd65a69e1b6b8982"
+    },
+    {
+      "id": "d9cd71cf-e852-4c5e-9d04-2b4d9556425f",
+      "file": "ai/lexica__feed/d9cd71cf-e852-4c5e-9d04-2b4d9556425f.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "ad083ee992fba77ecee1b8308d5333ceabe12d7edd0a89aacd6158f14724c1b1"
+    },
+    {
+      "id": "bd234279-4dd0-439c-aa81-91cf6c099c2b",
+      "file": "ai/lexica__feed/bd234279-4dd0-439c-aa81-91cf6c099c2b.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "655a68613dc2c48d339202e2351cc17ac205fa10a9a1f4f24e5c38645e4fefba"
+    },
+    {
+      "id": "37bf4ba4-929f-4a1b-a276-6f98dbdbb7b4",
+      "file": "ai/lexica__feed/37bf4ba4-929f-4a1b-a276-6f98dbdbb7b4.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "3cd6b73e5b219383a40161c6352a5ab2e73824510e34ae4b347bcf289c6a5964"
+    },
+    {
+      "id": "07a1c80f-01eb-4c8e-9af9-1bb853008a0c",
+      "file": "ai/lexica__feed/07a1c80f-01eb-4c8e-9af9-1bb853008a0c.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "8dd4732ad2e82a84abececf318a47ca09648f737cd0b1b0d36ba7755ca4e67bf"
+    },
+    {
+      "id": "04a6b152-2f12-4ad7-890d-480ebc5a596d",
+      "file": "ai/lexica__feed/04a6b152-2f12-4ad7-890d-480ebc5a596d.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "d4b486cc0b8e6f40702af64d90183ff67686214041b847ebd12ea1134f41009c"
+    },
+    {
+      "id": "68c4ecd1-22b6-4e11-8fa1-65d117395499",
+      "file": "ai/lexica__feed/68c4ecd1-22b6-4e11-8fa1-65d117395499.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "289d7a5e36679a3f014bf972aa76034ff9b0a7dc6dd650266f03aae21db75538"
+    },
+    {
+      "id": "be4021ab-cd0e-4ae3-85fa-77512437d4e9",
+      "file": "ai/lexica__feed/be4021ab-cd0e-4ae3-85fa-77512437d4e9.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "d83be835879c8daecf1ded5a947683f94b206e24db62266d6631701880c4545f"
+    },
+    {
+      "id": "6155ff80-43e6-47cc-a228-14ed73dfb283",
+      "file": "ai/lexica__feed/6155ff80-43e6-47cc-a228-14ed73dfb283.jpg",
+      "model": "experimental-v1-raw",
+      "sha256": "34f507b191b779f81bd72d0bc0af063f36b547a3e9e267a1ad35bbd70ed72fb8"
+    }
+  ]
+}
