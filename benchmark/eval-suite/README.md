@@ -11,11 +11,13 @@ Produces CPU + GPU numbers for:
 ## Local PC
 
 ```bash
+npm ci                             # once — installs esbuild / playwright / …
 npm run setup:models && npm run setup:ort && npm run build:zig
-npm run build
-npm run eval:suite
+npm run eval:suite                 # builds extension once, then host + browser
 open benchmark/eval-suite/index.html
 ```
+
+If you see `Cannot find package 'esbuild'`, you’re missing `node_modules` — run `npm ci` from the repo root (the suite also tries this automatically once).
 
 ## CI
 
