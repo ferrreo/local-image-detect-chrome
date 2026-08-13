@@ -6,6 +6,8 @@ export type ModelArtifact = {
   id: string;
   /** Relative path under the Cache Storage namespace. */
   cacheKey: string;
+  /** Local path used by Node eval (onnxruntime-node). */
+  localPath: string;
   /** Public Hugging Face URL (resolved at setup time only). */
   url: string;
   /** Expected SHA-256 hex digest of the artifact bytes. */
@@ -17,30 +19,63 @@ export type ModelArtifact = {
   aiLabelIndex: number;
   mean: readonly [number, number, number];
   std: readonly [number, number, number];
+  /** ORT graphOptimizationLevel for this export. */
+  graphOptimizationLevel: "disabled" | "all";
 };
 
 export const MODEL_CACHE_NAME = "truepixel-models-v1";
 
+/** Models required by the extension runtime (Cache Storage). */
 export const MODEL_VERSION = "ai-image-detect-distilled-fp16-v1";
 
 /**
- * Distilled ViT AI image detector (MIT), fp16 ONNX via onnx-community.
+ * Distilled ViT AI image detector (MIT).
  * Source: https://huggingface.co/onnx-community/ai-image-detect-distilled-ONNX
+ * Labels: 0=fake, 1=real
  */
-export const VISUAL_MODEL = {
+export const DISTILLED_MODEL = {
   id: "ai-image-detect-distilled",
   cacheKey: "models/ai-image-detect-distilled/model_fp16.onnx",
+  localPath: "models/ai-image-detect-distilled/model_fp16.onnx",
   url: "https://huggingface.co/onnx-community/ai-image-detect-distilled-ONNX/resolve/main/onnx/model_fp16.onnx",
-  // Filled by setup script verification; placeholder updated after first download in CI.
   sha256: "9594bacb70d9c65fcaa656e0d17038c5cac7a6c48d04cd10f2ebf972a01ba3ee",
   bytes: 29_273_325,
   role: "visual-classifier",
   inputSize: 224,
-  // jacoballessio/ai-image-detect-distilled labels: typically ["artificial", "human"] or similar.
-  // Confirmed at runtime from logits orientation tests; artificial/fake is index 0.
   aiLabelIndex: 0,
   mean: [0.5, 0.5, 0.5],
   std: [0.5, 0.5, 0.5],
+  graphOptimizationLevel: "disabled",
 } as const satisfies ModelArtifact;
 
-export const ALL_MODELS: readonly ModelArtifact[] = [VISUAL_MODEL];
+/**
+ * CapCheck ViT-base AI image detector (Apache-2.0), q4 ONNX.
+ * Source: https://huggingface.co/onnx-community/ai-image-detection-ONNX
+ * Labels: 0=REAL, 1=FAKE
+ */
+export const CAPCHECK_MODEL = {
+  id: "ai-image-detection-capcheck",
+  cacheKey: "models/ai-image-detection/model_q4.onnx",
+  localPath: "models/ai-image-detection/model_q4.onnx",
+  url: "https://huggingface.co/onnx-community/ai-image-detection-ONNX/resolve/main/onnx/model_q4.onnx",
+  sha256: "28c7f06d5aa87bc7e023c023eab1fbf473deef54e9c62f9838a99e50422810ec",
+  bytes: 56_757_898,
+  role: "visual-classifier",
+  inputSize: 224,
+  aiLabelIndex: 1,
+  mean: [0.5, 0.5, 0.5],
+  std: [0.5, 0.5, 0.5],
+  graphOptimizationLevel: "all",
+} as const satisfies ModelArtifact;
+
+/** Primary model kept for backwards-compatible imports. */
+export const VISUAL_MODEL = DISTILLED_MODEL;
+
+/** Required for browser Cache Storage / extension readiness. */
+export const ALL_MODELS: readonly ModelArtifact[] = [DISTILLED_MODEL];
+
+/**
+ * Extra weights downloaded by `npm run setup:models` for Node eval experiments.
+ * Not required by the extension runtime until an ensemble is wired in.
+ */
+export const EVAL_EXTRA_MODELS: readonly ModelArtifact[] = [CAPCHECK_MODEL];

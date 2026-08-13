@@ -27,11 +27,8 @@ export async function rasterizeForModel(
     throw new Error("OffscreenCanvas 2d context unavailable");
   }
 
-  // Center-crop to square, then resize.
-  const side = Math.min(bitmap.width, bitmap.height);
-  const sx = Math.floor((bitmap.width - side) / 2);
-  const sy = Math.floor((bitmap.height - side) / 2);
-  ctx.drawImage(bitmap, sx, sy, side, side, 0, 0, size, size);
+  // Match ViTFeatureExtractor: stretch-resize to HxW (no center-crop).
+  ctx.drawImage(bitmap, 0, 0, size, size);
   return ctx.getImageData(0, 0, size, size);
 }
 
