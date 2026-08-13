@@ -132,6 +132,13 @@ const sha = execFileSync("git", ["rev-parse", "HEAD"], {
 }).trim();
 console.log(`Building onnxruntime-web from ${sha} (${prRef})`);
 
+// Stop Node from treating ORT's CJS post-build scripts as ESM because
+// /workspace/package.json has "type": "module".
+writeFileSync(
+  path.join(ortSrc, "package.json"),
+  JSON.stringify({ private: true, type: "commonjs" }, null, 2) + "\n",
+);
+
 ensureEmsdk(ortSrc);
 
 const buildSh = path.join(ortSrc, "build.sh");
