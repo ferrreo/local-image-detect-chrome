@@ -137,23 +137,25 @@ const MODELS = [
     preprocess: "stretch",
   },
   {
-    // Q8 fine-tune shipped by Dyno-man/Dino-ImageGen-Ext (Proofmark).
-    // Same preprocess family as detectra-v1 (shortest→440, center-crop 384).
+    // Private HF fine-tune — do not hotlink / redistribute third-party quants.
+    // Train ours via `npm run distill:accurate` instead.
     id: "proofmark-webwild-v3",
     requested: false,
+    status: "unavailable",
+    reason:
+      "Proofmark/proofmark-webwild-v3 is private on HF; we do not fetch or ship third-party bundled quants. Distill our own accurate head instead.",
+    substituteFor: null,
+  },
+  {
+    id: "truepixel-accurate-v1",
+    requested: false,
     status: "ok",
-    hf: "Proofmark/proofmark-webwild-v3 (private on HF; public via GitHub bundle)",
-    url: "https://raw.githubusercontent.com/Dyno-man/Dino-ImageGen-Ext/main/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
-    localPath: "models/compare/proofmark-webwild-v3/model_quantized.onnx",
-    seedPaths: [
-      "/tmp/Dino-ImageGen-Ext/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
-      path.join(
-        root,
-        "vendor/Dino-ImageGen-Ext/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
-      ),
-    ],
-    sha256:
-      "ed17ceb332bef84d0adcc2fa537eef85ed3ac6fb32c30393c326321fbbe54683",
+    hf: "local distill (OwensLab/commfor-model-384 backbone + TruePixel head)",
+    url: null,
+    localPath: "models/truepixel-accurate-v1/model_quantized.onnx",
+    seedPaths: [],
+    // Filled by npm run distill:accurate → models/truepixel-accurate-v1/manifest.json
+    sha256: null,
     inputSize: 384,
     mean: [0.485, 0.456, 0.406],
     std: [0.229, 0.224, 0.225],
@@ -207,7 +209,6 @@ async function download(model) {
     }
   }
 
-  // Local-only / vendored weights (e.g. Proofmark Q8 from Dino-ImageGen-Ext).
   for (const seed of model.seedPaths ?? []) {
     if (!seed || !existsSync(seed)) continue;
     if (model.sha256 && digestFile(seed) !== model.sha256) continue;
@@ -218,10 +219,7 @@ async function download(model) {
 
   if (!model.url) {
     throw new Error(
-      `no weights for ${model.id}: place ONNX at ${model.localPath}` +
-        (model.seedPaths?.length
-          ? ` or one of seedPaths (${model.seedPaths.join(", ")})`
-          : ""),
+      `no weights for ${model.id}: run npm run distill:accurate or place ONNX at ${model.localPath}`,
     );
   }
 
@@ -459,9 +457,14 @@ const images = loadCorpus();
 console.log(`Corpus: ${images.length} images (${images.filter((i) => i.hardCase).length} hardcases)`);
 
 const unavailable = MODELS.filter((m) => m.status === "unavailable");
-const runnable = MODELS.filter(
-  (m) => m.status === "ok" && (!filter || filter.has(m.id)),
-);
+const runnable = MODELS.filter((m) => {
+  if (m.status !== "ok") return false;
+  if (filter && !filter.has(m.id)) return false;
+  const local = path.join(root, m.localPath);
+  if (existsSync(local) || m.url) return true;
+  console.log(`skip ${m.id}: no local weights (npm run distill:accurate)`);
+  return false;
+});
 
 const results = [];
 for (const model of runnable) {
@@ -488,7 +491,7 @@ const report = {
   corpusImages: images.length,
   hardCases: images.filter((i) => i.hardCase).length,
   lexicaImages: lexicaCount,
-  note: "Two requested models lacked usable detector ONNX weights; substitutes noted below. Soylent hardcase is a local proxy (original screenshot bytes were not available to the agent). proofmark-webwild-v3 is the Q8 ONNX shipped by Dyno-man/Dino-ImageGen-Ext.",
+  note: "Two requested models lacked usable detector ONNX weights; substitutes noted below. Soylent hardcase is a local proxy. We do not fetch private Proofmark quants — train truepixel-accurate-v1 with npm run distill:accurate.",
   unavailable: unavailable.map((m) => ({
     id: m.id,
     reason: m.reason,
@@ -540,8 +543,8 @@ for (const r of report.rankingAt065) {
   const full = results.find((x) => x.id === r.id);
   const note = r.substituteFor
     ? `sub for ${r.substituteFor}`
-    : r.id === "proofmark-webwild-v3"
-      ? "Proofmark vendor Q8"
+    : r.id === "truepixel-accurate-v1"
+      ? "our distill"
       : "requested";
   const lex =
     full.at065.lexicaTpr == null

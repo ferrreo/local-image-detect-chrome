@@ -1,7 +1,10 @@
 /**
  * One-time setup downloads only these publicly available weights.
  * After caching, inference never fetches models again.
- * Proofmark is packaged-only (no public HF URL in this repo).
+ *
+ * Accurate-head distillation (TruePixel-trained) lives in
+ * `scripts/distill-accurate-head.py` and is promoted into FORENSICS_MODEL
+ * once exported — we do not ship third-party fine-tune quants.
  */
 export type ModelPreprocess = "stretch" | "short440-center384";
 export type ModelOutputKind = "logits2" | "logit";
@@ -12,10 +15,7 @@ export type ModelArtifact = {
   cacheKey: string;
   /** Local path used by Node eval (onnxruntime-node). */
   localPath: string;
-  /**
-   * Public Hugging Face URL (resolved at setup time only).
-   * Empty when the artifact must be seeded from a packaged/vendored file.
-   */
+  /** Public Hugging Face URL (resolved at setup time only). */
   url: string;
   /** Expected SHA-256 hex digest of the artifact bytes. */
   sha256: string;
@@ -32,7 +32,7 @@ export type ModelArtifact = {
   outputKind: ModelOutputKind;
 };
 
-export const MODEL_CACHE_NAME = "truepixel-models-v2";
+export const MODEL_CACHE_NAME = "truepixel-models-v3";
 
 /**
  * Cache / package version. Bump when the required artifact set changes.
@@ -40,7 +40,7 @@ export const MODEL_CACHE_NAME = "truepixel-models-v2";
  * on WASM when the adapter lacks shader-f16 (never fp32-on-WebGPU).
  */
 export const MODEL_VERSION =
-  "distilled-fp16+fp32+proofmark-webwild-v3-q8-v1";
+  "distilled-fp16+fp32+community-forensics-q4-v2";
 
 /**
  * Distilled ViT AI image detector (MIT), fp16 ONNX.
@@ -91,22 +91,41 @@ export const DISTILLED_MODEL_FP32 = {
 } as const satisfies ModelArtifact;
 
 /**
- * Proofmark webwild-v3 Q8 (accurate secondary head).
- * Backbone: OwensLab/commfor-model-384; head fine-tune shipped by
- * Dyno-man/Dino-ImageGen-Ext. HF repo `Proofmark/proofmark-webwild-v3` is
- * private (401); public bytes match the GitHub-bundled ONNX below.
- * Preprocess: shortest side → 440, center-crop 384, ImageNet norm, logit+sigmoid.
+ * Community Forensics ViT-Small detector (MIT), q4 ONNX — temporary accurate head.
+ * Source: https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX
+ * Labels: softmax index 1 treated as AI/fake for this export.
  *
- * Zig+ORT WASM still hardcodes stretch/0.5 — pipeline prefers ort-web while
- * this head is active.
+ * Replace with `truepixel-accurate-v1` from `npm run distill:accurate` once
+ * that export clears the Lexica / bounty bar on our held-out shard.
  */
 export const FORENSICS_MODEL = {
-  id: "proofmark-webwild-v3",
-  cacheKey: "models/proofmark-webwild-v3/model_quantized.onnx",
-  localPath: "models/proofmark-webwild-v3/model_quantized.onnx",
-  url: "https://raw.githubusercontent.com/Dyno-man/Dino-ImageGen-Ext/main/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
-  sha256: "ed17ceb332bef84d0adcc2fa537eef85ed3ac6fb32c30393c326321fbbe54683",
-  bytes: 24_031_833,
+  id: "community-forensics-deepfake-det",
+  cacheKey: "models/community-forensics/model_q4.onnx",
+  localPath: "models/community-forensics/model_q4.onnx",
+  url: "https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX/resolve/main/onnx/model_q4.onnx",
+  sha256: "263c46052167a15b981848465b8adb9f28dbd1f9ad8ecf8157cb05d876f7091b",
+  bytes: 24_416_892,
+  role: "visual-classifier",
+  inputSize: 384,
+  aiLabelIndex: 1,
+  mean: [0.5, 0.5, 0.5],
+  std: [0.5, 0.5, 0.5],
+  graphOptimizationLevel: "all",
+  preprocess: "stretch",
+  outputKind: "logits2",
+} as const satisfies ModelArtifact;
+
+/**
+ * Placeholder for our distilled accurate head (not shipped until trained).
+ * Promoted into FORENSICS_MODEL / ALL_MODELS after `distill:accurate`.
+ */
+export const TRUEPIXEL_ACCURATE_MODEL = {
+  id: "truepixel-accurate-v1",
+  cacheKey: "models/truepixel-accurate-v1/model_quantized.onnx",
+  localPath: "models/truepixel-accurate-v1/model_quantized.onnx",
+  url: "",
+  sha256: "",
+  bytes: 0,
   role: "visual-classifier",
   inputSize: 384,
   aiLabelIndex: 0,

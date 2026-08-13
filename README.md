@@ -12,13 +12,16 @@ Detection pipeline:
 
 1. **Provenance** — EXIF/XMP/C2PA/AIGC/string fingerprints (scans file head + tail)
 2. **Spectral forensics** — FFT / noise / chroma features in plain TypeScript
-3. **Visual classifiers** — fast distilled ViT, then Proofmark webwild-v3 (accurate) via `onnxruntime-web`
+3. **Visual classifiers** — fast distilled ViT, then Community Forensics (temporary accurate head) via `onnxruntime-web`
 4. **Fusion** — calibrated ensemble (product AI label ≥69.51%; bounty eval often uses 65%)
+
+We train our own accurate head on the public [OwensLab/commfor-model-384](https://huggingface.co/OwensLab/commfor-model-384) backbone (`npm run distill:accurate`). Private third-party fine-tune quants are not fetched or shipped.
 
 ## Requirements
 
 - Google Chrome 121+ (WebGPU capable preferred)
 - Node.js 20+ to build from source
+- Python 3.10+ only if you run accurate-head distillation
 
 ## Build from source
 
@@ -35,7 +38,13 @@ Optional: prefetch model weights into `./models` (also downloaded in-browser on 
 npm run setup:models
 ```
 
-Proofmark’s accurate head (`proofmark-webwild-v3` Q8) has a private HF repo (`Proofmark/proofmark-webwild-v3`, 401). Setup/extension download the matching public ONNX from [Dyno-man/Dino-ImageGen-Ext](https://github.com/Dyno-man/Dino-ImageGen-Ext) (backbone [OwensLab/commfor-model-384](https://huggingface.co/OwensLab/commfor-model-384)).
+Train / export our accurate head (writes `models/truepixel-accurate-v1/`):
+
+```bash
+python3 -m pip install -r scripts/requirements-distill.txt
+npm run distill:accurate
+npm run eval:compare   # includes truepixel-accurate-v1 when the ONNX exists
+```
 
 Load unpacked:
 
@@ -104,7 +113,7 @@ OpenRouter corpus (76 images, threshold 65%), same machine:
 | Zig CPU · dual (always CF) | **100%** | 38 | 38 | 0 | 0 | ~158 |
 | Zig CPU · cascade (default eval) | **100%** | 38 | 38 | 0 | 0 | **~78** (CF on 14/76) |
 
-Distilled-alone misses hard Krea/Riverflow and Lexica feed cases. The browser cascade now recovers with **Proofmark webwild-v3** (Q8 accurate head; ~77–78% BA @65% on the 130-image OpenRouter+Lexica corpus, 0 hardcase FPs). `npm run eval:compare` ranks heads; see `benchmark/model-survey/compare-top6-latest.md`. The Zig host still tries **WebGPU** (Dawn→Vulkan) → CUDA → XNNPACK → CPU; browser accurate path prefers ort-web while Proofmark needs ImageNet center-crop preprocess.
+Distilled-alone misses hard Krea/Riverflow and Lexica feed cases. The browser cascade always pays for the accurate head unless distilled is already decisive, and realtime→accurate refine runs whenever the first paint is below the AI threshold. Ship path still uses public Community Forensics until `truepixel-accurate-v1` from `distill:accurate` beats it on our held-out shard. `npm run eval:compare` ranks heads; see `benchmark/model-survey/compare-top6-latest.md`.
 
 ### Full offline suite (CPU + GPU modes)
 
@@ -119,7 +128,7 @@ npm run eval:suite:ci              # CI-sized subset (wasm + key host modes)
 # EVAL_SUITE_LIMIT=16 EVAL_SUITE_BROWSER_PROVIDERS=webgpu,wasm npm run eval:suite
 ```
 
-Browser path: **realtime distilled**, then **accurate Proofmark refine** when the first paint is below the AI threshold (Lexica-class near-zero distilled scores included). Silent stub fallback is disabled — if offscreen ORT fails, the result is an error, not a fake score.
+Browser path: **realtime distilled**, then **accurate-head refine** when the first paint is below the AI threshold (Lexica-class near-zero distilled scores included). Silent stub fallback is disabled — if offscreen ORT fails, the result is an error, not a fake score.
 
 Live page inside the extension (after Load unpacked `dist/`):
 

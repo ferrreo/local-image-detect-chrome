@@ -2,7 +2,6 @@
 /**
  * One-time download of public model weights into ./models for packaging/tests.
  * The extension itself downloads into Cache Storage on first setup.
- * Proofmark is seeded from a local vendor path (no public HF URL).
  */
 import { createHash } from "node:crypto";
 import {
@@ -12,7 +11,6 @@ import {
   readFileSync,
   writeFileSync,
   renameSync,
-  copyFileSync,
 } from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
@@ -43,29 +41,12 @@ const MODELS = [
     license: "MIT",
   },
   {
-    id: "proofmark-webwild-v3",
-    // HF `Proofmark/proofmark-webwild-v3` is private; same Q8 bytes are public
-    // in Dyno-man/Dino-ImageGen-Ext (upstream backbone OwensLab/commfor-model-384).
-    url: "https://raw.githubusercontent.com/Dyno-man/Dino-ImageGen-Ext/main/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
-    outPath: path.join(
-      root,
-      "models/proofmark-webwild-v3/model_quantized.onnx",
-    ),
-    sha256:
-      "ed17ceb332bef84d0adcc2fa537eef85ed3ac6fb32c30393c326321fbbe54683",
-    bytes: 24_031_833,
-    license: "MIT (Proofmark head; OwensLab/commfor-model-384 backbone)",
-    seedPaths: [
-      path.join(
-        root,
-        "models/compare/proofmark-webwild-v3/model_quantized.onnx",
-      ),
-      "/tmp/Dino-ImageGen-Ext/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
-      path.join(
-        root,
-        "vendor/Dino-ImageGen-Ext/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
-      ),
-    ],
+    id: "community-forensics-deepfake-det",
+    url: "https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX/resolve/main/onnx/model_q4.onnx",
+    outPath: path.join(root, "models/community-forensics/model_q4.onnx"),
+    sha256: "263c46052167a15b981848465b8adb9f28dbd1f9ad8ecf8157cb05d876f7091b",
+    bytes: 24_416_892,
+    license: "MIT",
   },
 ];
 
@@ -81,21 +62,7 @@ async function download(model) {
       console.log(`Already present: ${model.outPath}`);
       return;
     }
-    console.log(`Checksum mismatch for ${model.id}, re-fetching…`);
-  }
-
-  for (const seed of model.seedPaths ?? []) {
-    if (!seed || !existsSync(seed)) continue;
-    if (digestFile(seed) !== model.sha256) continue;
-    copyFileSync(seed, model.outPath);
-    console.log(`Seeded ${model.id} ← ${seed}`);
-    return;
-  }
-
-  if (!model.url) {
-    throw new Error(
-      `No weights for ${model.id}. Place ONNX at ${model.outPath} or one of: ${(model.seedPaths ?? []).join(", ")}`,
-    );
+    console.log(`Checksum mismatch for ${model.id}, re-downloading…`);
   }
 
   console.log(`Downloading ${model.url}`);
@@ -126,15 +93,16 @@ writeFileSync(
   path.join(root, "models/manifest.json"),
   JSON.stringify(
     {
-      version: "distilled-fp16+fp32+proofmark-webwild-v3-q8-v1",
+      version: "distilled-fp16+fp32+community-forensics-q4-v2",
       models: MODELS.map((m) => ({
         id: m.id,
         path: path.relative(path.join(root, "models"), m.outPath),
         sha256: m.sha256,
         bytes: m.bytes,
-        source: m.url || "(vendored seed)",
+        source: m.url,
         license: m.license,
       })),
+      note: "Train our accurate head with npm run distill:accurate (does not fetch third-party fine-tune quants).",
     },
     null,
     2,
