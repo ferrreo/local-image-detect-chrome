@@ -97,6 +97,17 @@ describe("fuseDetection", () => {
     expect(out.label.kind).toBe("ai");
     expect(out.tiers.at(-1)?.detail).toBe("forensics-ambiguous-distilled");
   });
+
+  it("catches weaker CF mid-band faces (~0.72) that still beat distilled", () => {
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.5),
+      visual: tier("visual", 0.56),
+      visualSecondary: tier("visual", 0.72),
+    });
+    expect(out.label.kind).toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toBe("forensics-ambiguous-distilled");
+  });
 });
 
 describe("labelFor / balancedAccuracy", () => {

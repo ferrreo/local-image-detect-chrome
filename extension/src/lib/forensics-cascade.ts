@@ -16,7 +16,7 @@ export function needsForensicsCascade(args: ForensicsCascadeInput): boolean {
   const sp = args.spectral;
   if (d >= 0.645 && sp <= 0.43) return false;
   // StyleGAN / mid-band misses: distilled unsure — always ask CF.
-  if (d >= 0.5 && d < 0.65) return true;
+  if (d >= 0.48 && d < 0.65) return true;
   const canCfBand =
     d >= 0.3 &&
     args.laplacianVariance >= 580 &&

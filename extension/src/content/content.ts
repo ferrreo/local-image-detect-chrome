@@ -215,31 +215,9 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
   }
 }
 
-/** AI probability from a labeled result (Real badges store 1−p_ai). */
-function aiScoreOf(result: DetectionResult): number {
-  if (result.label.kind === "real") return 1 - result.confidence;
-  if (result.label.kind === "error") return 0.5;
-  return result.confidence;
-}
-
-/**
- * Distilled-only often underscores StyleGAN / hard gens (~0.5–0.62).
- * Community Forensics recovers those — refine when the fast pass is ambiguous.
- */
-function needsForensicsRefine(result: DetectionResult): boolean {
-  if (result.label.kind === "error") return false;
-  if (result.tiers.some((t) => t.tier === "provenance" && t.shortCircuit)) {
-    return false;
-  }
-  if (result.label.kind === "uncertain") return true;
-  const pAi = aiScoreOf(result);
-  return pAi >= 0.3 && pAi < 0.65;
-}
-
 async function requestAnalyze(
   img: HTMLImageElement,
   id: string,
-  speedMode: "realtime" | "accurate",
 ): Promise<DetectionResult> {
   const response = (await chrome.runtime.sendMessage({
     kind: "analyze-image",
@@ -248,7 +226,9 @@ async function requestAnalyze(
     src: imageKey(img),
     width: img.naturalWidth || img.width,
     height: img.naturalHeight || img.height,
-    speedMode,
+    // Always cascade (distilled → CF when gated). Realtime-only misses
+    // StyleGAN/TPDNE that Community Forensics recovers.
+    speedMode: "accurate",
   })) as AnalyzeImageResponse;
   if (response.kind !== "analyze-image-result") {
     throw new Error("analyze-image failed");
@@ -268,23 +248,11 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
   applyConcealment(entry);
 
   try {
-    const quick = await requestAnalyze(img, id, "realtime");
-    // Keep blur only while CF refine is still running.
-    entry.inFlight = needsForensicsRefine(quick);
-    entry.result = quick;
-    renderResult(img, quick);
-
-    if (needsForensicsRefine(quick)) {
-      const refined = await requestAnalyze(img, id, "accurate");
-      if (tracked.get(id)?.src === entry.src) {
-        entry.inFlight = false;
-        entry.result = refined;
-        renderResult(img, refined);
-      }
-    } else {
-      entry.inFlight = false;
-      applyConcealment(entry);
-    }
+    const result = await requestAnalyze(img, id);
+    if (tracked.get(id)?.src !== entry.src) return;
+    entry.inFlight = false;
+    entry.result = result;
+    renderResult(img, result);
   } catch (error) {
     entry.inFlight = false;
     const message = error instanceof Error ? error.message : String(error);
@@ -303,6 +271,24 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
       applyConcealment(current);
     }
   }
+}
+
+/** Same URL can decode new bytes (TPDNE). Rescore on reload after the first. */
+function armLoadRescore(img: HTMLImageElement, id: string): void {
+  if (img.dataset.truepixelLoadArmed === "1") return;
+  img.dataset.truepixelLoadArmed = "1";
+  let loads = 0;
+  img.addEventListener("load", () => {
+    loads += 1;
+    // First decode is handled by trackAndMaybeAnalyze → analyze.
+    if (loads === 1) return;
+    const entry = tracked.get(id);
+    if (!entry || entry.inFlight) return;
+    entry.src = imageKey(img);
+    delete entry.result;
+    entry.revealed = false;
+    void analyze(img, id);
+  });
 }
 
 function trackAndMaybeAnalyze(img: HTMLImageElement): void {
@@ -332,11 +318,11 @@ function trackAndMaybeAnalyze(img: HTMLImageElement): void {
       : {}),
   };
   tracked.set(id, entry);
+  armLoadRescore(img, id);
   // Blur immediately on discovery — before analyze round-trip.
   if (!entry.result) {
     entry.inFlight = true;
     applyConcealment(entry);
-    // analyze() sets inFlight again; clear the peek flag used only for CSS.
     entry.inFlight = false;
   }
   void analyze(img, id);

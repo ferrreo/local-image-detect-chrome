@@ -45,4 +45,15 @@ describe("needsForensicsCascade", () => {
       }),
     ).toBe(true);
   });
+
+  it("requests forensics from 0.48 mid-band floor", () => {
+    expect(
+      needsForensicsCascade({
+        distilled: 0.49,
+        spectral: 0.5,
+        laplacianVariance: 100,
+        chromaFlatness: 0.1,
+      }),
+    ).toBe(true);
+  });
 });

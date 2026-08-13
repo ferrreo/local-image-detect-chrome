@@ -54,7 +54,8 @@ async function loadInferBytes(
   if (request.src) {
     const response = await fetch(request.src, {
       credentials: "omit",
-      cache: "force-cache",
+      // Dynamic URLs (e.g. TPDNE) must match the pixels on screen — not HTTP cache.
+      cache: "no-cache",
     });
     if (!response.ok) {
       throw new Error(`Offscreen image fetch failed (${response.status})`);

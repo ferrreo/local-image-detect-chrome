@@ -104,7 +104,7 @@ async function fetchImageBytes(
 ): Promise<{ bytes: ArrayBuffer; mimeType: string }> {
   const response = await fetch(src, {
     credentials: "omit",
-    cache: "force-cache",
+    cache: "no-cache",
   });
   if (!response.ok) {
     throw new Error(`Image fetch failed (${response.status})`);
