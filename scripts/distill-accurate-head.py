@@ -391,8 +391,22 @@ def main() -> None:
     torch.manual_seed(args.seed)
 
     samples = collect_samples(args.corpus)
-    train_s, val_s = split_train_val(samples, args.val_frac, args.seed)
-    print(f"corpus {len(samples)}  train {len(train_s)}  val {len(val_s)}")
+    excluded = [
+        s
+        for s in samples
+        if any(sub.lower() in str(s[0]).lower() for sub in args.exclude_substr)
+    ]
+    eligible = [s for s in samples if s not in excluded] if excluded else samples
+    train_s, val_s = split_train_val(eligible, args.val_frac, args.seed)
+    if excluded:
+        # Domain holdout: evaluate excluded paths after export (not used in train).
+        val_s = excluded
+        print(
+            f"corpus {len(samples)}  train-eligible {len(eligible)}  "
+            f"excluded-holdout {len(excluded)}  train {len(train_s)}"
+        )
+    else:
+        print(f"corpus {len(samples)}  train {len(train_s)}  val {len(val_s)}")
 
     backbone_path = ensure_backbone(args.cache)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

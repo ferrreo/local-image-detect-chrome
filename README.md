@@ -43,8 +43,12 @@ Train / export our accurate head (writes `models/truepixel-accurate-v1/`):
 ```bash
 python3 -m pip install -r scripts/requirements-distill.txt
 npm run distill:accurate
-npm run eval:compare   # includes truepixel-accurate-v1 when the ONNX exists
+# Honest Lexica generalization check (do not train on Lexica):
+python3 scripts/distill-accurate-head.py --exclude-substr lexica --epochs 40
+npm run eval:compare   # full-corpus numbers are contaminated if Lexica was in train
 ```
+
+See `benchmark/model-survey/truepixel-accurate-holdout.md`. Domain-holdout Lexica TPR is still ~15% — not ready to replace Community Forensics.
 
 TruthLens-named image heads on HF (mostly text detectors under that name) can be scored with:
 
