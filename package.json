@@ -1,0 +1,43 @@
+{
+  "name": "truepixel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Privacy-preserving Chrome MV3 extension that detects AI-generated images entirely in-browser via WebGPU/WASM.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf dist .truepixel-cache coverage test-results playwright-report",
+    "prepare:assets": "node scripts/generate-icons.mjs && node scripts/generate-fixtures.mjs",
+    "prebuild": "npm run prepare:assets",
+    "build": "node scripts/build.mjs",
+    "build:watch": "node scripts/build.mjs --watch",
+    "setup:models": "node scripts/setup-models.mjs",
+    "fetch:openrouter": "node scripts/fetch-openrouter-images.mjs",
+    "fetch:real": "node scripts/fetch-real-photos.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:unit": "npm run prepare:assets && vitest run tests/unit",
+    "test:watch": "vitest",
+    "test:integration": "playwright test",
+    "test:all": "npm run typecheck && npm run test:unit && npm run build && npm run test:integration",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "eval:local": "npm run prepare:assets && node scripts/eval-local.mjs",
+    "ci": "npm run test:all"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "onnxruntime-web": "^1.22.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/chrome": "^0.1.4",
+    "@types/node": "^24.2.1",
+    "esbuild": "^0.25.8",
+    "jsdom": "^26.1.0",
+    "sharp": "^0.35.3",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}
