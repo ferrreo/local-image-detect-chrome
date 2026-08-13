@@ -21,5 +21,8 @@ __pycache__/
 native/ort/
 native/ort-wasm/
 native/ort-wasm-src/
+native/ort-web-pr29599/
+native/ort-web-pr29599-src/
+vendor/onnxruntime-web/
 native/zig-infer/.zig-cache/
 native/zig-infer/zig-out/
