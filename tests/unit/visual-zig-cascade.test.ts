@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { needsForensicsCascade } from "../../extension/src/lib/visual-zig";
+import { needsForensicsCascade } from "../../extension/src/lib/forensics-cascade";
 
 describe("needsForensicsCascade", () => {
   it("skips forensics when distilled near-threshold gate applies", () => {

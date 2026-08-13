@@ -6,7 +6,7 @@ Produces CPU + GPU numbers for:
 | --- | --- |
 | `js-node-cpu-distilled` / `js-node-cpu-dual` | Node `onnxruntime-node` |
 | `zig-{webgpu,vulkan,xnnpack,cpu}-{distilled,dual,cascade}` | Zig host + ORT (prefers EP, falls back). `vulkan` aliases native WebGPU/Dawn→Vulkan |
-| `js-ext-wasm-dual` / `js-ext-webgpu-dual` | Unpacked MV3 extension in Playwright Chromium |
+| `js-ext-wasm-cascade` / `js-ext-webgpu-cascade` | Unpacked MV3 extension (ORT-web or Zig+ORT WASM): distilled → CF cascade |
 
 ## Local PC
 

@@ -111,10 +111,12 @@ Runs the **real unpacked extension** in Playwright Chromium (ORT WebGPU / WASM) 
 ```bash
 npm ci                             # required once (esbuild, playwright, …)
 npm run setup:models && npm run setup:ort && npm run build:zig
-npm run eval:suite                 # local PC: host + browser wasm/webgpu
+npm run eval:suite                 # local PC: host + browser wasm/webgpu (cascade dual)
 npm run eval:suite:ci              # CI-sized subset (wasm + key host modes)
 # EVAL_SUITE_LIMIT=16 EVAL_SUITE_BROWSER_PROVIDERS=webgpu,wasm npm run eval:suite
 ```
+
+Browser visual matches the Zig host: **cascade dual** (distilled first, Community Forensics only when fusion gates fire). Silent stub fallback is disabled — if offscreen ORT fails, the result is an error, not a fake score.
 
 Live page inside the extension (after Load unpacked `dist/`):
 

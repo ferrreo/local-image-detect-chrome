@@ -1,0 +1,34 @@
+/**
+ * Shared distilled → Community Forensics cascade gate.
+ * Used by the Zig host, browser ORT-web, and Zig+ORT WASM paths so they
+ * only pay for the second head when fusion can actually use it.
+ */
+export type ForensicsCascadeInput = {
+  distilled: number;
+  spectral: number;
+  laplacianVariance: number;
+  chromaFlatness: number;
+};
+
+/** Mirrors fusion.ts forensics gates. */
+export function needsForensicsCascade(args: ForensicsCascadeInput): boolean {
+  const d = args.distilled;
+  const sp = args.spectral;
+  if (d >= 0.645 && sp <= 0.43) return false;
+  const canCfBand =
+    d >= 0.3 &&
+    args.laplacianVariance >= 580 &&
+    args.chromaFlatness >= 0.34 &&
+    args.chromaFlatness <= 0.7;
+  const canFlat =
+    d >= 0.62 &&
+    args.chromaFlatness >= 0.74 &&
+    args.laplacianVariance >= 700;
+  const canHighFlat =
+    d >= 0.4 &&
+    args.laplacianVariance >= 800 &&
+    args.chromaFlatness >= 0.6 &&
+    args.chromaFlatness <= 0.72 &&
+    sp <= 0.38;
+  return canCfBand || canFlat || canHighFlat;
+}

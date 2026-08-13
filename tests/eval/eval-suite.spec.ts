@@ -165,7 +165,7 @@ test.describe("Offline extension eval suite", () => {
         const parsed = JSON.parse(raw) as Record<string, unknown>;
         if (state === "error") {
           browserResults.push({
-            mode: `js-ext-${provider}-dual`,
+            mode: `js-ext-${provider}-cascade`,
             skipped: provider === "webgpu",
             error: parsed.message ?? "browser eval failed",
             providerRequested: provider,
@@ -175,9 +175,10 @@ test.describe("Offline extension eval suite", () => {
           }
         } else {
           browserResults.push({
-            mode: `js-ext-${provider}-dual`,
+            mode: `js-ext-${provider}-cascade`,
             runtime: "extension-chromium",
             engine: "onnxruntime-web",
+            visualMode: "cascade",
             preferEp: provider,
             distilledEp: parsed.providerActual,
             forensicsEp: parsed.providerActual,

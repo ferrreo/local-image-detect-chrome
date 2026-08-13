@@ -19,6 +19,7 @@ import {
   stubVisualClassify,
   type VisualClassification,
 } from "./visual-stub";
+import { needsForensicsCascade } from "./forensics-cascade";
 
 export type { VisualClassification };
 
@@ -217,9 +218,26 @@ async function runModel(
   return loaded.model.aiLabelIndex === 0 ? p0 : p1;
 }
 
+export type ClassifyVisualOptions = {
+  stub?: boolean;
+  /**
+   * Cascade dual (default true): run distilled, then Community Forensics only
+   * when `needsForensicsCascade` fires. Set false for always-dual.
+   */
+  cascade?: boolean;
+  spectral?: {
+    score: number;
+    laplacianVariance: number;
+    chromaFlatness: number;
+  };
+  /** Force which heads to run. Overrides cascade when set. */
+  runDistilled?: boolean;
+  runForensics?: boolean;
+};
+
 export async function classifyVisual(
   bitmap: ImageBitmap,
-  options?: { stub?: boolean },
+  options?: ClassifyVisualOptions,
 ): Promise<VisualClassification> {
   if (options?.stub) {
     const imageData = await rasterizeForModel(bitmap, VISUAL_MODEL.inputSize);
@@ -228,26 +246,83 @@ export async function classifyVisual(
 
   const ort = await loadOrt();
   const sessions = await getSessions();
+  const distilledSession = sessions.find((s) => s.model.id === DISTILLED_MODEL.id);
+  const forensicsSession = sessions.find((s) => s.model.id === FORENSICS_MODEL.id);
+  if (!distilledSession) {
+    throw new Error("Distilled visual session missing");
+  }
+
+  const forceDistilled = options?.runDistilled;
+  const forceForensics = options?.runForensics;
+  const cascade = options?.cascade !== false;
+
+  const runDistilled = forceDistilled !== false;
+  let runForensics = forceForensics === true;
+  if (forceForensics === undefined && forceDistilled === undefined) {
+    // Default path: distilled always; forensics via cascade or always-dual.
+    runForensics = !cascade;
+  }
+
   const scores = new Map<string, number>();
-  for (const loaded of sessions) {
-    scores.set(loaded.model.id, await runModel(ort, loaded, bitmap));
+  if (runDistilled) {
+    scores.set(
+      DISTILLED_MODEL.id,
+      await runModel(ort, distilledSession, bitmap),
+    );
   }
 
   const distilled = scores.get(DISTILLED_MODEL.id);
-  const forensics = scores.get(FORENSICS_MODEL.id);
-  if (distilled === undefined) {
+  if (runDistilled && distilled === undefined) {
     throw new Error("Distilled visual score missing");
   }
 
+  if (
+    forceForensics === undefined &&
+    forceDistilled === undefined &&
+    cascade &&
+    forensicsSession &&
+    distilled !== undefined &&
+    options?.spectral
+  ) {
+    runForensics = needsForensicsCascade({
+      distilled,
+      spectral: options.spectral.score,
+      laplacianVariance: options.spectral.laplacianVariance,
+      chromaFlatness: options.spectral.chromaFlatness,
+    });
+  }
+
+  if (runForensics) {
+    if (!forensicsSession) {
+      throw new Error("Community Forensics session missing");
+    }
+    scores.set(
+      FORENSICS_MODEL.id,
+      await runModel(ort, forensicsSession, bitmap),
+    );
+  }
+
+  const forensics = scores.get(FORENSICS_MODEL.id);
+  if (distilled === undefined && forensics === undefined) {
+    throw new Error("No visual score produced");
+  }
+  const primary = distilled !== undefined ? distilled : forensics;
+  if (primary === undefined) {
+    throw new Error("No visual score produced");
+  }
+
   return {
-    score: asAiConfidence(distilled),
+    // Primary head is always distilled when present (fusion expects that).
+    score: asAiConfidence(primary),
     ...(forensics !== undefined
       ? { secondaryScore: asAiConfidence(forensics) }
       : {}),
     backend: activeBackend.kind === "none" ? { kind: "wasm" } : activeBackend,
-    detail: [...scores.entries()]
-      .map(([id, v]) => `${id}=${v.toFixed(3)}`)
-      .join(","),
+    detail: [
+      ...[...scores.entries()].map(([id, v]) => `${id}=${v.toFixed(3)}`),
+      cascade ? "cascade" : "dual",
+      runForensics ? "ranForensics" : "skipForensics",
+    ].join(","),
   };
 }
 

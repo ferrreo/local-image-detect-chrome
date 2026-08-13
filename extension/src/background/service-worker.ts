@@ -193,14 +193,21 @@ async function detectFromBytes(args: {
     };
   }
 
-  const result = await analyzeLocalStub({
+  // Do not silently fall back to the heuristic stub — that reported as
+  // "webgpu/wasm stub" in eval and tanked BA. Surface the offscreen failure.
+  const message =
+    offscreen?.result.label.kind === "error"
+      ? offscreen.result.label.message
+      : "Offscreen visual inference unavailable";
+  backendCache = { kind: "none" };
+  return {
     imageId: args.imageId,
-    bytes: args.bytes,
-    mimeType: args.mimeType,
-    threshold: options.threshold,
-  });
-  backendCache = result.backend;
-  return result;
+    label: { kind: "error", message },
+    confidence: asAiConfidence(0.5),
+    tiers: [],
+    backend: { kind: "none" },
+    elapsedMs: 0,
+  };
 }
 
 async function analyzeImage(

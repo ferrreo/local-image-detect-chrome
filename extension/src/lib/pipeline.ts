@@ -2,11 +2,16 @@ import { analyzeProvenance } from "./provenance";
 import { analyzeSpectral } from "./spectral";
 import { classifyVisual } from "./visual-classifier";
 import {
+  classifyVisualZigWasm,
+  isZigWasmOrtReady,
+} from "./visual-zig-wasm";
+import {
   decodeImageBytes,
   guessMimeType,
   rasterizeForSpectral,
 } from "./image-decode";
 import { fuseDetection } from "./fusion";
+import { needsForensicsCascade } from "./forensics-cascade";
 import {
   asAiConfidence,
   type AiConfidence,
@@ -14,17 +19,26 @@ import {
   type InferenceBackend,
 } from "../shared/types";
 
+export type VisualEngineKind = "onnxruntime-web" | "zig-wasm";
+
 export type PipelineOptions = {
   imageId: string;
   bytes: ArrayBuffer;
   mimeType?: string;
   threshold?: number;
   stubVisual?: boolean;
+  /**
+   * Distilled → optional Community Forensics (default true).
+   * Applies to onnxruntime-web and Zig+ORT WASM visual backends.
+   */
+  cascade?: boolean;
+  /** Prefer Zig+ORT WASM when linked; otherwise onnxruntime-web. */
+  visualEngine?: VisualEngineKind | "auto";
 };
 
 /**
  * Full local detection pipeline:
- * provenance (bytes) → spectral forensics → visual ONNX (WebGPU/WASM) → fusion.
+ * provenance → spectral → visual (cascade dual) → fusion.
  */
 export async function detectAiImage(
   options: PipelineOptions,
@@ -32,6 +46,7 @@ export async function detectAiImage(
   const started = performance.now();
   const bytesView = new Uint8Array(options.bytes);
   const mimeType = options.mimeType ?? guessMimeType(bytesView);
+  const cascade = options.cascade !== false;
 
   const provenance = analyzeProvenance(bytesView);
   const provenanceTier = {
@@ -59,13 +74,57 @@ export async function detectAiImage(
       spectralDetail = spectral.detail;
       spectralFeatures = spectral.features;
 
-      const visual = await classifyVisual(decoded.bitmap, {
+      const classifyOpts = {
         stub: options.stubVisual === true,
-      });
+        cascade,
+        spectral: {
+          score: spectral.score,
+          laplacianVariance: spectral.features.laplacianVariance,
+          chromaFlatness: spectral.features.chromaFlatness,
+        },
+      };
+
+      const prefer =
+        options.visualEngine ??
+        (typeof globalThis !== "undefined" &&
+        (globalThis as { TRUEPIXEL_VISUAL_ENGINE?: string })
+          .TRUEPIXEL_VISUAL_ENGINE === "zig-wasm"
+          ? "zig-wasm"
+          : "auto");
+      const useZig =
+        prefer === "zig-wasm" ||
+        (prefer === "auto" && (await isZigWasmOrtReady()));
+      const classify = useZig ? classifyVisualZigWasm : classifyVisual;
+
+      const visual = await classify(decoded.bitmap, classifyOpts);
       visualScore = visual.score;
       visualSecondary = visual.secondaryScore;
-      visualDetail = visual.detail;
+      visualDetail = `${visual.detail}${useZig ? ",engine=zig-wasm" : ",engine=ort-web"}`;
       backend = visual.backend;
+
+      // Defense in depth: if a backend returned only distilled, apply the same gate.
+      if (
+        cascade &&
+        visualSecondary === undefined &&
+        !options.stubVisual &&
+        spectralFeatures &&
+        needsForensicsCascade({
+          distilled: visualScore,
+          spectral: spectralScore,
+          laplacianVariance: spectralFeatures.laplacianVariance,
+          chromaFlatness: spectralFeatures.chromaFlatness,
+        })
+      ) {
+        const forensicsOnly = await classify(decoded.bitmap, {
+          cascade: false,
+          runDistilled: false,
+          runForensics: true,
+        });
+        visualSecondary =
+          forensicsOnly.secondaryScore ?? forensicsOnly.score;
+        visualDetail = `${visualDetail};${forensicsOnly.detail}`;
+        backend = forensicsOnly.backend;
+      }
     } finally {
       decoded.bitmap.close();
     }
