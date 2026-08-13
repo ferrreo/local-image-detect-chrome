@@ -83,11 +83,15 @@ gh run view --log
 
 Balanced accuracy is measured at a **65% confidence threshold**, matching the bounty brief. Configure the threshold on the options page if you need a different operating point for personal use.
 
-Local eval prefers the stored OpenRouter multi-model corpus under `benchmark/openrouter/` (stub visual path by default):
+Local eval prefers the stored OpenRouter multi-model corpus under `benchmark/openrouter/` (real ONNX by default; `TRUEPIXEL_STUB=1` for the heuristic stub):
 
 ```bash
 npm run eval:local
 ```
+
+On that corpus the dual-model path currently reports **100% balanced accuracy @ 65%**, at roughly **~137 ms/image** average on Node CPU (vs ~55 ms with distilled alone).
+
+> **TODO:** Cut dual-model latency. Running Community Forensics on every non-provenance image is the main cost (~2.5× slower than distilled-only). Cascade / early-exit (only run the second head when distilled + spectral are ambiguous), WebGPU parallelism, or a single distilled student would help.
 
 Refresh that corpus incrementally when OpenRouter adds models (needs `OPENROUTER_API_KEY` in `.env`):
 
