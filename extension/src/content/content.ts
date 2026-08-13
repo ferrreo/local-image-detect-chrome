@@ -196,7 +196,11 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
     "truepixel-clickable",
   );
 
-  const pct = Math.round(result.confidence * 100);
+  // Floor uncertain % so "? 70%" cannot appear when score is still under a 70% threshold.
+  const pct =
+    result.label.kind === "uncertain"
+      ? Math.floor(result.confidence * 100 + 1e-9)
+      : Math.round(result.confidence * 100);
   const timingHint = result.timing
     ? ` · ${result.timing.totalMs.toFixed(0)}ms` +
       (result.timing.ranForensics
@@ -233,7 +237,7 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
     case "uncertain":
       badge.classList.add("truepixel-uncertain");
       badge.textContent = `? ${pct}%`;
-      badge.title = `TruePixel: below AI threshold (${pct}% AI confidence)${timingHint}`;
+      badge.title = `TruePixel: below AI threshold (${pct}% AI confidence). Blur/blank only applies to AI labels.${timingHint}`;
       break;
     case "error":
       badge.classList.add("truepixel-error");

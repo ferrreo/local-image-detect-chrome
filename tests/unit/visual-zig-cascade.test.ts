@@ -2,15 +2,26 @@ import { describe, expect, it } from "vitest";
 import { needsForensicsCascade } from "../../extension/src/lib/forensics-cascade";
 
 describe("needsForensicsCascade", () => {
-  it("skips forensics when distilled near-threshold gate applies", () => {
+  it("skips forensics only when distilled is already decisive", () => {
     expect(
       needsForensicsCascade({
-        distilled: 0.63,
+        distilled: 0.72,
         spectral: 0.4,
         laplacianVariance: 900,
         chromaFlatness: 0.5,
       }),
     ).toBe(false);
+  });
+
+  it("asks forensics to confirm near-threshold distilled scores", () => {
+    expect(
+      needsForensicsCascade({
+        distilled: 0.69,
+        spectral: 0.42,
+        laplacianVariance: 900,
+        chromaFlatness: 0.5,
+      }),
+    ).toBe(true);
   });
 
   it("requests forensics in the flatness band used by fusion", () => {

@@ -150,8 +150,8 @@ describe("fuseDetection", () => {
     expect(out.label.kind).not.toBe("ai");
   });
 
-  it("still catches near-threshold distilled AI without needing mild CF", () => {
-    // krea kitchen_window-style: distilled 0.644 / spectral 0.423
+  it("catches near-threshold distilled AI when CF agrees", () => {
+    // krea kitchen_window-style: distilled 0.644 / spectral 0.423 / CF 0.727
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.423),
@@ -166,7 +166,42 @@ describe("fuseDetection", () => {
     });
     expect(out.confidence).toBeGreaterThanOrEqual(0.65);
     expect(out.label.kind).toBe("ai");
-    expect(out.tiers.at(-1)?.detail).toBe("distilled-near-threshold");
+    expect(out.tiers.at(-1)?.detail).toBe("distilled-near-threshold-cf");
+  });
+
+  it("does not solo-promote ~70% distilled group-photo scores", () => {
+    // Observed: real group selfie showed "? 70%" after threshold raised to 70%.
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.42),
+      visual: tier("visual", 0.695),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.41,
+        laplacianVariance: 1600,
+        chromaFlatness: 0.48,
+        blockiness: 0.2,
+      },
+    });
+    expect(out.confidence).toBeLessThan(0.7);
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).not.toMatch(/distilled-near-threshold/);
+  });
+
+  it("does not promote near-threshold distilled when CF disagrees", () => {
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.42),
+      visual: tier("visual", 0.69),
+      visualSecondary: tier("visual", 0.55),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.4,
+        laplacianVariance: 1500,
+        chromaFlatness: 0.5,
+        blockiness: 0.2,
+      },
+    });
+    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.label.kind).not.toBe("ai");
   });
 });
 

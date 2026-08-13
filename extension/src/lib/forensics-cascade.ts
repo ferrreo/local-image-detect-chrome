@@ -14,9 +14,10 @@ export type ForensicsCascadeInput = {
 export function needsForensicsCascade(args: ForensicsCascadeInput): boolean {
   const d = args.distilled;
   const sp = args.spectral;
-  if (d >= 0.63 && sp <= 0.43) return false;
-  // StyleGAN / mid-band misses: distilled unsure — always ask CF.
-  if (d >= 0.48 && d < 0.6) return true;
+  // Only skip CF when distilled is already decisive on its own.
+  if (d >= 0.72 && sp <= 0.43) return false;
+  // Mid / near-threshold: always ask CF (confirms AI, vetoes real-photo FPs).
+  if (d >= 0.48 && d < 0.72) return true;
   const canCfBand =
     d >= 0.3 &&
     args.laplacianVariance >= 580 &&

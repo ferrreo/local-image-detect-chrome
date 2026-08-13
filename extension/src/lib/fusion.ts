@@ -70,9 +70,27 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   let confidence: AiConfidence;
   let detail: string;
 
-  if (distilled >= 0.63 && spectral <= 0.43) {
+  if (
+    // Strong distilled alone — only when clearly over the eval line.
+    distilled >= 0.72 &&
+    spectral <= 0.43
+  ) {
     confidence = asAiConfidence(Math.max(distilled, 0.66));
     detail = "distilled-near-threshold";
+  } else if (
+    // Near-threshold distilled needs CF agreement. Solo promote was stamping
+    // busy real photos (group selfies / restaurant) at ~70% without CF.
+    forensics !== undefined &&
+    distilled >= 0.63 &&
+    distilled < 0.72 &&
+    spectral <= 0.43 &&
+    forensics >= 0.72 &&
+    forensics >= distilled - 0.02
+  ) {
+    confidence = asAiConfidence(
+      Math.max(0.66, 0.45 * distilled + 0.55 * forensics),
+    );
+    detail = "distilled-near-threshold-cf";
   } else if (
     forensics !== undefined &&
     feats &&
