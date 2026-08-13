@@ -27,7 +27,8 @@ export const MODEL_CACHE_NAME = "truepixel-models-v1";
 
 /**
  * Cache / package version. Bump when the required artifact set changes.
- * fp32 distilled is required for WebGPU adapters without shader-f16.
+ * fp32 distilled is packaged for legacy / experiments; runtime prefers fp16
+ * on WASM when the adapter lacks shader-f16 (never fp32-on-WebGPU).
  */
 export const MODEL_VERSION =
   "distilled-fp16+fp32+community-forensics-q4-v1";
@@ -37,7 +38,7 @@ export const MODEL_VERSION =
  * Source: https://huggingface.co/onnx-community/ai-image-detect-distilled-ONNX
  * Labels: 0=fake, 1=real
  *
- * Prefer on WASM, and on WebGPU when the adapter supports shader-f16.
+ * WebGPU only when adapter has shader-f16 and passes a latency probe; else WASM.
  */
 export const DISTILLED_MODEL = {
   id: "ai-image-detect-distilled",
@@ -56,7 +57,8 @@ export const DISTILLED_MODEL = {
 
 /**
  * Same distilled detector, fp32 ONNX.
- * Required for WebGPU when the adapter lacks shader-f16 (fp16 Transpose fails).
+ * Packaged for adapters that cannot run fp16 graphs; cascade defaults to
+ * WASM fp16 instead of putting this on WebGPU (pathological latency).
  */
 export const DISTILLED_MODEL_FP32 = {
   id: "ai-image-detect-distilled-fp32",
@@ -78,8 +80,10 @@ export const DISTILLED_MODEL_FP32 = {
  * Source: https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX
  * Labels: softmax index 1 treated as AI/fake for this export.
  *
- * Browser WebGPU: use ORT #29599 `preferredMatmulAccumulatorPrecision: "f32"`
- * (vendored via `npm run setup:ort-web-pr29599`). Falls back to WASM otherwise.
+ * Browser cascade runs this on WASM for latency. ORT #29599
+ * (`preferredMatmulAccumulatorPrecision: "f32"`, vendored via
+ * `npm run setup:ort-web-pr29599`) can place it on WebGPU when explicitly
+ * requested — default cascade does not.
  */
 export const FORENSICS_MODEL = {
   id: "community-forensics-deepfake-det",
