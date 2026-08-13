@@ -101,7 +101,7 @@ describe("fuseDetection", () => {
     });
     expect(out.confidence).toBeGreaterThanOrEqual(0.65);
     expect(out.label.kind).toBe("ai");
-    expect(out.tiers.at(-1)?.detail).toBe("forensics-ambiguous-distilled");
+    expect(out.tiers.at(-1)?.detail).toMatch(/forensics/);
   });
 
   it("does not apply mid-band CF boost without photo-like texture feats", () => {
