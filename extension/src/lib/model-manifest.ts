@@ -52,7 +52,9 @@ export const DISTILLED_MODEL = {
   aiLabelIndex: 0,
   mean: [0.5, 0.5, 0.5],
   std: [0.5, 0.5, 0.5],
-  graphOptimizationLevel: "all",
+  // "all" triggers SimplifiedLayerNormFusion bugs on this fp16 ViT with some
+  // ORT builds (session create → GetIndexFromName / InsertedPrecisionFreeCast).
+  graphOptimizationLevel: "disabled",
 } as const satisfies ModelArtifact;
 
 /**
@@ -72,7 +74,7 @@ export const DISTILLED_MODEL_FP32 = {
   aiLabelIndex: 0,
   mean: [0.5, 0.5, 0.5],
   std: [0.5, 0.5, 0.5],
-  graphOptimizationLevel: "all",
+  graphOptimizationLevel: "disabled",
 } as const satisfies ModelArtifact;
 
 /**
