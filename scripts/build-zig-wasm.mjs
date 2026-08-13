@@ -111,6 +111,7 @@ const exports = [
   "_tp_session_free",
   "_tp_session_run",
   "_tp_rgb_to_nchw_half",
+  "_tp_rgba_resize_nchw",
   "_tp_softmax2",
 ].join(",");
 

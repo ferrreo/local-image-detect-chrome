@@ -93,7 +93,8 @@ async function fetchImageBytes(
 async function inferViaOffscreen(args: {
   requestId: string;
   imageId: string;
-  bytes: ArrayBuffer;
+  bytes?: ArrayBuffer;
+  src?: string;
   mimeType: string;
 }): Promise<OffscreenInferResponse | undefined> {
   if (!chrome.offscreen) return undefined;
@@ -105,8 +106,14 @@ async function inferViaOffscreen(args: {
       kind: "offscreen-infer",
       requestId: args.requestId,
       imageId: args.imageId,
-      bytesBase64: arrayBufferToBase64(args.bytes),
       mimeType: args.mimeType,
+      ...(args.src
+        ? { src: args.src }
+        : {
+            bytesBase64: arrayBufferToBase64(
+              args.bytes ?? new ArrayBuffer(0),
+            ),
+          }),
     };
     const response: unknown = await chrome.runtime.sendMessage(message);
     if (
@@ -234,6 +241,26 @@ async function analyzeImage(
   request: AnalyzeImageRequest,
 ): Promise<ExtensionResponse> {
   try {
+    const options = await loadOptions();
+    // Hot path: offscreen fetches `src` itself (no SW fetch + base64 tax).
+    const offscreen = await inferViaOffscreen({
+      requestId: request.requestId,
+      imageId: request.imageId,
+      src: request.src,
+      mimeType: "application/octet-stream",
+    });
+    if (offscreen && offscreen.result.label.kind !== "error") {
+      backendCache = offscreen.result.backend;
+      return {
+        kind: "analyze-image-result",
+        requestId: request.requestId,
+        result: {
+          ...offscreen.result,
+          label: relabel(offscreen.result.confidence, options.threshold),
+        },
+      };
+    }
+    // Fallback: SW fetch + bytes path (content scripts / opaque URLs).
     const { bytes, mimeType } = await fetchImageBytes(request.src);
     const result = await detectFromBytes({
       imageId: request.imageId,

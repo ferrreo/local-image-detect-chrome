@@ -48,6 +48,51 @@ export fn tp_rgb_to_nchw_half(
     }
 }
 
+/// Bilinear stretch-resize RGBA → NCHW float32 (mean/std 0.5).
+/// Matches native Zig host `preprocess.tensorFromImageBytes` sampling.
+export fn tp_rgba_resize_nchw(
+    rgba: [*]const u8,
+    src_w: usize,
+    src_h: usize,
+    size: usize,
+    out: [*]f32,
+) void {
+    if (src_w == 0 or src_h == 0 or size == 0) return;
+    const plane = size * size;
+    const inv_x: f32 = if (size <= 1) 0 else @as(f32, @floatFromInt(src_w - 1)) / @as(f32, @floatFromInt(size - 1));
+    const inv_y: f32 = if (size <= 1) 0 else @as(f32, @floatFromInt(src_h - 1)) / @as(f32, @floatFromInt(size - 1));
+
+    var y: usize = 0;
+    while (y < size) : (y += 1) {
+        const fy = @as(f32, @floatFromInt(y)) * inv_y;
+        const y0: usize = @intFromFloat(@floor(fy));
+        const y1 = @min(y0 + 1, src_h - 1);
+        const wy = fy - @as(f32, @floatFromInt(y0));
+        var x: usize = 0;
+        while (x < size) : (x += 1) {
+            const fx = @as(f32, @floatFromInt(x)) * inv_x;
+            const x0: usize = @intFromFloat(@floor(fx));
+            const x1 = @min(x0 + 1, src_w - 1);
+            const wx = fx - @as(f32, @floatFromInt(x0));
+
+            inline for (0..3) |ch| {
+                const p00 = (y0 * src_w + x0) * 4 + ch;
+                const p01 = (y0 * src_w + x1) * 4 + ch;
+                const p10 = (y1 * src_w + x0) * 4 + ch;
+                const p11 = (y1 * src_w + x1) * 4 + ch;
+                const v00: f32 = @floatFromInt(rgba[p00]);
+                const v01: f32 = @floatFromInt(rgba[p01]);
+                const v10: f32 = @floatFromInt(rgba[p10]);
+                const v11: f32 = @floatFromInt(rgba[p11]);
+                const top = v00 + (v01 - v00) * wx;
+                const bot = v10 + (v11 - v10) * wx;
+                const v = (top + (bot - top) * wy) / 255.0;
+                out[ch * plane + y * size + x] = (v - 0.5) / 0.5;
+            }
+        }
+    }
+}
+
 comptime {
     _ = std;
 }

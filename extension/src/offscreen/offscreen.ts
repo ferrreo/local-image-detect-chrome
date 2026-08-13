@@ -21,6 +21,7 @@ import type {
 } from "../shared/types";
 import { asAiConfidence } from "../shared/types";
 import { base64ToArrayBuffer } from "../lib/bytes-codec";
+import { guessMimeType } from "../lib/image-decode";
 
 async function loadProviderPreference(): Promise<VisualProvider["kind"]> {
   try {
@@ -42,14 +43,41 @@ async function loadProviderPreference(): Promise<VisualProvider["kind"]> {
   return "auto";
 }
 
+async function loadInferBytes(
+  request: OffscreenInferRequest,
+): Promise<{ bytes: ArrayBuffer; mimeType: string }> {
+  if (request.src) {
+    const response = await fetch(request.src, {
+      credentials: "omit",
+      cache: "force-cache",
+    });
+    if (!response.ok) {
+      throw new Error(`Offscreen image fetch failed (${response.status})`);
+    }
+    const bytes = await response.arrayBuffer();
+    const headerType = response.headers.get("content-type") ?? "";
+    const mimeType = headerType.startsWith("image/")
+      ? (headerType.split(";")[0] ?? request.mimeType)
+      : guessMimeType(new Uint8Array(bytes));
+    return { bytes, mimeType };
+  }
+  if (request.bytesBase64) {
+    return {
+      bytes: base64ToArrayBuffer(request.bytesBase64),
+      mimeType: request.mimeType,
+    };
+  }
+  throw new Error("offscreen-infer requires src or bytesBase64");
+}
+
 async function handleInfer(
   request: OffscreenInferRequest,
 ): Promise<OffscreenInferResponse> {
-  const bytes = base64ToArrayBuffer(request.bytesBase64);
+  const { bytes, mimeType } = await loadInferBytes(request);
   const result = await detectAiImage({
     imageId: request.imageId,
     bytes,
-    mimeType: request.mimeType,
+    mimeType,
   });
 
   return {

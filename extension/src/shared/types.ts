@@ -164,10 +164,15 @@ export type OffscreenInferRequest = {
   requestId: string;
   imageId: string;
   /**
-   * Image bytes as base64. ArrayBuffer is not reliable across SW↔offscreen
-   * structured clone (often arrives non-buffer → decode failures).
+   * Prefer `src` when the offscreen document can fetch it (eval / http images).
+   * Avoids SW fetch + base64 + second decode on the hot path.
    */
-  bytesBase64: string;
+  src?: string;
+  /**
+   * Image bytes as base64 when `src` is unavailable.
+   * ArrayBuffer is not reliable across SW↔offscreen structured clone.
+   */
+  bytesBase64?: string;
   mimeType: string;
 };
 

@@ -137,16 +137,21 @@ export async function rasterizeForSpectral(
     );
   }
 
-  // Browser ImageBitmap: read through a capped canvas, then box-downsample.
-  const maxRead = 768;
-  const readScale = Math.min(
+  // Browser ImageBitmap: read native pixels then box-downsample.
+  // Do NOT pre-shrink (old 768 cap depressed laplacianVariance and skipped
+  // Community Forensics on Riverflow cases → 97.4% BA vs host 100%).
+  const maxNative = 4096;
+  const nativeScale = Math.min(
     1,
-    maxRead / Math.max(bitmap.width, bitmap.height),
+    maxNative / Math.max(bitmap.width, bitmap.height),
   );
-  const readW = Math.max(32, Math.round(bitmap.width * readScale));
-  const readH = Math.max(32, Math.round(bitmap.height * readScale));
+  const readW = Math.max(32, Math.round(bitmap.width * nativeScale));
+  const readH = Math.max(32, Math.round(bitmap.height * nativeScale));
   const canvas = new OffscreenCanvas(readW, readH);
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  const ctx = canvas.getContext("2d", {
+    willReadFrequently: true,
+    colorSpace: "srgb",
+  });
   if (!ctx) {
     throw new Error("OffscreenCanvas 2d context unavailable");
   }

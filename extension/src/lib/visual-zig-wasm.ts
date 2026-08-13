@@ -40,6 +40,13 @@ type ZigOrtModule = {
     aiLabel: number,
   ) => number;
   _tp_rgb_to_nchw_half: (rgbPtr: number, size: number, outPtr: number) => void;
+  _tp_rgba_resize_nchw: (
+    rgbaPtr: number,
+    srcW: number,
+    srcH: number,
+    size: number,
+    outPtr: number,
+  ) => void;
 };
 
 type CreateModule = (opts?: {
@@ -169,36 +176,37 @@ export async function warmVisualZigWasm(): Promise<InferenceBackend> {
   return warmPromise;
 }
 
-async function runSession(
+async function bitmapToRgba(bitmap: ImageBitmap): Promise<ImageData> {
+  const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+  const ctx = canvas.getContext("2d", {
+    willReadFrequently: true,
+    colorSpace: "srgb",
+  });
+  if (!ctx) throw new Error("OffscreenCanvas 2d context unavailable");
+  ctx.drawImage(bitmap, 0, 0);
+  return ctx.getImageData(0, 0, bitmap.width, bitmap.height);
+}
+
+function runSessionOnRgba(
   m: ZigOrtModule,
   sessionId: number,
-  bitmap: ImageBitmap,
+  rgba: ImageData,
   model: ModelArtifact,
-): Promise<number> {
-  const imageData = await rasterizeForModel(bitmap, model.inputSize);
+): number {
   const size = model.inputSize;
-  const rgbLen = size * size * 3;
+  const rgbaLen = rgba.data.byteLength;
   const nchwLen = 3 * size * size;
-  const rgbPtr = m._tp_malloc(rgbLen);
+  const rgbaPtr = m._tp_malloc(rgbaLen);
   const nchwPtr = m._tp_malloc(nchwLen * 4);
-  if (!rgbPtr || !nchwPtr) {
-    if (rgbPtr) m._tp_free(rgbPtr, rgbLen);
+  if (!rgbaPtr || !nchwPtr) {
+    if (rgbaPtr) m._tp_free(rgbaPtr, rgbaLen);
     if (nchwPtr) m._tp_free(nchwPtr, nchwLen * 4);
     throw new Error("tp_malloc for tensors failed");
   }
   try {
-    // imageData is RGBA — pack RGB for the Zig helper.
-    const rgba = imageData.data;
-    const rgb = new Uint8Array(rgbLen);
-    for (let i = 0, j = 0; i < size * size; i += 1, j += 3) {
-      const p = i * 4;
-      rgb[j] = rgba[p] ?? 0;
-      rgb[j + 1] = rgba[p + 1] ?? 0;
-      rgb[j + 2] = rgba[p + 2] ?? 0;
-    }
-    m.HEAPU8.set(rgb, rgbPtr);
-    // emscripten pointers are byte addresses for both [*]u8 and [*]f32 exports.
-    m._tp_rgb_to_nchw_half(rgbPtr, size, nchwPtr);
+    m.HEAPU8.set(rgba.data, rgbaPtr);
+    // Host-matching bilinear resize + normalize inside Zig WASM.
+    m._tp_rgba_resize_nchw(rgbaPtr, rgba.width, rgba.height, size, nchwPtr);
     const score = m._tp_session_run(
       sessionId,
       nchwPtr,
@@ -210,7 +218,7 @@ async function runSession(
     }
     return score;
   } finally {
-    m._tp_free(rgbPtr, rgbLen);
+    m._tp_free(rgbaPtr, rgbaLen);
     m._tp_free(nchwPtr, nchwLen * 4);
   }
 }
@@ -239,11 +247,15 @@ export async function classifyVisualZigWasm(
     runForensics = !cascade;
   }
 
+  // One native RGBA read; both heads bilinear-resize in Zig (matches host).
+  const rgba =
+    runDistilled || runForensics ? await bitmapToRgba(bitmap) : undefined;
+
   const scores = new Map<string, number>();
-  if (runDistilled) {
+  if (runDistilled && rgba) {
     scores.set(
       DISTILLED_MODEL.id,
-      await runSession(m, distilledId, bitmap, DISTILLED_MODEL),
+      runSessionOnRgba(m, distilledId, rgba, DISTILLED_MODEL),
     );
   }
   const distilled = scores.get(DISTILLED_MODEL.id);
@@ -263,10 +275,10 @@ export async function classifyVisualZigWasm(
     });
   }
 
-  if (runForensics) {
+  if (runForensics && rgba) {
     scores.set(
       FORENSICS_MODEL.id,
-      await runSession(m, forensicsId, bitmap, FORENSICS_MODEL),
+      runSessionOnRgba(m, forensicsId, rgba, FORENSICS_MODEL),
     );
   }
 
