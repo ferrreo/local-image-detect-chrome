@@ -193,9 +193,21 @@ test.describe("Offline extension eval suite", () => {
                 : "onnxruntime-web";
             const modePrefix =
               visualEngine === "zig-ort-wasm" ? "js-ext-zig" : "js-ext";
-            // Distilled EP from suite; CF may be webgpu when #29599 build is used.
-            const distilledEp = parsed.providerActual;
-            const forensicsEp = distilledEp;
+            // Prefer EPs from cascade detail tags (CF may differ under #29599).
+            const rows = Array.isArray(parsed.rows) ? parsed.rows : [];
+            const detail = rows
+              .map((r) =>
+                r && typeof r === "object" && "tiers" in r
+                  ? String((r as { tiers?: unknown }).tiers ?? "")
+                  : "",
+              )
+              .find((t) => t.includes("distilledEp="));
+            const epFrom = (key: string, fallback: unknown) => {
+              const m = detail?.match(new RegExp(`${key}=([a-z0-9-]+)`));
+              return m?.[1] ?? fallback;
+            };
+            const distilledEp = epFrom("distilledEp", parsed.providerActual);
+            const forensicsEp = epFrom("forensicsEp", distilledEp);
             browserResults.push({
               mode: `${modePrefix}-${provider}-cascade`,
               runtime: "extension-chromium",

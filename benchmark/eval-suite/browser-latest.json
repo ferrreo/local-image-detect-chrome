@@ -1,29 +1,41 @@
 {
-  "generatedAt": "2026-08-13T15:05:18.234Z",
+  "generatedAt": "2026-08-13T18:32:30.366Z",
   "providers": [
     "wasm",
     "webgpu"
   ],
+  "engines": [
+    "ort-web"
+  ],
   "results": [
     {
-      "mode": "js-ext-wasm-dual",
+      "mode": "js-ext-wasm-cascade",
       "runtime": "extension-chromium",
       "engine": "onnxruntime-web",
+      "visualMode": "cascade",
       "preferEp": "wasm",
-      "distilledEp": "none",
-      "forensicsEp": "none",
-      "gpuAvailable": false,
+      "distilledEp": "wasm",
+      "forensicsEp": "wasm",
+      "gpuAvailable": true,
       "threshold": 0.65,
-      "balancedAccuracy": 0.9078947368421053,
+      "balancedAccuracy": 1,
       "confusion": {
-        "tp": 31,
+        "tp": 38,
         "tn": 38,
         "fp": 0,
-        "fn": 7
+        "fn": 0
       },
       "timing": {
-        "avgTotalMs": 50.96447368422033,
-        "count": 76
+        "avgTotalMs": 406.8618421056553,
+        "p50TotalMs": 243.70000000298023,
+        "p90TotalMs": 1734.4000000022352,
+        "count": 76,
+        "forensicsCount": 12,
+        "avgDistilledMs": 133.25263157879053,
+        "avgForensicsMsWhenRun": 1487.6583333341405,
+        "avgDecodeMs": 5.038157894766252,
+        "avgSpectralMs": 7.431578947329207,
+        "avgPreprocessMs": 0
       },
       "rows": [
         {
@@ -34,9 +46,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 34.79999999888241,
-          "elapsedMs": 15.5,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 306.30000000074506,
+          "elapsedMs": 28.800000000745058,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0.20000000298023224,
+            "totalMs": 28.800000000745058,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/x-ai__grok-imagine-image-2.0/kitchen_window.jpg",
@@ -46,9 +68,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 22.59999999962747,
-          "elapsedMs": 7.699999999254942,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 42.5,
+          "elapsedMs": 9.899999998509884,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 9.899999998509884,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/microsoft__mai-image-2.5-pro/kitchen_window.png",
@@ -58,9 +90,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 533,
-          "elapsedMs": 49.899999998509884,
-          "tiers": "provenance:0.930|spectral:0.500|visual:0.500|fusion:0.930"
+          "totalMs": 72.89999999850988,
+          "elapsedMs": 43.19999999925494,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 43.19999999925494,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
         },
         {
           "file": "ai/qwen__qwen-image-3-pro/park_dog.png",
@@ -70,9 +112,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 373,
-          "elapsedMs": 26.700000001117587,
-          "tiers": "provenance:0.930|spectral:0.500|visual:0.500|fusion:0.930"
+          "totalMs": 107.69999999925494,
+          "elapsedMs": 23.400000002235174,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 23.400000002235174,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
         },
         {
           "file": "ai/qwen__qwen-image-3/street_cafe.png",
@@ -82,45 +134,85 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 95,
-          "elapsedMs": 42.59999999962747,
-          "tiers": "provenance:0.930|spectral:0.500|visual:0.500|fusion:0.930"
+          "totalMs": 69.60000000149012,
+          "elapsedMs": 43.600000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 43.600000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
         },
         {
           "file": "ai/krea__krea-2-medium-turbo/kitchen_window.png",
           "label": "ai",
           "model": "krea/krea-2-medium-turbo",
-          "confidence": 0.2564328889452835,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 152.7000000011176,
-          "elapsedMs": 118.40000000037253,
-          "tiers": "provenance:0.500|spectral:0.423|visual:0.197|fusion:0.256"
+          "confidence": 0.66,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "wasm",
+          "totalMs": 450.70000000298023,
+          "elapsedMs": 424.3999999985099,
+          "timing": {
+            "decodeMs": 13.899999998509884,
+            "spectralMs": 29.300000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 337.5999999977648,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 424.3999999985099,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.423|visual:0.646[ai-image-detect-distilled=0.646,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=337.6,forensicsMs=0.0,engine=ort-web]|fusion:0.660"
         },
         {
           "file": "ai/krea__krea-2-medium/street_cafe.png",
           "label": "ai",
           "model": "krea/krea-2-medium",
-          "confidence": 0.23704855875015224,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 102.09999999962747,
-          "elapsedMs": 68.69999999925494,
-          "tiers": "provenance:0.500|spectral:0.362|visual:0.182|fusion:0.237"
+          "confidence": 0.6829174663929148,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "wasm",
+          "totalMs": 288.1000000014901,
+          "elapsedMs": 271.3999999985099,
+          "timing": {
+            "decodeMs": 11.699999999254942,
+            "spectralMs": 16.400000002235174,
+            "preprocessMs": 0,
+            "distilledMs": 221.09999999776483,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 271.3999999985099,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.361|visual:0.683[ai-image-detect-distilled=0.683,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=221.1,forensicsMs=0.0,engine=ort-web]|fusion:0.683"
         },
         {
           "file": "ai/krea__krea-2-large/park_dog.png",
           "label": "ai",
           "model": "krea/krea-2-large",
-          "confidence": 0.21070078929722924,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 94.10000000149012,
-          "elapsedMs": 52,
-          "tiers": "provenance:0.500|spectral:0.309|visual:0.151|fusion:0.211"
+          "confidence": 0.7822969945172523,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "wasm",
+          "totalMs": 1814.800000000745,
+          "elapsedMs": 1788.9000000022352,
+          "timing": {
+            "decodeMs": 14.599999997764826,
+            "spectralMs": 20.800000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 220.80000000074506,
+            "forensicsMs": 1507.199999999255,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 1788.9000000022352,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.308|visual:0.496[ai-image-detect-distilled=0.496,community-forensics-deepfake-det=0.782,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=220.8,forensicsMs=1507.2,engine=ort-web]|visual:0.782[community-forensics]|fusion:0.782"
         },
         {
           "file": "ai/google__gemini-3.1-flash-lite-image/park_dog.jpg",
@@ -130,9 +222,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 36.40000000037253,
-          "elapsedMs": 14.099999999627471,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 21.900000002235174,
+          "elapsedMs": 10.100000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 10.100000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-image-1/park_dog.png",
@@ -142,9 +244,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 57.09999999962747,
-          "elapsedMs": 18.5,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 28.800000000745058,
+          "elapsedMs": 19.300000000745058,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 19.300000000745058,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-image-1-mini/kitchen_window.png",
@@ -154,9 +266,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 45.30000000074506,
-          "elapsedMs": 16.700000001117587,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 28.5,
+          "elapsedMs": 19.899999998509884,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0.09999999776482582,
+            "totalMs": 19.899999998509884,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-3.1-flash-image/street_cafe.jpg",
@@ -166,9 +288,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 42.09999999962747,
-          "elapsedMs": 19,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 34.19999999925494,
+          "elapsedMs": 21.100000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 21.100000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-image-2/street_cafe.png",
@@ -178,9 +310,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 49.5,
-          "elapsedMs": 7.799999998882413,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 30,
+          "elapsedMs": 19.699999999254942,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 19.699999999254942,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-3-pro-image/kitchen_window.jpg",
@@ -190,21 +332,41 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 46,
-          "elapsedMs": 17.40000000037253,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 28.800000000745058,
+          "elapsedMs": 18.399999998509884,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 18.399999998509884,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/sourceful__riverflow-v2.5-fast/street_cafe.jpg",
           "label": "ai",
           "model": "sourceful/riverflow-v2.5-fast",
-          "confidence": 0.24590568674517227,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 67,
-          "elapsedMs": 47.5,
-          "tiers": "provenance:0.500|spectral:0.369|visual:0.195|fusion:0.246"
+          "confidence": 0.7164826821406871,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "wasm",
+          "totalMs": 1772.2000000029802,
+          "elapsedMs": 1765,
+          "timing": {
+            "decodeMs": 12.800000000745058,
+            "spectralMs": 20.199999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 229.5,
+            "forensicsMs": 1491.5,
+            "fuseMs": 0,
+            "totalMs": 1765,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.368|visual:0.445[ai-image-detect-distilled=0.445,community-forensics-deepfake-det=0.716,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=229.5,forensicsMs=1491.5,engine=ort-web]|visual:0.716[community-forensics]|fusion:0.716"
         },
         {
           "file": "ai/microsoft__mai-image-2.5/kitchen_window.png",
@@ -214,33 +376,63 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 38.20000000111759,
-          "elapsedMs": 14.300000000745058,
-          "tiers": "provenance:0.930|spectral:0.500|visual:0.500|fusion:0.930"
+          "totalMs": 42,
+          "elapsedMs": 15.600000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 15.600000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
         },
         {
           "file": "ai/x-ai__grok-imagine-image-quality/park_dog.jpg",
           "label": "ai",
           "model": "x-ai/grok-imagine-image-quality",
+          "confidence": 0.98,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "none",
+          "totalMs": 10.200000002980232,
+          "elapsedMs": 5.100000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5.100000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
+        },
+        {
+          "file": "ai/recraft__recraft-v4.1-utility/street_cafe.webp",
+          "label": "ai",
+          "model": "recraft/recraft-v4.1-utility",
           "confidence": 0.98,
           "predicted": "ai",
           "correct": true,
           "backend": "none",
           "totalMs": 24.699999999254942,
-          "elapsedMs": 4.300000000745058,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
-        },
-        {
-          "file": "ai/recraft__recraft-v4.1-utility/street_cafe.webp",
-          "label": "ai",
-          "model": "recraft/recraft-v4.1-utility",
-          "confidence": 0.98,
-          "predicted": "ai",
-          "correct": true,
-          "backend": "none",
-          "totalMs": 52.40000000037253,
-          "elapsedMs": 11.800000000745058,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "elapsedMs": 15.199999999254942,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 15.199999999254942,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4.1-utility-pro/park_dog.webp",
@@ -250,9 +442,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 142.7000000011176,
-          "elapsedMs": 12.600000001490116,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 41.100000001490116,
+          "elapsedMs": 20.200000002980232,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 20.200000002980232,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4.1/park_dog.webp",
@@ -262,9 +464,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 58.09999999962747,
-          "elapsedMs": 20.800000000745058,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 32.400000002235174,
+          "elapsedMs": 23.5,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 23.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4.1-pro/kitchen_window.webp",
@@ -274,9 +486,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 112.70000000111759,
-          "elapsedMs": 13,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 41.80000000074506,
+          "elapsedMs": 21.100000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 21.100000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4/street_cafe.webp",
@@ -286,9 +508,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 53.899999998509884,
-          "elapsedMs": 20.899999998509884,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 28.399999998509884,
+          "elapsedMs": 20.599999997764826,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 20.599999997764826,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4-pro/park_dog.webp",
@@ -298,9 +530,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 116.29999999888241,
-          "elapsedMs": 12.900000000372529,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 49.30000000074506,
+          "elapsedMs": 22.100000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 22.100000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v3/kitchen_window.webp",
@@ -310,9 +552,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 51.70000000111759,
-          "elapsedMs": 20.399999998509884,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 31.100000001490116,
+          "elapsedMs": 22.099999997764826,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 22.099999997764826,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-3.1-flash-image-preview/street_cafe.jpg",
@@ -322,9 +574,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 42.69999999925494,
+          "totalMs": 28,
           "elapsedMs": 21.199999999254942,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 21.199999999254942,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-5.4-image-2/park_dog.png",
@@ -334,21 +596,41 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 58,
-          "elapsedMs": 16.5,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 35.5,
+          "elapsedMs": 23.600000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 23.600000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/sourceful__riverflow-v2-pro/kitchen_window.webp",
           "label": "ai",
           "model": "sourceful/riverflow-v2-pro",
-          "confidence": 0.26192822908469865,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 28.90000000037253,
-          "elapsedMs": 22.5,
-          "tiers": "provenance:0.500|spectral:0.440|visual:0.201|fusion:0.262"
+          "confidence": 0.68,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "wasm",
+          "totalMs": 1741.8999999985099,
+          "elapsedMs": 1735.6000000014901,
+          "timing": {
+            "decodeMs": 11.300000000745058,
+            "spectralMs": 15,
+            "preprocessMs": 0,
+            "distilledMs": 226.19999999925494,
+            "forensicsMs": 1481.5,
+            "fuseMs": 0,
+            "totalMs": 1735.6000000014901,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.438|visual:0.629[ai-image-detect-distilled=0.629,community-forensics-deepfake-det=0.679,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=226.2,forensicsMs=1481.5,engine=ort-web]|visual:0.679[community-forensics]|fusion:0.680"
         },
         {
           "file": "ai/black-forest-labs__flux.2-klein-4b/street_cafe.png",
@@ -358,9 +640,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 46.09999999962747,
-          "elapsedMs": 12.599999999627471,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 34.600000001490116,
+          "elapsedMs": 14.699999999254942,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 14.699999999254942,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/bytedance-seed__seedream-4.5/kitchen_window.jpg",
@@ -370,21 +662,41 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 34,
-          "elapsedMs": 15.699999999254942,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 27.199999999254942,
+          "elapsedMs": 21.100000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 21.100000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/sourceful__riverflow-v2-fast/park_dog.webp",
           "label": "ai",
           "model": "sourceful/riverflow-v2-fast",
-          "confidence": 0.2022944491826495,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 27.199999999254942,
-          "elapsedMs": 21,
-          "tiers": "provenance:0.500|spectral:0.304|visual:0.136|fusion:0.202"
+          "confidence": 0.7933743449365619,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "wasm",
+          "totalMs": 1733.300000000745,
+          "elapsedMs": 1725.0999999977648,
+          "timing": {
+            "decodeMs": 11.199999999254942,
+            "spectralMs": 18.800000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 220.39999999850988,
+            "forensicsMs": 1473.1000000014901,
+            "fuseMs": 0,
+            "totalMs": 1725.0999999977648,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.304|visual:0.357[ai-image-detect-distilled=0.357,community-forensics-deepfake-det=0.793,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=220.4,forensicsMs=1473.1,engine=ort-web]|visual:0.793[community-forensics]|fusion:0.793"
         },
         {
           "file": "ai/black-forest-labs__flux.2-flex/street_cafe.png",
@@ -394,9 +706,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 42.90000000037253,
-          "elapsedMs": 12.099999999627471,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 34.599999997764826,
+          "elapsedMs": 22.800000000745058,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 22.800000000745058,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/black-forest-labs__flux.2-max/park_dog.png",
@@ -406,9 +728,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 53,
-          "elapsedMs": 19,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 31.5,
+          "elapsedMs": 22.5,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 22.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/black-forest-labs__flux.2-pro/kitchen_window.png",
@@ -418,9 +750,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 38.20000000111759,
-          "elapsedMs": 11.599999999627471,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 31.399999998509884,
+          "elapsedMs": 19.600000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 19.600000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-3-pro-image-preview/park_dog.jpg",
@@ -430,9 +772,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 30.200000001117587,
-          "elapsedMs": 18.399999998509884,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 34.5,
+          "elapsedMs": 20.899999998509884,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 20.899999998509884,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-5-image-mini/street_cafe.png",
@@ -442,9 +794,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 41.69999999925494,
-          "elapsedMs": 17.59999999962747,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 32.5,
+          "elapsedMs": 16.5,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 16.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-2.5-flash-image/park_dog.png",
@@ -454,9 +816,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 47.5,
-          "elapsedMs": 11.5,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 25.199999999254942,
+          "elapsedMs": 12.399999998509884,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 12.399999998509884,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-5-image/kitchen_window.png",
@@ -466,499 +838,908 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 40.100000001490116,
-          "elapsedMs": 16.40000000037253,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 27.199999999254942,
+          "elapsedMs": 15.300000000745058,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 15.300000000745058,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/sourceful__riverflow-v2.5-pro/park_dog.png",
           "label": "ai",
           "model": "sourceful/riverflow-v2.5-pro",
-          "confidence": 0.23846412773197295,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 80.69999999925494,
-          "elapsedMs": 49.59999999962747,
-          "tiers": "provenance:0.500|spectral:0.295|visual:0.204|fusion:0.238"
+          "confidence": 0.7637428108010146,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "wasm",
+          "totalMs": 1756.6000000014901,
+          "elapsedMs": 1744,
+          "timing": {
+            "decodeMs": 12.400000002235174,
+            "spectralMs": 20.199999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 216.69999999925494,
+            "forensicsMs": 1470.1000000014901,
+            "fuseMs": 0,
+            "totalMs": 1744,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.294|visual:0.319[ai-image-detect-distilled=0.319,community-forensics-deepfake-det=0.764,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=216.7,forensicsMs=1470.1,engine=ort-web]|visual:0.764[community-forensics]|fusion:0.764"
         },
         {
           "file": "real/picsum_10.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23110910471196733,
+          "confidence": 0.3109532296810659,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 25.200000001117587,
-          "elapsedMs": 17.5,
-          "tiers": "provenance:0.500|spectral:0.326|visual:0.182|fusion:0.231"
+          "backend": "wasm",
+          "totalMs": 243.80000000074506,
+          "elapsedMs": 236.69999999925494,
+          "timing": {
+            "decodeMs": 9,
+            "spectralMs": 11,
+            "preprocessMs": 0,
+            "distilledMs": 215,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 236.69999999925494,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.326|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=215.0,forensicsMs=0.0,engine=ort-web]|fusion:0.311"
         },
         {
           "file": "real/picsum_15.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2494298569999836,
+          "confidence": 0.5163251919438068,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 26.199999999254942,
-          "elapsedMs": 19.5,
-          "tiers": "provenance:0.500|spectral:0.375|visual:0.199|fusion:0.249"
+          "backend": "wasm",
+          "totalMs": 1719.300000000745,
+          "elapsedMs": 1710.5,
+          "timing": {
+            "decodeMs": 9.300000000745058,
+            "spectralMs": 10.399999998509884,
+            "preprocessMs": 0,
+            "distilledMs": 214,
+            "forensicsMs": 1474.300000000745,
+            "fuseMs": 0,
+            "totalMs": 1710.5,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.374|visual:0.555[ai-image-detect-distilled=0.555,community-forensics-deepfake-det=0.543,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=214.0,forensicsMs=1474.3,engine=ort-web]|visual:0.543[community-forensics]|fusion:0.516"
         },
         {
           "file": "real/picsum_28.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2576809557122395,
+          "confidence": 0.2943711286026169,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 30.5,
-          "elapsedMs": 22.40000000037253,
-          "tiers": "provenance:0.500|spectral:0.267|visual:0.243|fusion:0.258"
+          "backend": "wasm",
+          "totalMs": 256.8999999985099,
+          "elapsedMs": 243.59999999776483,
+          "timing": {
+            "decodeMs": 9.699999999254942,
+            "spectralMs": 10.100000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 220.5,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 243.59999999776483,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.268|visual:0.299[ai-image-detect-distilled=0.299,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=220.5,forensicsMs=0.0,engine=ort-web]|fusion:0.294"
         },
         {
           "file": "real/picsum_48.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.32745678760517594,
+          "confidence": 0.35824964446803564,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 18.40000000037253,
-          "elapsedMs": 13.5,
-          "tiers": "provenance:0.500|spectral:0.478|visual:0.286|fusion:0.327"
+          "backend": "wasm",
+          "totalMs": 243.5,
+          "elapsedMs": 238.5,
+          "timing": {
+            "decodeMs": 6.299999997019768,
+            "spectralMs": 10.100000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 221.5,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 238.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.478|visual:0.328[ai-image-detect-distilled=0.328,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=221.5,forensicsMs=0.0,engine=ort-web]|fusion:0.358"
         },
         {
           "file": "real/picsum_64.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.244015954745542,
+          "confidence": 0.383083183490941,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 22.899999998509884,
-          "elapsedMs": 14.799999998882413,
-          "tiers": "provenance:0.500|spectral:0.416|visual:0.179|fusion:0.244"
+          "backend": "wasm",
+          "totalMs": 240.5,
+          "elapsedMs": 235.19999999925494,
+          "timing": {
+            "decodeMs": 6.200000002980232,
+            "spectralMs": 10.299999997019768,
+            "preprocessMs": 0,
+            "distilledMs": 217.70000000298023,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 235.19999999925494,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.416|visual:0.378[ai-image-detect-distilled=0.378,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=217.7,forensicsMs=0.0,engine=ort-web]|fusion:0.383"
         },
         {
           "file": "real/picsum_83.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2170391975283018,
+          "confidence": 0.29343316400419917,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 25.200000001117587,
-          "elapsedMs": 17.199999999254942,
-          "tiers": "provenance:0.500|spectral:0.234|visual:0.183|fusion:0.217"
+          "backend": "wasm",
+          "totalMs": 243.70000000298023,
+          "elapsedMs": 235.80000000074506,
+          "timing": {
+            "decodeMs": 7.299999997019768,
+            "spectralMs": 10.5,
+            "preprocessMs": 0,
+            "distilledMs": 216.60000000149012,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 235.80000000074506,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.234|visual:0.307[ai-image-detect-distilled=0.307,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=216.6,forensicsMs=0.0,engine=ort-web]|fusion:0.293"
         },
         {
           "file": "real/picsum_96.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2613075376596998,
+          "confidence": 0.3754314997993003,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 18.90000000037253,
-          "elapsedMs": 14.100000001490116,
-          "tiers": "provenance:0.500|spectral:0.461|visual:0.194|fusion:0.261"
+          "backend": "wasm",
+          "totalMs": 241,
+          "elapsedMs": 236.40000000223517,
+          "timing": {
+            "decodeMs": 5.900000002235174,
+            "spectralMs": 9.899999998509884,
+            "preprocessMs": 0,
+            "distilledMs": 220,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 236.40000000223517,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.461|visual:0.356[ai-image-detect-distilled=0.356,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=220.0,forensicsMs=0.0,engine=ort-web]|fusion:0.375"
         },
         {
           "file": "real/picsum_119.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.5651605945073497,
+          "confidence": 0.3058612038347086,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 19.59999999962747,
-          "elapsedMs": 12.5,
-          "tiers": "provenance:0.500|spectral:0.423|visual:0.602|fusion:0.565"
+          "backend": "wasm",
+          "totalMs": 243,
+          "elapsedMs": 236.90000000223517,
+          "timing": {
+            "decodeMs": 5.800000000745058,
+            "spectralMs": 9.599999997764826,
+            "preprocessMs": 0,
+            "distilledMs": 221,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 236.90000000223517,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.423|visual:0.271[ai-image-detect-distilled=0.271,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=221.0,forensicsMs=0.0,engine=ort-web]|fusion:0.306"
         },
         {
           "file": "real/picsum_129.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.244096017976777,
+          "confidence": 0.29697154307118817,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 19.600000001490116,
-          "elapsedMs": 15.400000000372529,
-          "tiers": "provenance:0.500|spectral:0.389|visual:0.186|fusion:0.244"
+          "backend": "wasm",
+          "totalMs": 252,
+          "elapsedMs": 244.5,
+          "timing": {
+            "decodeMs": 7.899999998509884,
+            "spectralMs": 10,
+            "preprocessMs": 0,
+            "distilledMs": 225.60000000149012,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 244.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.389|visual:0.268[ai-image-detect-distilled=0.268,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=225.6,forensicsMs=0.0,engine=ort-web]|fusion:0.297"
         },
         {
           "file": "real/picsum_137.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23121551976178079,
+          "confidence": 0.2563564329563769,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.59999999962747,
-          "elapsedMs": 14.599999999627471,
-          "tiers": "provenance:0.500|spectral:0.351|visual:0.175|fusion:0.231"
+          "backend": "wasm",
+          "totalMs": 249.69999999925494,
+          "elapsedMs": 239,
+          "timing": {
+            "decodeMs": 6.600000001490116,
+            "spectralMs": 9.800000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 221.89999999850988,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 239,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.351|visual:0.217[ai-image-detect-distilled=0.217,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=221.9,forensicsMs=0.0,engine=ort-web]|fusion:0.256"
         },
         {
           "file": "real/picsum_152.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2608863569734835,
+          "confidence": 0.4018778155987808,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 20.90000000037253,
-          "elapsedMs": 15.599999999627471,
-          "tiers": "provenance:0.500|spectral:0.456|visual:0.195|fusion:0.261"
+          "backend": "wasm",
+          "totalMs": 243.69999999925494,
+          "elapsedMs": 239,
+          "timing": {
+            "decodeMs": 6.399999998509884,
+            "spectralMs": 10,
+            "preprocessMs": 0,
+            "distilledMs": 221.69999999925494,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 239,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.457|visual:0.391[ai-image-detect-distilled=0.391,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=221.7,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
         },
         {
           "file": "real/picsum_163.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23403826247393072,
+          "confidence": 0.5125525278786804,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.09999999962747,
-          "elapsedMs": 17.199999999254942,
-          "tiers": "provenance:0.500|spectral:0.355|visual:0.179|fusion:0.234"
+          "backend": "wasm",
+          "totalMs": 1734.4000000022352,
+          "elapsedMs": 1728.300000000745,
+          "timing": {
+            "decodeMs": 8.299999997019768,
+            "spectralMs": 10.800000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 225,
+            "forensicsMs": 1482.4000000022352,
+            "fuseMs": 0,
+            "totalMs": 1728.300000000745,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.356|visual:0.556[ai-image-detect-distilled=0.556,community-forensics-deepfake-det=0.619,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=225.0,forensicsMs=1482.4,engine=ort-web]|visual:0.619[community-forensics]|fusion:0.513"
         },
         {
           "file": "real/picsum_176.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.22315800840792877,
+          "confidence": 0.3355535310523645,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 22.199999999254942,
-          "elapsedMs": 15.799999998882413,
-          "tiers": "provenance:0.500|spectral:0.288|visual:0.179|fusion:0.223"
+          "backend": "wasm",
+          "totalMs": 1758.6000000014901,
+          "elapsedMs": 1752.1000000014901,
+          "timing": {
+            "decodeMs": 8.199999999254942,
+            "spectralMs": 10.699999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 222.19999999925494,
+            "forensicsMs": 1509.4000000022352,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 1752.1000000014901,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.290|visual:0.351[ai-image-detect-distilled=0.351,community-forensics-deepfake-det=0.593,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=222.2,forensicsMs=1509.4,engine=ort-web]|visual:0.593[community-forensics]|fusion:0.336"
         },
         {
           "file": "real/picsum_193.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2416622206760231,
+          "confidence": 0.4748193938714467,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.700000001117587,
-          "elapsedMs": 17.40000000037253,
-          "tiers": "provenance:0.500|spectral:0.347|visual:0.194|fusion:0.242"
+          "backend": "wasm",
+          "totalMs": 264.5999999977648,
+          "elapsedMs": 258,
+          "timing": {
+            "decodeMs": 9,
+            "spectralMs": 27.099999997764826,
+            "preprocessMs": 0,
+            "distilledMs": 220.30000000074506,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 258,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.347|visual:0.512[ai-image-detect-distilled=0.512,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=220.3,forensicsMs=0.0,engine=ort-web]|fusion:0.475"
         },
         {
           "file": "real/picsum_201.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23729263382757076,
+          "confidence": 0.30099818989013033,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 19.799999998882413,
-          "elapsedMs": 14.899999998509884,
-          "tiers": "provenance:0.500|spectral:0.394|visual:0.174|fusion:0.237"
+          "backend": "wasm",
+          "totalMs": 251.10000000149012,
+          "elapsedMs": 244.70000000298023,
+          "timing": {
+            "decodeMs": 7.300000000745058,
+            "spectralMs": 10.800000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 225.39999999850988,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 244.70000000298023,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.394|visual:0.273[ai-image-detect-distilled=0.273,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=225.4,forensicsMs=0.0,engine=ort-web]|fusion:0.301"
         },
         {
           "file": "real/picsum_225.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2611316891700435,
+          "confidence": 0.6296135582626012,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 20.09999999962747,
-          "elapsedMs": 15,
-          "tiers": "provenance:0.500|spectral:0.468|visual:0.192|fusion:0.261"
+          "backend": "wasm",
+          "totalMs": 253,
+          "elapsedMs": 242.89999999850988,
+          "timing": {
+            "decodeMs": 8.5,
+            "spectralMs": 10.300000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 223,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 242.89999999850988,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.468|visual:0.671[ai-image-detect-distilled=0.671,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=223.0,forensicsMs=0.0,engine=ort-web]|fusion:0.630"
         },
         {
           "file": "real/picsum_237.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2602219016455757,
+          "confidence": 0.5038427947040373,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 24.299999998882413,
-          "elapsedMs": 16.699999999254942,
-          "tiers": "provenance:0.500|spectral:0.429|visual:0.201|fusion:0.260"
+          "backend": "wasm",
+          "totalMs": 245.90000000223517,
+          "elapsedMs": 240.20000000298023,
+          "timing": {
+            "decodeMs": 7.300000000745058,
+            "spectralMs": 10.400000002235174,
+            "preprocessMs": 0,
+            "distilledMs": 220.89999999850988,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 240.20000000298023,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.429|visual:0.525[ai-image-detect-distilled=0.525,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=220.9,forensicsMs=0.0,engine=ort-web]|fusion:0.504"
         },
         {
           "file": "real/picsum_250.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.26509341268766184,
+          "confidence": 0.577326637805285,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.799999998882413,
-          "elapsedMs": 16.300000000745058,
-          "tiers": "provenance:0.500|spectral:0.449|visual:0.203|fusion:0.265"
+          "backend": "wasm",
+          "totalMs": 244,
+          "elapsedMs": 238,
+          "timing": {
+            "decodeMs": 6.899999998509884,
+            "spectralMs": 9.900000002235174,
+            "preprocessMs": 0,
+            "distilledMs": 220.19999999925494,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 238,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.449|visual:0.610[ai-image-detect-distilled=0.610,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=220.2,forensicsMs=0.0,engine=ort-web]|fusion:0.577"
         },
         {
           "file": "real/picsum_274.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2693776461048558,
+          "confidence": 0.3984901270844998,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.100000001490116,
-          "elapsedMs": 17.09999999962747,
-          "tiers": "provenance:0.500|spectral:0.405|visual:0.222|fusion:0.269"
+          "backend": "wasm",
+          "totalMs": 256.4000000022352,
+          "elapsedMs": 252,
+          "timing": {
+            "decodeMs": 7.200000002980232,
+            "spectralMs": 10.099999997764826,
+            "preprocessMs": 0,
+            "distilledMs": 233.30000000074506,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 252,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.405|visual:0.401[ai-image-detect-distilled=0.401,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=233.3,forensicsMs=0.0,engine=ort-web]|fusion:0.398"
         },
         {
           "file": "real/picsum_292.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23114106753997715,
+          "confidence": 0.5580560598976696,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 22.299999998882413,
-          "elapsedMs": 16.200000001117587,
-          "tiers": "provenance:0.500|spectral:0.351|visual:0.175|fusion:0.231"
+          "backend": "wasm",
+          "totalMs": 260.4000000022352,
+          "elapsedMs": 252.80000000074506,
+          "timing": {
+            "decodeMs": 9.299999997019768,
+            "spectralMs": 11.100000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 231,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 252.80000000074506,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.351|visual:0.613[ai-image-detect-distilled=0.613,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=231.0,forensicsMs=0.0,engine=ort-web]|fusion:0.558"
         },
         {
           "file": "real/picsum_314.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.25745251905089916,
+          "confidence": 0.44512698047241434,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 25.699999999254942,
-          "elapsedMs": 17.399999998509884,
-          "tiers": "provenance:0.500|spectral:0.457|visual:0.189|fusion:0.257"
+          "backend": "wasm",
+          "totalMs": 250.69999999925494,
+          "elapsedMs": 244.40000000223517,
+          "timing": {
+            "decodeMs": 8.300000000745058,
+            "spectralMs": 11.299999997019768,
+            "preprocessMs": 0,
+            "distilledMs": 223,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 244.40000000223517,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.457|visual:0.445[ai-image-detect-distilled=0.445,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=223.0,forensicsMs=0.0,engine=ort-web]|fusion:0.445"
         },
         {
           "file": "real/picsum_338.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.259964379832394,
+          "confidence": 0.3407934248032298,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 22.59999999962747,
-          "elapsedMs": 17.199999999254942,
-          "tiers": "provenance:0.500|spectral:0.442|visual:0.197|fusion:0.260"
+          "backend": "wasm",
+          "totalMs": 263.80000000074506,
+          "elapsedMs": 256.8999999985099,
+          "timing": {
+            "decodeMs": 8.899999998509884,
+            "spectralMs": 11.699999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 223.90000000223517,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 256.8999999985099,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.442|visual:0.315[ai-image-detect-distilled=0.315,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=223.9,forensicsMs=0.0,engine=ort-web]|fusion:0.341"
         },
         {
           "file": "real/picsum_349.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2663764505526486,
+          "confidence": 0.3375794835776976,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 18.600000001490116,
-          "elapsedMs": 13.699999999254942,
-          "tiers": "provenance:0.500|spectral:0.441|visual:0.207|fusion:0.266"
+          "backend": "wasm",
+          "totalMs": 252.19999999925494,
+          "elapsedMs": 239.5,
+          "timing": {
+            "decodeMs": 7.100000001490116,
+            "spectralMs": 10.100000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 221.5,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 239.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.441|visual:0.311[ai-image-detect-distilled=0.311,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=221.5,forensicsMs=0.0,engine=ort-web]|fusion:0.338"
         },
         {
           "file": "real/picsum_366.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2852575681628077,
+          "confidence": 0.45004608843017113,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.40000000037253,
-          "elapsedMs": 14.200000001117587,
-          "tiers": "provenance:0.500|spectral:0.499|visual:0.220|fusion:0.285"
+          "backend": "wasm",
+          "totalMs": 256,
+          "elapsedMs": 249.79999999701977,
+          "timing": {
+            "decodeMs": 6.699999999254942,
+            "spectralMs": 10.200000002980232,
+            "preprocessMs": 0,
+            "distilledMs": 231.69999999925494,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 249.79999999701977,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.499|visual:0.439[ai-image-detect-distilled=0.439,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=231.7,forensicsMs=0.0,engine=ort-web]|fusion:0.450"
         },
         {
           "file": "real/picsum_399.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.24782493370499725,
+          "confidence": 0.25046306454253514,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.299999998882413,
-          "elapsedMs": 13.099999999627471,
-          "tiers": "provenance:0.500|spectral:0.469|visual:0.170|fusion:0.248"
+          "backend": "wasm",
+          "totalMs": 243.10000000149012,
+          "elapsedMs": 236.80000000074506,
+          "timing": {
+            "decodeMs": 5.800000000745058,
+            "spectralMs": 10.600000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 219.59999999776483,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 236.80000000074506,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.469|visual:0.174[ai-image-detect-distilled=0.174,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=219.6,forensicsMs=0.0,engine=ort-web]|fusion:0.250"
         },
         {
           "file": "real/picsum_433.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.25953497297271677,
+          "confidence": 0.5829731565825796,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 24.700000001117587,
-          "elapsedMs": 17.700000001117587,
-          "tiers": "provenance:0.500|spectral:0.421|visual:0.202|fusion:0.260"
+          "backend": "wasm",
+          "totalMs": 1753,
+          "elapsedMs": 1746.4000000022352,
+          "timing": {
+            "decodeMs": 7.800000000745058,
+            "spectralMs": 11.5,
+            "preprocessMs": 0,
+            "distilledMs": 219.5,
+            "forensicsMs": 1505.1000000014901,
+            "fuseMs": 0,
+            "totalMs": 1746.4000000022352,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.421|visual:0.624[ai-image-detect-distilled=0.624,community-forensics-deepfake-det=0.661,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=219.5,forensicsMs=1505.1,engine=ort-web]|visual:0.661[community-forensics]|fusion:0.583"
         },
         {
           "file": "real/picsum_453.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2726823438370681,
+          "confidence": 0.4075107951383571,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 20,
-          "elapsedMs": 14.599999999627471,
-          "tiers": "provenance:0.500|spectral:0.431|visual:0.220|fusion:0.273"
+          "backend": "wasm",
+          "totalMs": 294.8999999985099,
+          "elapsedMs": 286.5,
+          "timing": {
+            "decodeMs": 8.5,
+            "spectralMs": 10.900000002235174,
+            "preprocessMs": 0,
+            "distilledMs": 265.69999999925494,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 286.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.431|visual:0.405[ai-image-detect-distilled=0.405,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=265.7,forensicsMs=0.0,engine=ort-web]|fusion:0.408"
         },
         {
           "file": "real/picsum_488.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.24122210796494747,
+          "confidence": 0.3282176029873608,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 25,
-          "elapsedMs": 16.799999998882413,
-          "tiers": "provenance:0.500|spectral:0.411|visual:0.175|fusion:0.241"
+          "backend": "wasm",
+          "totalMs": 1754.699999999255,
+          "elapsedMs": 1746.300000000745,
+          "timing": {
+            "decodeMs": 9.900000002235174,
+            "spectralMs": 12.199999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 226.5,
+            "forensicsMs": 1495.5,
+            "fuseMs": 0,
+            "totalMs": 1746.300000000745,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.412|visual:0.306[ai-image-detect-distilled=0.306,community-forensics-deepfake-det=0.608,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=226.5,forensicsMs=1495.5,engine=ort-web]|visual:0.608[community-forensics]|fusion:0.328"
         },
         {
           "file": "real/picsum_525.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2217530051260947,
+          "confidence": 0.24543967390192245,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 18.09999999962747,
-          "elapsedMs": 13.599999999627471,
-          "tiers": "provenance:0.500|spectral:0.406|visual:0.143|fusion:0.222"
+          "backend": "wasm",
+          "totalMs": 251.80000000074506,
+          "elapsedMs": 238.89999999850988,
+          "timing": {
+            "decodeMs": 7.599999997764826,
+            "spectralMs": 10.5,
+            "preprocessMs": 0,
+            "distilledMs": 220.19999999925494,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 238.89999999850988,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.407|visual:0.184[ai-image-detect-distilled=0.184,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=220.2,forensicsMs=0.0,engine=ort-web]|fusion:0.245"
         },
         {
           "file": "real/picsum_553.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.19278028394688163,
+          "confidence": 0.29127079722768734,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 25.5,
-          "elapsedMs": 18.600000001490116,
-          "tiers": "provenance:0.500|spectral:0.284|visual:0.124|fusion:0.193"
+          "backend": "wasm",
+          "totalMs": 248.30000000074506,
+          "elapsedMs": 241.80000000074506,
+          "timing": {
+            "decodeMs": 8.600000001490116,
+            "spectralMs": 12.599999997764826,
+            "preprocessMs": 0,
+            "distilledMs": 218,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 241.80000000074506,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.284|visual:0.290[ai-image-detect-distilled=0.290,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=218.0,forensicsMs=0.0,engine=ort-web]|fusion:0.291"
         },
         {
           "file": "real/picsum_582.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.24751748175117,
+          "confidence": 0.43258391788514194,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.399999998509884,
-          "elapsedMs": 17.59999999962747,
-          "tiers": "provenance:0.500|spectral:0.390|visual:0.192|fusion:0.248"
+          "backend": "wasm",
+          "totalMs": 246.69999999925494,
+          "elapsedMs": 241.29999999701977,
+          "timing": {
+            "decodeMs": 9.599999997764826,
+            "spectralMs": 11.5,
+            "preprocessMs": 0,
+            "distilledMs": 217.90000000223517,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 241.29999999701977,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.390|visual:0.448[ai-image-detect-distilled=0.448,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=217.9,forensicsMs=0.0,engine=ort-web]|fusion:0.433"
         },
         {
           "file": "real/picsum_593.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.254145374883856,
+          "confidence": 0.37559920743416897,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 24.5,
-          "elapsedMs": 17.699999999254942,
-          "tiers": "provenance:0.500|spectral:0.337|visual:0.217|fusion:0.254"
+          "backend": "wasm",
+          "totalMs": 1727.4000000022352,
+          "elapsedMs": 1722.300000000745,
+          "timing": {
+            "decodeMs": 8,
+            "spectralMs": 11.099999997764826,
+            "preprocessMs": 0,
+            "distilledMs": 219.60000000149012,
+            "forensicsMs": 1480.800000000745,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 1722.300000000745,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.337|visual:0.391[ai-image-detect-distilled=0.391,community-forensics-deepfake-det=0.656,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=219.6,forensicsMs=1480.8,engine=ort-web]|visual:0.656[community-forensics]|fusion:0.376"
         },
         {
           "file": "real/picsum_628.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.24944592020175432,
+          "confidence": 0.5708223436459678,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.5,
-          "elapsedMs": 17.399999998509884,
-          "tiers": "provenance:0.500|spectral:0.397|visual:0.193|fusion:0.249"
+          "backend": "wasm",
+          "totalMs": 247.20000000298023,
+          "elapsedMs": 238.10000000149012,
+          "timing": {
+            "decodeMs": 8,
+            "spectralMs": 10.400000002235174,
+            "preprocessMs": 0,
+            "distilledMs": 217.29999999701977,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 238.10000000149012,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.397|visual:0.616[ai-image-detect-distilled=0.616,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=217.3,forensicsMs=0.0,engine=ort-web]|fusion:0.571"
         },
         {
           "file": "real/picsum_660.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.5345517833458127,
+          "confidence": 0.32798960166341795,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 19,
-          "elapsedMs": 14.299999998882413,
-          "tiers": "provenance:0.500|spectral:0.466|visual:0.552|fusion:0.535"
+          "backend": "wasm",
+          "totalMs": 243.5,
+          "elapsedMs": 237.20000000298023,
+          "timing": {
+            "decodeMs": 6.700000002980232,
+            "spectralMs": 11.299999997019768,
+            "preprocessMs": 0,
+            "distilledMs": 218,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 237.20000000298023,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.465|visual:0.291[ai-image-detect-distilled=0.291,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=218.0,forensicsMs=0.0,engine=ort-web]|fusion:0.328"
         },
         {
           "file": "real/picsum_718.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.4087664297986744,
+          "confidence": 0.4307920211571933,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 26.59999999962747,
-          "elapsedMs": 18.199999999254942,
-          "tiers": "provenance:0.500|spectral:0.433|visual:0.406|fusion:0.409"
+          "backend": "wasm",
+          "totalMs": 249.39999999850988,
+          "elapsedMs": 244.40000000223517,
+          "timing": {
+            "decodeMs": 10.100000001490116,
+            "spectralMs": 13.300000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 218.59999999776483,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 244.40000000223517,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.434|visual:0.434[ai-image-detect-distilled=0.434,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=218.6,forensicsMs=0.0,engine=ort-web]|fusion:0.431"
         },
         {
           "file": "real/picsum_741.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.21981079033152695,
+          "confidence": 0.35284655975832757,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.200000001117587,
-          "elapsedMs": 14.599999999627471,
-          "tiers": "provenance:0.500|spectral:0.366|visual:0.151|fusion:0.220"
+          "backend": "wasm",
+          "totalMs": 246.40000000223517,
+          "elapsedMs": 236,
+          "timing": {
+            "decodeMs": 5.900000002235174,
+            "spectralMs": 9.899999998509884,
+            "preprocessMs": 0,
+            "distilledMs": 219.19999999925494,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 236,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.366|visual:0.353[ai-image-detect-distilled=0.353,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=219.2,forensicsMs=0.0,engine=ort-web]|fusion:0.353"
         },
         {
           "file": "real/picsum_783.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.5209158827344417,
+          "confidence": 0.4022126838182929,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 26.5,
-          "elapsedMs": 18.199999999254942,
-          "tiers": "provenance:0.500|spectral:0.369|visual:0.563|fusion:0.521"
+          "backend": "wasm",
+          "totalMs": 247.69999999925494,
+          "elapsedMs": 241.89999999850988,
+          "timing": {
+            "decodeMs": 8.199999999254942,
+            "spectralMs": 12,
+            "preprocessMs": 0,
+            "distilledMs": 219.19999999925494,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 241.89999999850988,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.369|visual:0.416[ai-image-detect-distilled=0.416,distilled=fp16,cascade,skipForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=219.2,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
         },
         {
           "file": "real/picsum_823.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.33648615545116894,
+          "confidence": 0.38440601962122906,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.699999999254942,
-          "elapsedMs": 17.399999998509884,
-          "tiers": "provenance:0.500|spectral:0.334|visual:0.340|fusion:0.336"
+          "backend": "wasm",
+          "totalMs": 1727.199999999255,
+          "elapsedMs": 1718.6000000014901,
+          "timing": {
+            "decodeMs": 6.900000002235174,
+            "spectralMs": 10.099999997764826,
+            "preprocessMs": 0,
+            "distilledMs": 218.69999999925494,
+            "forensicsMs": 1481,
+            "fuseMs": 0,
+            "totalMs": 1718.6000000014901,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.334|visual:0.403[ai-image-detect-distilled=0.403,community-forensics-deepfake-det=0.535,distilled=fp16,cascade,ranForensics,distilledEp=wasm,forensicsEp=wasm,distilledMs=218.7,forensicsMs=1481.0,engine=ort-web]|visual:0.535[community-forensics]|fusion:0.384"
         }
       ]
     },
     {
-      "mode": "js-ext-webgpu-dual",
+      "mode": "js-ext-webgpu-cascade",
       "runtime": "extension-chromium",
       "engine": "onnxruntime-web",
+      "visualMode": "cascade",
       "preferEp": "webgpu",
       "distilledEp": "webgpu",
       "forensicsEp": "webgpu",
       "gpuAvailable": true,
       "threshold": 0.65,
-      "balancedAccuracy": 0.9078947368421053,
+      "balancedAccuracy": 1,
       "confusion": {
-        "tp": 31,
+        "tp": 38,
         "tn": 38,
         "fp": 0,
-        "fn": 7
+        "fn": 0
       },
       "timing": {
-        "avgTotalMs": 36.186842105204335,
-        "count": 76
+        "avgTotalMs": 7658.201315789434,
+        "p50TotalMs": 5817.800000000745,
+        "p90TotalMs": 31817,
+        "count": 76,
+        "forensicsCount": 12,
+        "avgDistilledMs": 3514.042105263099,
+        "avgForensicsMsWhenRun": 25988.675000000745,
+        "avgDecodeMs": 6.7131578948250725,
+        "avgSpectralMs": 8.702631578878744,
+        "avgPreprocessMs": 0
       },
       "rows": [
         {
@@ -969,9 +1750,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 29.09999999962747,
-          "elapsedMs": 6.5,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 14.5,
+          "elapsedMs": 8.600000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 8.600000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/x-ai__grok-imagine-image-2.0/kitchen_window.jpg",
@@ -981,9 +1772,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 15.599999999627471,
-          "elapsedMs": 3.599999999627471,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 12.199999999254942,
+          "elapsedMs": 4.300000000745058,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 4.300000000745058,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/microsoft__mai-image-2.5-pro/kitchen_window.png",
@@ -993,9 +1794,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 58.600000001490116,
-          "elapsedMs": 22.199999999254942,
-          "tiers": "provenance:0.930|spectral:0.500|visual:0.500|fusion:0.930"
+          "totalMs": 56.399999998509884,
+          "elapsedMs": 47.899999998509884,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 47.899999998509884,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
         },
         {
           "file": "ai/qwen__qwen-image-3-pro/park_dog.png",
@@ -1005,9 +1816,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 44.79999999888241,
-          "elapsedMs": 17.09999999962747,
-          "tiers": "provenance:0.930|spectral:0.500|visual:0.500|fusion:0.930"
+          "totalMs": 45.80000000074506,
+          "elapsedMs": 32.599999997764826,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 32.599999997764826,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
         },
         {
           "file": "ai/qwen__qwen-image-3/street_cafe.png",
@@ -1017,45 +1838,85 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 65.30000000074506,
-          "elapsedMs": 24.90000000037253,
-          "tiers": "provenance:0.930|spectral:0.500|visual:0.500|fusion:0.930"
+          "totalMs": 35.600000001490116,
+          "elapsedMs": 23.399999998509884,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 23.399999998509884,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
         },
         {
           "file": "ai/krea__krea-2-medium-turbo/kitchen_window.png",
           "label": "ai",
           "model": "krea/krea-2-medium-turbo",
-          "confidence": 0.2564328889452835,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 99,
-          "elapsedMs": 66.20000000111759,
-          "tiers": "provenance:0.500|spectral:0.423|visual:0.197|fusion:0.256"
+          "confidence": 0.66,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "webgpu",
+          "totalMs": 7137.800000000745,
+          "elapsedMs": 7130.599999997765,
+          "timing": {
+            "decodeMs": 11.699999999254942,
+            "spectralMs": 33.69999999925494,
+            "preprocessMs": 0,
+            "distilledMs": 7060.10000000149,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 7130.599999997765,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.423|visual:0.646[ai-image-detect-distilled=0.646,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=7060.1,forensicsMs=0.0,engine=ort-web]|fusion:0.660"
         },
         {
           "file": "ai/krea__krea-2-medium/street_cafe.png",
           "label": "ai",
           "model": "krea/krea-2-medium",
-          "confidence": 0.23704855875015224,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 87.30000000074506,
-          "elapsedMs": 55.20000000111759,
-          "tiers": "provenance:0.500|spectral:0.362|visual:0.182|fusion:0.237"
+          "confidence": 0.6829431085442063,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "webgpu",
+          "totalMs": 6133.699999999255,
+          "elapsedMs": 6106.300000000745,
+          "timing": {
+            "decodeMs": 13.899999998509884,
+            "spectralMs": 32,
+            "preprocessMs": 0,
+            "distilledMs": 6041.400000002235,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 6106.300000000745,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.361|visual:0.683[ai-image-detect-distilled=0.683,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6041.4,forensicsMs=0.0,engine=ort-web]|fusion:0.683"
         },
         {
           "file": "ai/krea__krea-2-large/park_dog.png",
           "label": "ai",
           "model": "krea/krea-2-large",
-          "confidence": 0.21070078929722924,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 96.69999999925494,
-          "elapsedMs": 53.59999999962747,
-          "tiers": "provenance:0.500|spectral:0.309|visual:0.151|fusion:0.211"
+          "confidence": 0.7822969742149074,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "webgpu",
+          "totalMs": 32528.599999997765,
+          "elapsedMs": 32517.60000000149,
+          "timing": {
+            "decodeMs": 13.100000001490116,
+            "spectralMs": 19.199999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 5822.89999999851,
+            "forensicsMs": 26641.400000002235,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 32517.60000000149,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.308|visual:0.496[ai-image-detect-distilled=0.496,community-forensics-deepfake-det=0.782,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5822.9,forensicsMs=26641.4,engine=ort-web]|visual:0.782[community-forensics]|fusion:0.782"
         },
         {
           "file": "ai/google__gemini-3.1-flash-lite-image/park_dog.jpg",
@@ -1065,9 +1926,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 24.5,
-          "elapsedMs": 8.199999999254942,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 81.5,
+          "elapsedMs": 62.80000000074506,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 62.80000000074506,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-image-1/park_dog.png",
@@ -1077,9 +1948,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 40.69999999925494,
-          "elapsedMs": 18,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 32.100000001490116,
+          "elapsedMs": 22.699999999254942,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 22.699999999254942,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-image-1-mini/kitchen_window.png",
@@ -1089,9 +1970,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 46,
-          "elapsedMs": 16,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 24.5,
+          "elapsedMs": 12,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 12,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-3.1-flash-image/street_cafe.jpg",
@@ -1101,9 +1992,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 37.399999998509884,
-          "elapsedMs": 19.200000001117587,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 40.69999999925494,
+          "elapsedMs": 31.099999997764826,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 31.099999997764826,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-image-2/street_cafe.png",
@@ -1113,9 +2014,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 33,
-          "elapsedMs": 7.300000000745058,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 42.600000001490116,
+          "elapsedMs": 31.900000002235174,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 31.900000002235174,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-3-pro-image/kitchen_window.jpg",
@@ -1125,21 +2036,41 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 32.19999999925494,
-          "elapsedMs": 16.800000000745058,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 24.399999998509884,
+          "elapsedMs": 18.800000000745058,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 18.800000000745058,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/sourceful__riverflow-v2.5-fast/street_cafe.jpg",
           "label": "ai",
           "model": "sourceful/riverflow-v2.5-fast",
-          "confidence": 0.24590568674517227,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 42.29999999888241,
-          "elapsedMs": 33.30000000074506,
-          "tiers": "provenance:0.500|spectral:0.369|visual:0.195|fusion:0.246"
+          "confidence": 0.7164828274343165,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "webgpu",
+          "totalMs": 32134.60000000149,
+          "elapsedMs": 32121.79999999702,
+          "timing": {
+            "decodeMs": 14.400000002235174,
+            "spectralMs": 19.5,
+            "preprocessMs": 0,
+            "distilledMs": 6036,
+            "forensicsMs": 26039.599999997765,
+            "fuseMs": 0,
+            "totalMs": 32121.79999999702,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.368|visual:0.444[ai-image-detect-distilled=0.444,community-forensics-deepfake-det=0.716,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6036.0,forensicsMs=26039.6,engine=ort-web]|visual:0.716[community-forensics]|fusion:0.716"
         },
         {
           "file": "ai/microsoft__mai-image-2.5/kitchen_window.png",
@@ -1149,9 +2080,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 40.59999999962747,
-          "elapsedMs": 13.399999998509884,
-          "tiers": "provenance:0.930|spectral:0.500|visual:0.500|fusion:0.930"
+          "totalMs": 48.599999997764826,
+          "elapsedMs": 31.100000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 31.100000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
         },
         {
           "file": "ai/x-ai__grok-imagine-image-quality/park_dog.jpg",
@@ -1161,9 +2102,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 14.800000000745058,
-          "elapsedMs": 4.100000001490116,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 16,
+          "elapsedMs": 8.899999998509884,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 8.899999998509884,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4.1-utility/street_cafe.webp",
@@ -1173,9 +2124,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 34.09999999962747,
-          "elapsedMs": 10.900000000372529,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 52.400000002235174,
+          "elapsedMs": 40.099999997764826,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 40.099999997764826,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4.1-utility-pro/park_dog.webp",
@@ -1185,9 +2146,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 94.39999999850988,
-          "elapsedMs": 11.699999999254942,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 59.79999999701977,
+          "elapsedMs": 30.900000002235174,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 30.900000002235174,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4.1/park_dog.webp",
@@ -1197,9 +2168,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 46.70000000111759,
-          "elapsedMs": 20.200000001117587,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 24.399999998509884,
+          "elapsedMs": 15.699999999254942,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 15.699999999254942,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4.1-pro/kitchen_window.webp",
@@ -1209,9 +2190,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 90.40000000037253,
-          "elapsedMs": 12.199999999254942,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 53.5,
+          "elapsedMs": 33.19999999925494,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 33.19999999925494,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4/street_cafe.webp",
@@ -1221,9 +2212,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 36.09999999962747,
-          "elapsedMs": 19.899999998509884,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 36.899999998509884,
+          "elapsedMs": 29.300000000745058,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 29.300000000745058,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v4-pro/park_dog.webp",
@@ -1233,9 +2234,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 109,
-          "elapsedMs": 11.799999998882413,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 51.19999999925494,
+          "elapsedMs": 22.5,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 22.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/recraft__recraft-v3/kitchen_window.webp",
@@ -1245,9 +2256,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 44.40000000037253,
-          "elapsedMs": 19.800000000745058,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 30.100000001490116,
+          "elapsedMs": 20.300000000745058,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 20.300000000745058,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-3.1-flash-image-preview/street_cafe.jpg",
@@ -1257,9 +2278,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 40.40000000037253,
-          "elapsedMs": 20.90000000037253,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 32.29999999701977,
+          "elapsedMs": 19.199999999254942,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 19.199999999254942,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-5.4-image-2/park_dog.png",
@@ -1269,21 +2300,41 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 65.30000000074506,
-          "elapsedMs": 16.200000001117587,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 21.400000002235174,
+          "elapsedMs": 9.899999998509884,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 9.899999998509884,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/sourceful__riverflow-v2-pro/kitchen_window.webp",
           "label": "ai",
           "model": "sourceful/riverflow-v2-pro",
-          "confidence": 0.26192822908469865,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 28.59999999962747,
-          "elapsedMs": 20.90000000037253,
-          "tiers": "provenance:0.500|spectral:0.440|visual:0.201|fusion:0.262"
+          "confidence": 0.68,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "webgpu",
+          "totalMs": 31960.800000000745,
+          "elapsedMs": 31952.900000002235,
+          "timing": {
+            "decodeMs": 12.5,
+            "spectralMs": 19.400000002235174,
+            "preprocessMs": 0,
+            "distilledMs": 6101.39999999851,
+            "forensicsMs": 25817.10000000149,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 31952.900000002235,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.438|visual:0.629[ai-image-detect-distilled=0.629,community-forensics-deepfake-det=0.679,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6101.4,forensicsMs=25817.1,engine=ort-web]|visual:0.679[community-forensics]|fusion:0.680"
         },
         {
           "file": "ai/black-forest-labs__flux.2-klein-4b/street_cafe.png",
@@ -1293,9 +2344,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 45.5,
-          "elapsedMs": 12,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 74.19999999925494,
+          "elapsedMs": 48.29999999701977,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 48.29999999701977,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/bytedance-seed__seedream-4.5/kitchen_window.jpg",
@@ -1305,21 +2366,41 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 31.700000001117587,
-          "elapsedMs": 15.5,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 44.5,
+          "elapsedMs": 34.19999999925494,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 34.19999999925494,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/sourceful__riverflow-v2-fast/park_dog.webp",
           "label": "ai",
           "model": "sourceful/riverflow-v2-fast",
-          "confidence": 0.2022944491826495,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 26.699999999254942,
-          "elapsedMs": 21,
-          "tiers": "provenance:0.500|spectral:0.304|visual:0.136|fusion:0.202"
+          "confidence": 0.7933743644787181,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "webgpu",
+          "totalMs": 32167,
+          "elapsedMs": 32161.39999999851,
+          "timing": {
+            "decodeMs": 14.400000002235174,
+            "spectralMs": 19.5,
+            "preprocessMs": 0,
+            "distilledMs": 6113.89999999851,
+            "forensicsMs": 26010.699999999255,
+            "fuseMs": 0.19999999925494194,
+            "totalMs": 32161.39999999851,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.304|visual:0.358[ai-image-detect-distilled=0.358,community-forensics-deepfake-det=0.793,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6113.9,forensicsMs=26010.7,engine=ort-web]|visual:0.793[community-forensics]|fusion:0.793"
         },
         {
           "file": "ai/black-forest-labs__flux.2-flex/street_cafe.png",
@@ -1329,9 +2410,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 44.5,
-          "elapsedMs": 12.199999999254942,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 44.100000001490116,
+          "elapsedMs": 26.300000000745058,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 26.300000000745058,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/black-forest-labs__flux.2-max/park_dog.png",
@@ -1341,9 +2432,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 47.59999999962747,
-          "elapsedMs": 18.5,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 45.19999999925494,
+          "elapsedMs": 35.5,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 35.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/black-forest-labs__flux.2-pro/kitchen_window.png",
@@ -1353,9 +2454,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 36.30000000074506,
-          "elapsedMs": 11.5,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 46.099999997764826,
+          "elapsedMs": 28.5,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 28.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-3-pro-image-preview/park_dog.jpg",
@@ -1365,9 +2476,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 35,
-          "elapsedMs": 18,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 25.199999999254942,
+          "elapsedMs": 19.100000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 19.100000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-5-image-mini/street_cafe.png",
@@ -1377,9 +2498,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 48.30000000074506,
-          "elapsedMs": 17.5,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 35.099999997764826,
+          "elapsedMs": 22.5,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 22.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/google__gemini-2.5-flash-image/park_dog.png",
@@ -1389,9 +2520,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 41.69999999925494,
-          "elapsedMs": 11.300000000745058,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 32.20000000298023,
+          "elapsedMs": 22.099999997764826,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 22.099999997764826,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/openai__gpt-5-image/kitchen_window.png",
@@ -1401,477 +2542,877 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 44.600000001490116,
-          "elapsedMs": 15.400000000372529,
-          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+          "totalMs": 30.300000000745058,
+          "elapsedMs": 17.600000001490116,
+          "timing": {
+            "decodeMs": 0,
+            "spectralMs": 0,
+            "preprocessMs": 0,
+            "distilledMs": 0,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 17.600000001490116,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
         },
         {
           "file": "ai/sourceful__riverflow-v2.5-pro/park_dog.png",
           "label": "ai",
           "model": "sourceful/riverflow-v2.5-pro",
-          "confidence": 0.23846412773197295,
-          "predicted": "real",
-          "correct": false,
-          "backend": "stub",
-          "totalMs": 93.5,
-          "elapsedMs": 50,
-          "tiers": "provenance:0.500|spectral:0.295|visual:0.204|fusion:0.238"
+          "confidence": 0.7637428215560604,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "webgpu",
+          "totalMs": 31785.39999999851,
+          "elapsedMs": 31770.400000002235,
+          "timing": {
+            "decodeMs": 16.699999999254942,
+            "spectralMs": 15.600000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 6123.5,
+            "forensicsMs": 25586.199999999255,
+            "fuseMs": 0,
+            "totalMs": 31770.400000002235,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.294|visual:0.319[ai-image-detect-distilled=0.319,community-forensics-deepfake-det=0.764,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6123.5,forensicsMs=25586.2,engine=ort-web]|visual:0.764[community-forensics]|fusion:0.764"
         },
         {
           "file": "real/picsum_10.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23110910471196733,
+          "confidence": 0.31075857375780125,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 24,
-          "elapsedMs": 17.59999999962747,
-          "tiers": "provenance:0.500|spectral:0.326|visual:0.182|fusion:0.231"
+          "backend": "webgpu",
+          "totalMs": 5951.800000000745,
+          "elapsedMs": 5940.199999999255,
+          "timing": {
+            "decodeMs": 11.199999999254942,
+            "spectralMs": 12.900000002235174,
+            "preprocessMs": 0,
+            "distilledMs": 5914.199999999255,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5940.199999999255,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.326|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5914.2,forensicsMs=0.0,engine=ort-web]|fusion:0.311"
         },
         {
           "file": "real/picsum_15.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2494298569999836,
+          "confidence": 0.5162620880189478,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 25.59999999962747,
-          "elapsedMs": 20,
-          "tiers": "provenance:0.500|spectral:0.375|visual:0.199|fusion:0.249"
+          "backend": "webgpu",
+          "totalMs": 32071.10000000149,
+          "elapsedMs": 32062.300000000745,
+          "timing": {
+            "decodeMs": 10.200000002980232,
+            "spectralMs": 13,
+            "preprocessMs": 0,
+            "distilledMs": 5818.199999999255,
+            "forensicsMs": 26217.699999999255,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 32062.300000000745,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.374|visual:0.555[ai-image-detect-distilled=0.555,community-forensics-deepfake-det=0.543,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5818.2,forensicsMs=26217.7,engine=ort-web]|visual:0.543[community-forensics]|fusion:0.516"
         },
         {
           "file": "real/picsum_28.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2576809557122395,
+          "confidence": 0.29499126027792555,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 26.09999999962747,
-          "elapsedMs": 20.800000000745058,
-          "tiers": "provenance:0.500|spectral:0.267|visual:0.243|fusion:0.258"
+          "backend": "webgpu",
+          "totalMs": 6203.5,
+          "elapsedMs": 6186.39999999851,
+          "timing": {
+            "decodeMs": 17.600000001490116,
+            "spectralMs": 17,
+            "preprocessMs": 0,
+            "distilledMs": 6147.099999997765,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 6186.39999999851,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.268|visual:0.299[ai-image-detect-distilled=0.299,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6147.1,forensicsMs=0.0,engine=ort-web]|fusion:0.295"
         },
         {
           "file": "real/picsum_48.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.32745678760517594,
+          "confidence": 0.35807758816362634,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 19.5,
-          "elapsedMs": 13.900000000372529,
-          "tiers": "provenance:0.500|spectral:0.478|visual:0.286|fusion:0.327"
+          "backend": "webgpu",
+          "totalMs": 5842.699999999255,
+          "elapsedMs": 5835.89999999851,
+          "timing": {
+            "decodeMs": 12.200000002980232,
+            "spectralMs": 13.199999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 5809.099999997765,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5835.89999999851,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.478|visual:0.328[ai-image-detect-distilled=0.328,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5809.1,forensicsMs=0.0,engine=ort-web]|fusion:0.358"
         },
         {
           "file": "real/picsum_64.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.244015954745542,
+          "confidence": 0.38275728527891284,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 18.90000000037253,
-          "elapsedMs": 15.199999999254942,
-          "tiers": "provenance:0.500|spectral:0.416|visual:0.179|fusion:0.244"
+          "backend": "webgpu",
+          "totalMs": 6060.199999999255,
+          "elapsedMs": 6051.699999999255,
+          "timing": {
+            "decodeMs": 9.800000000745058,
+            "spectralMs": 13.099999997764826,
+            "preprocessMs": 0,
+            "distilledMs": 6024.20000000298,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 6051.699999999255,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.416|visual:0.378[ai-image-detect-distilled=0.378,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6024.2,forensicsMs=0.0,engine=ort-web]|fusion:0.383"
         },
         {
           "file": "real/picsum_83.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2170391975283018,
+          "confidence": 0.29361510250455203,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23,
-          "elapsedMs": 17.5,
-          "tiers": "provenance:0.500|spectral:0.234|visual:0.183|fusion:0.217"
+          "backend": "webgpu",
+          "totalMs": 5959.900000002235,
+          "elapsedMs": 5950.400000002235,
+          "timing": {
+            "decodeMs": 11.199999999254942,
+            "spectralMs": 13.899999998509884,
+            "preprocessMs": 0,
+            "distilledMs": 5921.900000002235,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 5950.400000002235,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.234|visual:0.307[ai-image-detect-distilled=0.307,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5921.9,forensicsMs=0.0,engine=ort-web]|fusion:0.294"
         },
         {
           "file": "real/picsum_96.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2613075376596998,
+          "confidence": 0.375392978108,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.300000000745058,
-          "elapsedMs": 14.299999998882413,
-          "tiers": "provenance:0.500|spectral:0.461|visual:0.194|fusion:0.261"
+          "backend": "webgpu",
+          "totalMs": 5863.900000002235,
+          "elapsedMs": 5858,
+          "timing": {
+            "decodeMs": 9.799999997019768,
+            "spectralMs": 14.100000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 5828.300000000745,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 5858,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.461|visual:0.356[ai-image-detect-distilled=0.356,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5828.3,forensicsMs=0.0,engine=ort-web]|fusion:0.375"
         },
         {
           "file": "real/picsum_119.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.5651605945073497,
+          "confidence": 0.3055673168472175,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 19.59999999962747,
-          "elapsedMs": 13,
-          "tiers": "provenance:0.500|spectral:0.423|visual:0.602|fusion:0.565"
+          "backend": "webgpu",
+          "totalMs": 5792.300000000745,
+          "elapsedMs": 5784.699999999255,
+          "timing": {
+            "decodeMs": 7.600000001490116,
+            "spectralMs": 10.799999997019768,
+            "preprocessMs": 0,
+            "distilledMs": 5765.10000000149,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5784.699999999255,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.423|visual:0.271[ai-image-detect-distilled=0.271,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5765.1,forensicsMs=0.0,engine=ort-web]|fusion:0.306"
         },
         {
           "file": "real/picsum_129.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.244096017976777,
+          "confidence": 0.2969605782253881,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21,
-          "elapsedMs": 16,
-          "tiers": "provenance:0.500|spectral:0.389|visual:0.186|fusion:0.244"
+          "backend": "webgpu",
+          "totalMs": 5921,
+          "elapsedMs": 5910.900000002235,
+          "timing": {
+            "decodeMs": 8.300000000745058,
+            "spectralMs": 12.399999998509884,
+            "preprocessMs": 0,
+            "distilledMs": 5887.199999999255,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5910.900000002235,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.389|visual:0.268[ai-image-detect-distilled=0.268,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5887.2,forensicsMs=0.0,engine=ort-web]|fusion:0.297"
         },
         {
           "file": "real/picsum_137.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23121551976178079,
+          "confidence": 0.2558869206693426,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.09999999962747,
-          "elapsedMs": 14.700000001117587,
-          "tiers": "provenance:0.500|spectral:0.351|visual:0.175|fusion:0.231"
+          "backend": "webgpu",
+          "totalMs": 6010,
+          "elapsedMs": 6000.800000000745,
+          "timing": {
+            "decodeMs": 10.5,
+            "spectralMs": 11.699999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 5977.800000000745,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 6000.800000000745,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.351|visual:0.216[ai-image-detect-distilled=0.216,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5977.8,forensicsMs=0.0,engine=ort-web]|fusion:0.256"
         },
         {
           "file": "real/picsum_152.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2608863569734835,
+          "confidence": 0.4015192611053081,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 20.100000001490116,
-          "elapsedMs": 16.200000001117587,
-          "tiers": "provenance:0.500|spectral:0.456|visual:0.195|fusion:0.261"
+          "backend": "webgpu",
+          "totalMs": 5708.300000000745,
+          "elapsedMs": 5702.800000000745,
+          "timing": {
+            "decodeMs": 7.5,
+            "spectralMs": 10.699999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 5681.60000000149,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5702.800000000745,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.457|visual:0.390[ai-image-detect-distilled=0.390,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5681.6,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
         },
         {
           "file": "real/picsum_163.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23403826247393072,
+          "confidence": 0.5123524548998153,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.90000000037253,
-          "elapsedMs": 17.200000001117587,
-          "tiers": "provenance:0.500|spectral:0.355|visual:0.179|fusion:0.234"
+          "backend": "webgpu",
+          "totalMs": 32772.79999999702,
+          "elapsedMs": 32764.10000000149,
+          "timing": {
+            "decodeMs": 8.199999999254942,
+            "spectralMs": 12.600000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 5827.199999999255,
+            "forensicsMs": 26910.800000000745,
+            "fuseMs": 0,
+            "totalMs": 32764.10000000149,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.356|visual:0.556[ai-image-detect-distilled=0.556,community-forensics-deepfake-det=0.619,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5827.2,forensicsMs=26910.8,engine=ort-web]|visual:0.619[community-forensics]|fusion:0.512"
         },
         {
           "file": "real/picsum_176.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.22315800840792877,
+          "confidence": 0.3353213010069027,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.5,
-          "elapsedMs": 15.900000000372529,
-          "tiers": "provenance:0.500|spectral:0.288|visual:0.179|fusion:0.223"
+          "backend": "webgpu",
+          "totalMs": 32529.60000000149,
+          "elapsedMs": 32509.10000000149,
+          "timing": {
+            "decodeMs": 15.5,
+            "spectralMs": 17.899999998509884,
+            "preprocessMs": 0,
+            "distilledMs": 6197.400000002235,
+            "forensicsMs": 26273.800000000745,
+            "fuseMs": 0,
+            "totalMs": 32509.10000000149,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.290|visual:0.350[ai-image-detect-distilled=0.350,community-forensics-deepfake-det=0.593,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6197.4,forensicsMs=26273.8,engine=ort-web]|visual:0.593[community-forensics]|fusion:0.335"
         },
         {
           "file": "real/picsum_193.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2416622206760231,
+          "confidence": 0.4746473318057218,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.59999999962747,
-          "elapsedMs": 17.799999998882413,
-          "tiers": "provenance:0.500|spectral:0.347|visual:0.194|fusion:0.242"
+          "backend": "webgpu",
+          "totalMs": 5984.699999999255,
+          "elapsedMs": 5974.79999999702,
+          "timing": {
+            "decodeMs": 14.199999999254942,
+            "spectralMs": 16.300000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 5938.300000000745,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5974.79999999702,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.347|visual:0.512[ai-image-detect-distilled=0.512,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5938.3,forensicsMs=0.0,engine=ort-web]|fusion:0.475"
         },
         {
           "file": "real/picsum_201.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23729263382757076,
+          "confidence": 0.30088567079170325,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.59999999962747,
-          "elapsedMs": 16.90000000037253,
-          "tiers": "provenance:0.500|spectral:0.394|visual:0.174|fusion:0.237"
+          "backend": "webgpu",
+          "totalMs": 5973.39999999851,
+          "elapsedMs": 5962.599999997765,
+          "timing": {
+            "decodeMs": 11.5,
+            "spectralMs": 13.399999998509884,
+            "preprocessMs": 0,
+            "distilledMs": 5936.199999999255,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5962.599999997765,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.394|visual:0.272[ai-image-detect-distilled=0.272,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5936.2,forensicsMs=0.0,engine=ort-web]|fusion:0.301"
         },
         {
           "file": "real/picsum_225.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2611316891700435,
+          "confidence": 0.629786517009734,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 20.5,
-          "elapsedMs": 15.400000000372529,
-          "tiers": "provenance:0.500|spectral:0.468|visual:0.192|fusion:0.261"
+          "backend": "webgpu",
+          "totalMs": 5948.300000000745,
+          "elapsedMs": 5939.800000000745,
+          "timing": {
+            "decodeMs": 15.100000001490116,
+            "spectralMs": 17,
+            "preprocessMs": 0,
+            "distilledMs": 5904.099999997765,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 5939.800000000745,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.468|visual:0.671[ai-image-detect-distilled=0.671,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5904.1,forensicsMs=0.0,engine=ort-web]|fusion:0.630"
         },
         {
           "file": "real/picsum_237.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2602219016455757,
+          "confidence": 0.5043413433908768,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.90000000037253,
-          "elapsedMs": 16.90000000037253,
-          "tiers": "provenance:0.500|spectral:0.429|visual:0.201|fusion:0.260"
+          "backend": "webgpu",
+          "totalMs": 5975.29999999702,
+          "elapsedMs": 5969.199999999255,
+          "timing": {
+            "decodeMs": 9.800000000745058,
+            "spectralMs": 11.899999998509884,
+            "preprocessMs": 0,
+            "distilledMs": 5945.60000000149,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 5969.199999999255,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.429|visual:0.525[ai-image-detect-distilled=0.525,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5945.6,forensicsMs=0.0,engine=ort-web]|fusion:0.504"
         },
         {
           "file": "real/picsum_250.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.26509341268766184,
+          "confidence": 0.5770977913246942,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 20.09999999962747,
-          "elapsedMs": 15.699999999254942,
-          "tiers": "provenance:0.500|spectral:0.449|visual:0.203|fusion:0.265"
+          "backend": "webgpu",
+          "totalMs": 6003.60000000149,
+          "elapsedMs": 5997.800000000745,
+          "timing": {
+            "decodeMs": 13.300000000745058,
+            "spectralMs": 13.800000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 5967.300000000745,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5997.800000000745,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.449|visual:0.609[ai-image-detect-distilled=0.609,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5967.3,forensicsMs=0.0,engine=ort-web]|fusion:0.577"
         },
         {
           "file": "real/picsum_274.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2693776461048558,
+          "confidence": 0.3984150847136603,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.59999999962747,
-          "elapsedMs": 16.300000000745058,
-          "tiers": "provenance:0.500|spectral:0.405|visual:0.222|fusion:0.269"
+          "backend": "webgpu",
+          "totalMs": 5873.199999999255,
+          "elapsedMs": 5864.5,
+          "timing": {
+            "decodeMs": 9.599999997764826,
+            "spectralMs": 10.800000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 5840.39999999851,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5864.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.405|visual:0.401[ai-image-detect-distilled=0.401,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5840.4,forensicsMs=0.0,engine=ort-web]|fusion:0.398"
         },
         {
           "file": "real/picsum_292.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.23114106753997715,
+          "confidence": 0.5584763496773519,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.399999998509884,
-          "elapsedMs": 17.799999998882413,
-          "tiers": "provenance:0.500|spectral:0.351|visual:0.175|fusion:0.231"
+          "backend": "webgpu",
+          "totalMs": 5980.300000000745,
+          "elapsedMs": 5968.20000000298,
+          "timing": {
+            "decodeMs": 9.800000000745058,
+            "spectralMs": 11.5,
+            "preprocessMs": 0,
+            "distilledMs": 5945,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5968.20000000298,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.351|visual:0.614[ai-image-detect-distilled=0.614,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5945.0,forensicsMs=0.0,engine=ort-web]|fusion:0.558"
         },
         {
           "file": "real/picsum_314.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.25745251905089916,
+          "confidence": 0.4447999442586932,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.399999998509884,
-          "elapsedMs": 18.09999999962747,
-          "tiers": "provenance:0.500|spectral:0.457|visual:0.189|fusion:0.257"
+          "backend": "webgpu",
+          "totalMs": 5817.800000000745,
+          "elapsedMs": 5805,
+          "timing": {
+            "decodeMs": 10.800000000745058,
+            "spectralMs": 11.5,
+            "preprocessMs": 0,
+            "distilledMs": 5777.800000000745,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5805,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.457|visual:0.445[ai-image-detect-distilled=0.445,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5777.8,forensicsMs=0.0,engine=ort-web]|fusion:0.445"
         },
         {
           "file": "real/picsum_338.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.259964379832394,
+          "confidence": 0.3409095776628051,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 20.199999999254942,
-          "elapsedMs": 16,
-          "tiers": "provenance:0.500|spectral:0.442|visual:0.197|fusion:0.260"
+          "backend": "webgpu",
+          "totalMs": 5789.800000000745,
+          "elapsedMs": 5784,
+          "timing": {
+            "decodeMs": 8.800000000745058,
+            "spectralMs": 12.399999998509884,
+            "preprocessMs": 0,
+            "distilledMs": 5760.900000002235,
+            "forensicsMs": 0,
+            "fuseMs": 0.09999999776482582,
+            "totalMs": 5784,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.442|visual:0.315[ai-image-detect-distilled=0.315,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5760.9,forensicsMs=0.0,engine=ort-web]|fusion:0.341"
         },
         {
           "file": "real/picsum_349.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2663764505526486,
+          "confidence": 0.33717149662789114,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 18.800000000745058,
-          "elapsedMs": 14.900000000372529,
-          "tiers": "provenance:0.500|spectral:0.441|visual:0.207|fusion:0.266"
+          "backend": "webgpu",
+          "totalMs": 5935.300000000745,
+          "elapsedMs": 5927.89999999851,
+          "timing": {
+            "decodeMs": 9.199999999254942,
+            "spectralMs": 12.199999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 5904.89999999851,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5927.89999999851,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.441|visual:0.310[ai-image-detect-distilled=0.310,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5904.9,forensicsMs=0.0,engine=ort-web]|fusion:0.337"
         },
         {
           "file": "real/picsum_366.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2852575681628077,
+          "confidence": 0.4503188757685316,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21.09999999962747,
-          "elapsedMs": 15.300000000745058,
-          "tiers": "provenance:0.500|spectral:0.499|visual:0.220|fusion:0.285"
+          "backend": "webgpu",
+          "totalMs": 6005.199999999255,
+          "elapsedMs": 5997.5,
+          "timing": {
+            "decodeMs": 7.699999999254942,
+            "spectralMs": 10,
+            "preprocessMs": 0,
+            "distilledMs": 5976.699999999255,
+            "forensicsMs": 0,
+            "fuseMs": 0.09999999776482582,
+            "totalMs": 5997.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.499|visual:0.440[ai-image-detect-distilled=0.440,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5976.7,forensicsMs=0.0,engine=ort-web]|fusion:0.450"
         },
         {
           "file": "real/picsum_399.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.24782493370499725,
+          "confidence": 0.24993177346267564,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 18.100000001490116,
-          "elapsedMs": 13.299999998882413,
-          "tiers": "provenance:0.500|spectral:0.469|visual:0.170|fusion:0.248"
+          "backend": "webgpu",
+          "totalMs": 5859,
+          "elapsedMs": 5850,
+          "timing": {
+            "decodeMs": 11.699999999254942,
+            "spectralMs": 13.800000000745058,
+            "preprocessMs": 0,
+            "distilledMs": 5823.300000000745,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5850,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.469|visual:0.173[ai-image-detect-distilled=0.173,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5823.3,forensicsMs=0.0,engine=ort-web]|fusion:0.250"
         },
         {
           "file": "real/picsum_433.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.25953497297271677,
+          "confidence": 0.5829935043155312,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 25,
-          "elapsedMs": 17.90000000037253,
-          "tiers": "provenance:0.500|spectral:0.421|visual:0.202|fusion:0.260"
+          "backend": "webgpu",
+          "totalMs": 31799.5,
+          "elapsedMs": 31789.79999999702,
+          "timing": {
+            "decodeMs": 10.800000000745058,
+            "spectralMs": 13,
+            "preprocessMs": 0,
+            "distilledMs": 5993.79999999702,
+            "forensicsMs": 25766.60000000149,
+            "fuseMs": 0.09999999776482582,
+            "totalMs": 31789.79999999702,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.421|visual:0.624[ai-image-detect-distilled=0.624,community-forensics-deepfake-det=0.661,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5993.8,forensicsMs=25766.6,engine=ort-web]|visual:0.661[community-forensics]|fusion:0.583"
         },
         {
           "file": "real/picsum_453.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2726823438370681,
+          "confidence": 0.40752650319501194,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 19.199999999254942,
-          "elapsedMs": 14.899999998509884,
-          "tiers": "provenance:0.500|spectral:0.431|visual:0.220|fusion:0.273"
+          "backend": "webgpu",
+          "totalMs": 5807.300000000745,
+          "elapsedMs": 5788.199999999255,
+          "timing": {
+            "decodeMs": 11.5,
+            "spectralMs": 13,
+            "preprocessMs": 0,
+            "distilledMs": 5760.5,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5788.199999999255,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.431|visual:0.405[ai-image-detect-distilled=0.405,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5760.5,forensicsMs=0.0,engine=ort-web]|fusion:0.408"
         },
         {
           "file": "real/picsum_488.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.24122210796494747,
+          "confidence": 0.3279315592428578,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 36.20000000111759,
-          "elapsedMs": 28.40000000037253,
-          "tiers": "provenance:0.500|spectral:0.411|visual:0.175|fusion:0.241"
+          "backend": "webgpu",
+          "totalMs": 31271.199999999255,
+          "elapsedMs": 31256.5,
+          "timing": {
+            "decodeMs": 14.300000000745058,
+            "spectralMs": 16.5,
+            "preprocessMs": 0,
+            "distilledMs": 5736.199999999255,
+            "forensicsMs": 25483.900000002235,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 31256.5,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.412|visual:0.306[ai-image-detect-distilled=0.306,community-forensics-deepfake-det=0.608,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5736.2,forensicsMs=25483.9,engine=ort-web]|visual:0.608[community-forensics]|fusion:0.328"
         },
         {
           "file": "real/picsum_525.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.2217530051260947,
+          "confidence": 0.2454280840245015,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 22,
-          "elapsedMs": 14,
-          "tiers": "provenance:0.500|spectral:0.406|visual:0.143|fusion:0.222"
+          "backend": "webgpu",
+          "totalMs": 5965.300000000745,
+          "elapsedMs": 5952.89999999851,
+          "timing": {
+            "decodeMs": 11.300000000745058,
+            "spectralMs": 15.100000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 5925.599999997765,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5952.89999999851,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.407|visual:0.184[ai-image-detect-distilled=0.184,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5925.6,forensicsMs=0.0,engine=ort-web]|fusion:0.245"
         },
         {
           "file": "real/picsum_553.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.19278028394688163,
+          "confidence": 0.2910519589157051,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 26.59999999962747,
-          "elapsedMs": 19.399999998509884,
-          "tiers": "provenance:0.500|spectral:0.284|visual:0.124|fusion:0.193"
+          "backend": "webgpu",
+          "totalMs": 5925.89999999851,
+          "elapsedMs": 5916.60000000149,
+          "timing": {
+            "decodeMs": 12.599999997764826,
+            "spectralMs": 12.600000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 5883.5,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5916.60000000149,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.284|visual:0.289[ai-image-detect-distilled=0.289,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5883.5,forensicsMs=0.0,engine=ort-web]|fusion:0.291"
         },
         {
           "file": "real/picsum_582.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.24751748175117,
+          "confidence": 0.4322334756403493,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 25.399999998509884,
-          "elapsedMs": 17.90000000037253,
-          "tiers": "provenance:0.500|spectral:0.390|visual:0.192|fusion:0.248"
+          "backend": "webgpu",
+          "totalMs": 5908.300000000745,
+          "elapsedMs": 5900.199999999255,
+          "timing": {
+            "decodeMs": 8.100000001490116,
+            "spectralMs": 13.5,
+            "preprocessMs": 0,
+            "distilledMs": 5876.39999999851,
+            "forensicsMs": 0,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 5900.199999999255,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.390|visual:0.448[ai-image-detect-distilled=0.448,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5876.4,forensicsMs=0.0,engine=ort-web]|fusion:0.432"
         },
         {
           "file": "real/picsum_593.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.254145374883856,
+          "confidence": 0.375539342159126,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 24.200000001117587,
-          "elapsedMs": 18.59999999962747,
-          "tiers": "provenance:0.500|spectral:0.337|visual:0.217|fusion:0.254"
+          "backend": "webgpu",
+          "totalMs": 31817,
+          "elapsedMs": 31807.89999999851,
+          "timing": {
+            "decodeMs": 10.5,
+            "spectralMs": 12.099999997764826,
+            "preprocessMs": 0,
+            "distilledMs": 6039.099999997765,
+            "forensicsMs": 25741.20000000298,
+            "fuseMs": 0.09999999776482582,
+            "totalMs": 31807.89999999851,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.337|visual:0.391[ai-image-detect-distilled=0.391,community-forensics-deepfake-det=0.656,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6039.1,forensicsMs=25741.2,engine=ort-web]|visual:0.656[community-forensics]|fusion:0.376"
         },
         {
           "file": "real/picsum_628.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.24944592020175432,
+          "confidence": 0.5704824015717078,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.199999999254942,
-          "elapsedMs": 17.90000000037253,
-          "tiers": "provenance:0.500|spectral:0.397|visual:0.193|fusion:0.249"
+          "backend": "webgpu",
+          "totalMs": 6046.89999999851,
+          "elapsedMs": 6033.099999997765,
+          "timing": {
+            "decodeMs": 11.899999998509884,
+            "spectralMs": 13.100000001490116,
+            "preprocessMs": 0,
+            "distilledMs": 6004.099999997765,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 6033.099999997765,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.397|visual:0.616[ai-image-detect-distilled=0.616,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=6004.1,forensicsMs=0.0,engine=ort-web]|fusion:0.570"
         },
         {
           "file": "real/picsum_660.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.5345517833458127,
+          "confidence": 0.32854892249383927,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 19.699999999254942,
-          "elapsedMs": 14.800000000745058,
-          "tiers": "provenance:0.500|spectral:0.466|visual:0.552|fusion:0.535"
+          "backend": "webgpu",
+          "totalMs": 5764.800000000745,
+          "elapsedMs": 5754.699999999255,
+          "timing": {
+            "decodeMs": 10.099999997764826,
+            "spectralMs": 12.400000002235174,
+            "preprocessMs": 0,
+            "distilledMs": 5731,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5754.699999999255,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.465|visual:0.292[ai-image-detect-distilled=0.292,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5731.0,forensicsMs=0.0,engine=ort-web]|fusion:0.329"
         },
         {
           "file": "real/picsum_718.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.4087664297986744,
+          "confidence": 0.43082180633756295,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 24.300000000745058,
-          "elapsedMs": 18.5,
-          "tiers": "provenance:0.500|spectral:0.433|visual:0.406|fusion:0.409"
+          "backend": "webgpu",
+          "totalMs": 5995.60000000149,
+          "elapsedMs": 5986.5,
+          "timing": {
+            "decodeMs": 11,
+            "spectralMs": 14.099999997764826,
+            "preprocessMs": 0,
+            "distilledMs": 5957.900000002235,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5986.5,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.434|visual:0.434[ai-image-detect-distilled=0.434,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5957.9,forensicsMs=0.0,engine=ort-web]|fusion:0.431"
         },
         {
           "file": "real/picsum_741.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.21981079033152695,
+          "confidence": 0.3530656436876216,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 21,
-          "elapsedMs": 15.600000001490116,
-          "tiers": "provenance:0.500|spectral:0.366|visual:0.151|fusion:0.220"
+          "backend": "webgpu",
+          "totalMs": 5806.199999999255,
+          "elapsedMs": 5796.60000000149,
+          "timing": {
+            "decodeMs": 6.699999999254942,
+            "spectralMs": 12,
+            "preprocessMs": 0,
+            "distilledMs": 5777,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5796.60000000149,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.366|visual:0.353[ai-image-detect-distilled=0.353,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5777.0,forensicsMs=0.0,engine=ort-web]|fusion:0.353"
         },
         {
           "file": "real/picsum_783.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.5209158827344417,
+          "confidence": 0.4024942982473735,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.699999999254942,
-          "elapsedMs": 18.199999999254942,
-          "tiers": "provenance:0.500|spectral:0.369|visual:0.563|fusion:0.521"
+          "backend": "webgpu",
+          "totalMs": 5880.39999999851,
+          "elapsedMs": 5872.199999999255,
+          "timing": {
+            "decodeMs": 12.400000002235174,
+            "spectralMs": 14,
+            "preprocessMs": 0,
+            "distilledMs": 5841.5,
+            "forensicsMs": 0,
+            "fuseMs": 0,
+            "totalMs": 5872.199999999255,
+            "ranForensics": false
+          },
+          "tiers": "provenance:0.500|spectral:0.369|visual:0.416[ai-image-detect-distilled=0.416,distilled=fp32,cascade,skipForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5841.5,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
         },
         {
           "file": "real/picsum_823.jpg",
           "label": "real",
           "model": null,
-          "confidence": 0.33648615545116894,
+          "confidence": 0.38477401776550696,
           "predicted": "real",
           "correct": true,
-          "backend": "stub",
-          "totalMs": 23.09999999962747,
-          "elapsedMs": 17.40000000037253,
-          "tiers": "provenance:0.500|spectral:0.334|visual:0.340|fusion:0.336"
+          "backend": "webgpu",
+          "totalMs": 31140.20000000298,
+          "elapsedMs": 31127.900000002235,
+          "timing": {
+            "decodeMs": 11.199999999254942,
+            "spectralMs": 13.199999999254942,
+            "preprocessMs": 0,
+            "distilledMs": 5721.60000000149,
+            "forensicsMs": 25375.10000000149,
+            "fuseMs": 0,
+            "totalMs": 31127.900000002235,
+            "ranForensics": true
+          },
+          "tiers": "provenance:0.500|spectral:0.334|visual:0.404[ai-image-detect-distilled=0.404,community-forensics-deepfake-det=0.535,distilled=fp32,cascade,ranForensics,distilledEp=webgpu,forensicsEp=webgpu,distilledMs=5721.6,forensicsMs=25375.1,engine=ort-web]|visual:0.535[community-forensics]|fusion:0.385"
         }
       ]
     }
