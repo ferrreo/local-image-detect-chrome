@@ -100,7 +100,7 @@ if (runBrowser) {
   const pw = [
     "playwright",
     "test",
-    "tests/eval/eval-suite.spec.ts",
+    "--project=eval",
     "--reporter=line",
   ];
   const useXvfb =
