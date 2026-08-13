@@ -22,6 +22,7 @@
     "test:all": "npm run typecheck && npm run test:unit && npm run build && npm run test:integration",
     "lint": "tsc -p tsconfig.json --noEmit",
     "eval:local": "npm run prepare:assets && node scripts/eval-local.mjs",
+    "eval:stub": "TRUEPIXEL_STUB=1 npm run eval:local",
     "ci": "npm run test:all"
   },
   "engines": {
@@ -36,6 +37,7 @@
     "@types/node": "^24.2.1",
     "esbuild": "^0.25.8",
     "jsdom": "^26.1.0",
+    "onnxruntime-node": "^1.27.0",
     "sharp": "^0.35.3",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
