@@ -102,7 +102,7 @@ OpenRouter corpus (76 images, threshold 65%), same machine:
 | Zig CPU · dual (always CF) | **100%** | 38 | 38 | 0 | 0 | ~158 |
 | Zig CPU · cascade (default eval) | **100%** | 38 | 38 | 0 | 0 | **~78** (CF on 14/76) |
 
-Distilled-alone misses hard Krea/Riverflow cases; dual/cascade recover them via Community Forensics. The Zig host tries WebGPU → Vulkan → XNNPACK → CPU (AVX2 via `x86_64_v3` / ORT MLAS); stock Linux ORT is CPU-only and falls through immediately.
+Distilled-alone misses hard Krea/Riverflow cases; dual/cascade recover them via Community Forensics. The Zig host tries **WebGPU** (Dawn→Vulkan, all GPUs) → CUDA (optional ORT gpu package) → XNNPACK → CPU (`x86_64_v3` / ORT MLAS). `npm run setup:ort` pulls ORT 1.29 + the WebGPU plugin; without a GPU/Vulkan stack it falls through to CPU.
 
 ### Full offline suite (CPU + GPU modes)
 

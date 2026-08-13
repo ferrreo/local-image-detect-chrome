@@ -5,7 +5,7 @@ Produces CPU + GPU numbers for:
 | Mode | Runtime |
 | --- | --- |
 | `js-node-cpu-distilled` / `js-node-cpu-dual` | Node `onnxruntime-node` |
-| `zig-{webgpu,vulkan,xnnpack,cpu}-{distilled,dual,cascade}` | Zig host + ORT (prefers EP, falls back) |
+| `zig-{webgpu,vulkan,xnnpack,cpu}-{distilled,dual,cascade}` | Zig host + ORT (prefers EP, falls back). `vulkan` aliases native WebGPU/Dawn→Vulkan |
 | `js-ext-wasm-dual` / `js-ext-webgpu-dual` | Unpacked MV3 extension in Playwright Chromium |
 
 ## Local PC

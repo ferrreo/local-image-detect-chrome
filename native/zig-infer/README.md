@@ -2,12 +2,14 @@
 
 Host-side inference for local eval / tooling. Tries execution providers in order:
 
-1. **WebGPU** (when the ORT package includes it)
-2. **Vulkan** (same)
-3. **XNNPACK** (same)
+1. **WebGPU** — native plugin EP (`libonnxruntime_providers_webgpu.so`), Dawn → **Vulkan** on Linux
+2. **CUDA** — only with the ORT `*-gpu*` package
+3. **XNNPACK** — when the linked ORT build exposes it
 4. **CPU** — ORT MLAS, built for `x86_64_v3` (AVX2+)
 
-Stock `onnxruntime-linux-x64` ships CPU only; GPU EPs fall through immediately. ORT shared libs are installed next to the binary (`zig-out/lib`, RPATH `$ORIGIN/../lib`).
+There is no separate ORT “Vulkan” EP. Preferring `Vulkan` in the JSONL protocol is an alias for WebGPU.
+
+`npm run setup:ort` downloads ORT **≥ 1.24.4** (default **1.29.0**) plus the WebGPU plugin from NuGet. Shared libs land next to the binary (`zig-out/lib`, RPATH `$ORIGIN/../lib`).
 
 ## Build
 
@@ -15,7 +17,8 @@ Requires [Zig 0.16](https://ziglang.org/download/), `libwebp`, and ORT:
 
 ```bash
 npm run setup:ort
-# PATH must include zig 0.16
+# optional NVIDIA CUDA package:
+# TRUEPIXEL_ORT_VARIANT=gpu npm run setup:ort
 npm run build:zig
 ```
 
@@ -23,7 +26,7 @@ npm run build:zig
 
 ```json
 {"cmd":"ping"}
-{"cmd":"warm"}
+{"cmd":"warm","preferEp":"WebGPU"}
 {"cmd":"infer","path":"benchmark/openrouter/real/picsum_10.jpg","models":["distilled"]}
 {"cmd":"quit"}
 ```

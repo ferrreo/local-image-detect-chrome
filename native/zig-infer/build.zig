@@ -4,8 +4,10 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
     const wasm = b.option(bool, "wasm", "Build wasm32-freestanding SIMD library") orelse false;
 
-    const ort_root = b.option([]const u8, "ort_root", "Path to onnxruntime-linux-x64 package") orelse
-        "../ort/onnxruntime-linux-x64-1.22.0";
+    const ort_root = b.option([]const u8, "ort_root", "Path to onnxruntime package (relative to zig-infer)") orelse
+        "../ort/active";
+    const ort_so_version = b.option([]const u8, "ort_so_version", "libonnxruntime.so.X.Y.Z version") orelse
+        "1.29.0";
 
     if (wasm) {
         const wasm_target = b.resolveTargetQuery(.{
@@ -59,22 +61,22 @@ pub fn build(b: *std.Build) void {
     });
     b.installArtifact(exe);
 
-    // Vendor ORT shared libs into zig-out/lib (RPATH $ORIGIN/../lib).
-    const install_ort = b.addInstallFile(
-        b.path(b.fmt("{s}/lib/libonnxruntime.so.1.22.0", .{ort_root})),
-        "lib/libonnxruntime.so.1.22.0",
-    );
-    const install_ort_link = b.addInstallFile(
-        b.path(b.fmt("{s}/lib/libonnxruntime.so.1", .{ort_root})),
-        "lib/libonnxruntime.so.1",
-    );
-    const install_ort_so = b.addInstallFile(
-        b.path(b.fmt("{s}/lib/libonnxruntime.so", .{ort_root})),
-        "lib/libonnxruntime.so",
-    );
-    b.getInstallStep().dependOn(&install_ort.step);
-    b.getInstallStep().dependOn(&install_ort_link.step);
-    b.getInstallStep().dependOn(&install_ort_so.step);
+    // Vendor ORT (+ WebGPU plugin) into zig-out/lib (RPATH $ORIGIN/../lib).
+    // setup-ort stages libonnxruntime_providers_webgpu.so into active/lib.
+    const lib_files = [_][]const u8{
+        b.fmt("libonnxruntime.so.{s}", .{ort_so_version}),
+        "libonnxruntime.so.1",
+        "libonnxruntime.so",
+        "libonnxruntime_providers_shared.so",
+        "libonnxruntime_providers_webgpu.so",
+    };
+    for (lib_files) |name| {
+        const install = b.addInstallFile(
+            b.path(b.fmt("{s}/lib/{s}", .{ ort_root, name })),
+            b.fmt("lib/{s}", .{name}),
+        );
+        b.getInstallStep().dependOn(&install.step);
+    }
 
     const run_step = b.step("run", "Run truepixel-infer");
     const run_cmd = b.addRunArtifact(exe);

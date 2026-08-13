@@ -73,7 +73,8 @@ const Engine = struct {
 
 fn parsePreferEp(line: []const u8) ?ort_session.EpKind {
     if (std.mem.indexOf(u8, line, "\"preferEp\":\"WebGPU\"") != null) return .webgpu;
-    if (std.mem.indexOf(u8, line, "\"preferEp\":\"Vulkan\"") != null) return .vulkan;
+    // "Vulkan" is an alias: native WebGPU EP uses Dawn→Vulkan on Linux.
+    if (std.mem.indexOf(u8, line, "\"preferEp\":\"Vulkan\"") != null) return .webgpu;
     if (std.mem.indexOf(u8, line, "\"preferEp\":\"XNNPACK\"") != null) return .xnnpack;
     if (std.mem.indexOf(u8, line, "\"preferEp\":\"CPU\"") != null) return .cpu;
     return null;

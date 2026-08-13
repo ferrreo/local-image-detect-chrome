@@ -3,7 +3,7 @@
  * Build native/zig-infer (ReleaseFast, x86_64_v3). Ensures ORT is present first.
  */
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -37,7 +37,22 @@ function findZig() {
 const zig = findZig();
 const ver = execFileSync(zig, ["version"], { encoding: "utf8" }).trim();
 console.log(`Using ${zig} (${ver})`);
-execFileSync(zig, ["build", "-Doptimize=ReleaseFast"], {
+
+const ortArgs = ["-Dort_root=../ort/active"];
+const activeJson = path.join(root, "native/ort/active.json");
+if (existsSync(activeJson)) {
+  try {
+    const meta = JSON.parse(readFileSync(activeJson, "utf8"));
+    if (meta.soVersion) ortArgs.push(`-Dort_so_version=${meta.soVersion}`);
+  } catch {
+    /* use build.zig default */
+  }
+}
+
+// Drop stale ORT sonames from prior versions so $ORIGIN/../lib stays clean.
+rmSync(path.join(zigDir, "zig-out/lib"), { recursive: true, force: true });
+
+execFileSync(zig, ["build", "-Doptimize=ReleaseFast", ...ortArgs], {
   stdio: "inherit",
   cwd: zigDir,
 });
