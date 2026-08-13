@@ -63,11 +63,13 @@ const PAGE_DELAY_MS = Math.max(
 );
 const UA = "TruePixelBenchmark/1.0 (+local eval corpus)";
 
-/** Rotate queries — empty feed alone cycles ~700 unique IDs. */
+/**
+ * Search queries for HTML harvest. The infinite-prompts JSON feed only exposes
+ * ~700 featured IDs; `/?q=` HTML embeds a much larger ID pool per query.
+ */
 const SEARCH_QUERIES = (
   process.env.LEXICA_QUERIES ||
   [
-    "",
     "portrait photo",
     "landscape",
     "cyberpunk city",
@@ -87,10 +89,35 @@ const SEARCH_QUERIES = (
     "underwater",
     "fashion editorial",
     "cozy interior",
+    "cat",
+    "dog",
+    "car",
+    "forest",
+    "sushi",
+    "spaceship",
+    "castle",
+    "mountain",
+    "beach sunset",
+    "neon lights",
+    "steampunk",
+    "watercolor bird",
+    "comic book panel",
+    "isometric room",
+    "macro insect",
+    "vintage poster",
+    "desert dunes",
+    "snowy cabin",
+    "city night rain",
+    "mecha",
+    "wizard",
   ].join("|")
 )
   .split("|")
-  .map((s) => s.trim());
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+const UUID_RE =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
 
 mkdirSync(holdoutDir, { recursive: true });
 mkdirSync(trainDir, { recursive: true });
@@ -169,6 +196,31 @@ async function fetchFeedPage(pageCursor, query) {
   });
   if (!res.ok) throw new Error(`Lexica feed HTTP ${res.status}`);
   return res.json();
+}
+
+async function harvestSearchHtml(query) {
+  const url = new URL("https://lexica.art/");
+  url.searchParams.set("q", query);
+  const res = await fetch(url, {
+    headers: {
+      Accept: "text/html,application/xhtml+xml",
+      "User-Agent":
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+      Referer: "https://lexica.art/",
+    },
+  });
+  if (!res.ok) throw new Error(`Lexica HTML HTTP ${res.status}`);
+  const html = await res.text();
+  const ids = [...html.matchAll(UUID_RE)].map((m) => m[0].toLowerCase());
+  // Preserve first-seen order, drop dupes.
+  const ordered = [];
+  const seen = new Set();
+  for (const id of ids) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    ordered.push({ id, model_mode: "lexica-html-search", promptid: null });
+  }
+  return ordered;
 }
 
 async function downloadImage(id) {
@@ -382,11 +434,14 @@ async function flushDownloads() {
   appendDistillManifest(distillRows);
 }
 
+const htmlDoneQueries = new Set(registry.htmlDoneQueries || []);
+
 console.log(
   `Lexica split: mode=${MODE} holdout=${holdoutIds.size}/${HOLDOUT_TARGET} ` +
     `train=${trainIds.size}/${TRAIN_TARGET} queries=${SEARCH_QUERIES.length}`,
 );
 
+// Prefer HTML search harvest — much larger ID pool than infinite-prompts JSON.
 while (pages < MAX_PAGES) {
   const needHoldout =
     wantHoldout && holdoutIds.size + pendingHoldout.length < HOLDOUT_TARGET;
@@ -394,10 +449,87 @@ while (pages < MAX_PAGES) {
     wantTrain && trainIds.size + pendingTrain.length < TRAIN_TARGET;
   if (!needHoldout && !needTrain) break;
 
-  const query = SEARCH_QUERIES[queryIndex % SEARCH_QUERIES.length] || "";
+  // Pick next query that still has unpaid HTML harvest work.
+  let query = null;
+  for (let i = 0; i < SEARCH_QUERIES.length; i += 1) {
+    const idx = (queryIndex + i) % SEARCH_QUERIES.length;
+    const candidate = SEARCH_QUERIES[idx];
+    if (!htmlDoneQueries.has(candidate)) {
+      query = candidate;
+      queryIndex = idx;
+      break;
+    }
+  }
+  if (!query) {
+    console.log("all HTML search queries harvested; falling back to JSON feed");
+    break;
+  }
+
+  console.log(
+    `html search q=${JSON.stringify(query)} ` +
+      `have holdout=${holdoutIds.size} train=${trainIds.size}`,
+  );
+  let images;
+  try {
+    images = await harvestSearchHtml(query);
+  } catch (err) {
+    console.warn(`html error: ${err instanceof Error ? err.message : err}`);
+    htmlDoneQueries.add(query);
+    queryIndex = (queryIndex + 1) % SEARCH_QUERIES.length;
+    pages += 1;
+    continue;
+  }
+
+  const pendingIds = new Set([
+    ...pendingHoldout.map((x) => x.id),
+    ...pendingTrain.map((x) => x.id),
+  ]);
+  let fresh = 0;
+  for (const img of images) {
+    if (!img?.id) continue;
+    if (
+      holdoutIds.has(img.id) ||
+      trainIds.has(img.id) ||
+      failedIds.has(img.id) ||
+      pendingIds.has(img.id)
+    ) {
+      continue;
+    }
+    fresh += 1;
+    if (needHoldout && holdoutIds.size + pendingHoldout.length < HOLDOUT_TARGET) {
+      pendingHoldout.push(img);
+      pendingIds.add(img.id);
+    } else if (
+      needTrain &&
+      trainIds.size + pendingTrain.length < TRAIN_TARGET
+    ) {
+      pendingTrain.push(img);
+      pendingIds.add(img.id);
+    }
+  }
+  console.log(`  html ids=${images.length} fresh=${fresh}`);
+  htmlDoneQueries.add(query);
+  registry.htmlDoneQueries = [...htmlDoneQueries];
+  queryIndex = (queryIndex + 1) % SEARCH_QUERIES.length;
+  pages += 1;
+
+  await flushDownloads();
+  persistRegistry();
+  if (PAGE_DELAY_MS) await sleep(PAGE_DELAY_MS);
+}
+
+// Secondary: JSON feed for any remaining deficit (small featured pool).
+while (pages < MAX_PAGES) {
+  const needHoldout =
+    wantHoldout && holdoutIds.size + pendingHoldout.length < HOLDOUT_TARGET;
+  const needTrain =
+    wantTrain && trainIds.size + pendingTrain.length < TRAIN_TARGET;
+  if (!needHoldout && !needTrain) break;
+
+  const query = "";
   const cursor = queryCursors[query] ?? "";
   console.log(
-    `feed page=${pages + 1} q=${JSON.stringify(query)} cursor=${cursor || 1} ` +
+    `json feed cursor=${cursor || 1} ` +
       `queue holdout=${pendingHoldout.length} train=${pendingTrain.length}`,
   );
   let data;
@@ -414,9 +546,7 @@ while (pages < MAX_PAGES) {
   const images = data.images ?? [];
   if (!images.length) {
     emptyPages += 1;
-    queryIndex = (queryIndex + 1) % Math.max(1, SEARCH_QUERIES.length);
-    queryCursors[query] = "";
-    if (emptyPages >= SEARCH_QUERIES.length * 2) break;
+    if (emptyPages >= 5) break;
   } else {
     emptyPages = 0;
   }
@@ -454,10 +584,9 @@ while (pages < MAX_PAGES) {
   pages += 1;
   if (fresh === 0) {
     stalePages += 1;
-    if (stalePages >= 2) {
-      queryIndex = (queryIndex + 1) % Math.max(1, SEARCH_QUERIES.length);
-      stalePages = 0;
-      console.log(`rotate query → ${SEARCH_QUERIES[queryIndex] || "(feed)"}`);
+    if (stalePages >= 8) {
+      console.log("JSON feed exhausted for new IDs");
+      break;
     }
   } else {
     stalePages = 0;
