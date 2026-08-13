@@ -32,20 +32,89 @@ export async function rasterizeForModel(
   return ctx.getImageData(0, 0, size, size);
 }
 
+/**
+ * Area-average downsample so spectral features stay stable across browsers
+ * and the Node canvas polyfill (nearest-neighbor drawImage skews Laplacian).
+ */
+export function boxDownsampleImageData(
+  source: ImageData,
+  maxSide = 256,
+): ImageData {
+  const scale = Math.min(1, maxSide / Math.max(source.width, source.height));
+  const width = Math.max(32, Math.round(source.width * scale));
+  const height = Math.max(32, Math.round(source.height * scale));
+  if (width === source.width && height === source.height) {
+    return source;
+  }
+
+  const out = new Uint8ClampedArray(width * height * 4);
+  for (let y = 0; y < height; y += 1) {
+    const y0 = Math.floor((y * source.height) / height);
+    const y1 = Math.max(y0 + 1, Math.floor(((y + 1) * source.height) / height));
+    for (let x = 0; x < width; x += 1) {
+      const x0 = Math.floor((x * source.width) / width);
+      const x1 = Math.max(x0 + 1, Math.floor(((x + 1) * source.width) / width));
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let n = 0;
+      for (let sy = y0; sy < y1; sy += 1) {
+        for (let sx = x0; sx < x1; sx += 1) {
+          const si = (sy * source.width + sx) * 4;
+          r += source.data[si] ?? 0;
+          g += source.data[si + 1] ?? 0;
+          b += source.data[si + 2] ?? 0;
+          n += 1;
+        }
+      }
+      const di = (y * width + x) * 4;
+      out[di] = n === 0 ? 0 : Math.round(r / n);
+      out[di + 1] = n === 0 ? 0 : Math.round(g / n);
+      out[di + 2] = n === 0 ? 0 : Math.round(b / n);
+      out[di + 3] = 255;
+    }
+  }
+  return { data: out, width, height, colorSpace: "srgb" } as ImageData;
+}
+
 export async function rasterizeForSpectral(
   bitmap: ImageBitmap,
   maxSide = 256,
 ): Promise<ImageData> {
-  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
-  const width = Math.max(32, Math.round(bitmap.width * scale));
-  const height = Math.max(32, Math.round(bitmap.height * scale));
-  const canvas = new OffscreenCanvas(width, height);
+  // Prefer direct pixel access when available (Node test polyfill) so we can
+  // box-downsample without nearest-neighbor drawImage artifacts.
+  const readable = bitmap as ImageBitmap & { data?: Uint8ClampedArray };
+  if (
+    readable.data &&
+    readable.data.byteLength >= bitmap.width * bitmap.height * 4
+  ) {
+    return boxDownsampleImageData(
+      {
+        data: readable.data,
+        width: bitmap.width,
+        height: bitmap.height,
+        colorSpace: "srgb",
+      } as ImageData,
+      maxSide,
+    );
+  }
+
+  // Browser ImageBitmap: read through a capped canvas, then box-downsample.
+  const maxRead = 768;
+  const readScale = Math.min(
+    1,
+    maxRead / Math.max(bitmap.width, bitmap.height),
+  );
+  const readW = Math.max(32, Math.round(bitmap.width * readScale));
+  const readH = Math.max(32, Math.round(bitmap.height * readScale));
+  const canvas = new OffscreenCanvas(readW, readH);
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   if (!ctx) {
     throw new Error("OffscreenCanvas 2d context unavailable");
   }
-  ctx.drawImage(bitmap, 0, 0, width, height);
-  return ctx.getImageData(0, 0, width, height);
+  ctx.drawImage(bitmap, 0, 0, readW, readH);
+  const mid = ctx.getImageData(0, 0, readW, readH);
+  return boxDownsampleImageData(mid, maxSide);
 }
 
 /** ImageNet-style NCHW float32 tensor for ViT classifiers. */

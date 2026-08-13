@@ -14,10 +14,12 @@
 
 TruePixel downloads these weights at setup time (or via `npm run setup:models`) and verifies SHA-256 before caching.
 
-## ai-image-detection / CapCheck (ONNX, optional eval)
+## CommunityForensics-DeepfakeDet-ViT (ONNX)
 
-- Upstream: CapCheck / `onnx-community/ai-image-detection-ONNX`
-- License: Apache-2.0
-- https://huggingface.co/onnx-community/ai-image-detection-ONNX
+- Upstream: Jeongsoo Park & Andrew Owens / Community Forensics
+- HF packaging: `onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX`
+- License: MIT
+- Paper: https://arxiv.org/abs/2411.04125
+- https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX
 
-Downloaded by `npm run setup:models` for local evaluation experiments. Not required by the extension runtime unless an ensemble path is enabled.
+Downloaded during one-time setup alongside the distilled detector and used as a secondary visual signal in fusion.

@@ -19,6 +19,7 @@ const AI_SOFTWARE_PATTERNS: readonly RegExp[] = [
   /\bimagen\b/i,
   /\breve\b/i,
   /\bcivitai\b/i,
+  /\brecraft\b/i,
   /\bai[\s_-]?generated\b/i,
   /\bgenerated\s+with\s+ai\b/i,
   /\btrainedalgorithmicmedia\b/i,
@@ -36,6 +37,10 @@ const AI_PARAM_PATTERNS: readonly RegExp[] = [
   /\bclip\s*skip\s*[:=]/i,
   /digitalSourceType/i,
   /c2pa\.actions/i,
+  /\bc2pa\b/i,
+  // PNG tEXt/zTXt/iTXt key used by China AIGC labeling (and similar embeds).
+  /ptEXtAIGC/i,
+  /ContentProducer/i,
 ];
 
 export type ProvenanceHit = {
@@ -44,13 +49,31 @@ export type ProvenanceHit = {
   shortCircuit: boolean;
 };
 
-function latin1Preview(bytes: Uint8Array, maxChars = 512_000): string {
-  const limit = Math.min(bytes.byteLength, maxChars);
+/** C2PA / JUMBF manifests are often appended near the end of WebP/JPEG files. */
+const HEAD_SCAN_BYTES = 512_000;
+const TAIL_SCAN_BYTES = 512_000;
+
+function latin1Slice(bytes: Uint8Array, start: number, end: number): string {
+  const lo = Math.max(0, start);
+  const hi = Math.min(bytes.byteLength, end);
   let out = "";
-  for (let i = 0; i < limit; i += 1) {
+  for (let i = lo; i < hi; i += 1) {
     out += String.fromCharCode(bytes[i] ?? 0);
   }
   return out;
+}
+
+function provenanceScanText(bytes: Uint8Array): string {
+  if (bytes.byteLength <= HEAD_SCAN_BYTES + TAIL_SCAN_BYTES) {
+    return latin1Slice(bytes, 0, bytes.byteLength);
+  }
+  const head = latin1Slice(bytes, 0, HEAD_SCAN_BYTES);
+  const tail = latin1Slice(
+    bytes,
+    bytes.byteLength - TAIL_SCAN_BYTES,
+    bytes.byteLength,
+  );
+  return `${head}\n${tail}`;
 }
 
 function firstMatch(
@@ -78,7 +101,7 @@ export function analyzeProvenance(bytes: Uint8Array): ProvenanceHit {
     };
   }
 
-  const text = latin1Preview(bytes);
+  const text = provenanceScanText(bytes);
 
   const software = firstMatch(text, AI_SOFTWARE_PATTERNS);
   if (software) {

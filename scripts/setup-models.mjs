@@ -33,12 +33,12 @@ const MODELS = [
     license: "MIT",
   },
   {
-    id: "ai-image-detection-capcheck",
-    url: "https://huggingface.co/onnx-community/ai-image-detection-ONNX/resolve/main/onnx/model_q4.onnx",
-    outPath: path.join(root, "models/ai-image-detection/model_q4.onnx"),
-    sha256: "28c7f06d5aa87bc7e023c023eab1fbf473deef54e9c62f9838a99e50422810ec",
-    bytes: 56_757_898,
-    license: "Apache-2.0",
+    id: "community-forensics-deepfake-det",
+    url: "https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX/resolve/main/onnx/model_q4.onnx",
+    outPath: path.join(root, "models/community-forensics/model_q4.onnx"),
+    sha256: "263c46052167a15b981848465b8adb9f28dbd1f9ad8ecf8157cb05d876f7091b",
+    bytes: 24_416_892,
+    license: "MIT",
   },
 ];
 
@@ -83,7 +83,7 @@ writeFileSync(
   path.join(root, "models/manifest.json"),
   JSON.stringify(
     {
-      version: "distilled-fp16+capcheck-q4-v1",
+      version: "distilled-fp16+community-forensics-q4-v1",
       models: MODELS.map((m) => ({
         id: m.id,
         path: path.relative(path.join(root, "models"), m.outPath),

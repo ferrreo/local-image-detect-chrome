@@ -52,6 +52,39 @@ describe("fuseDetection", () => {
     });
     expect(out.label.kind).toBe("real");
   });
+
+  it("uses forensics + flatness band when distilled is weak", () => {
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.3),
+      visual: tier("visual", 0.4),
+      visualSecondary: tier("visual", 0.8),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.3,
+        laplacianVariance: 800,
+        chromaFlatness: 0.5,
+        blockiness: 0.25,
+      },
+    });
+    expect(out.confidence).toBeGreaterThanOrEqual(0.65);
+    expect(out.tiers.at(-1)?.detail).toMatch(/forensics/);
+  });
+
+  it("does not let high-CF smooth reals short-circuit via flatness band", () => {
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.39),
+      visual: tier("visual", 0.45),
+      visualSecondary: tier("visual", 0.79),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.43,
+        laplacianVariance: 635,
+        chromaFlatness: 0.72,
+        blockiness: 0.25,
+      },
+    });
+    expect(out.confidence).toBeLessThan(0.65);
+  });
 });
 
 describe("labelFor / balancedAccuracy", () => {

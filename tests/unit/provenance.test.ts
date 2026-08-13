@@ -39,6 +39,28 @@ describe("analyzeProvenance", () => {
     expect(hit.score).toBeGreaterThanOrEqual(0.9);
   });
 
+  it("scans the file tail where C2PA manifests are often appended", () => {
+    const head = new Uint8Array(600_000);
+    head.fill(0x41); // 'A'
+    const tail = bytesFrom(
+      'jumb c2pa {"digitalSourceType":"trainedAlgorithmicMedia","claim_generator":"recraft"}',
+    );
+    const bytes = new Uint8Array(head.byteLength + tail.byteLength);
+    bytes.set(head, 0);
+    bytes.set(tail, head.byteLength);
+    const hit = analyzeProvenance(bytes);
+    expect(hit.shortCircuit).toBe(true);
+    expect(hit.score).toBeGreaterThanOrEqual(0.9);
+  });
+
+  it("short-circuits on PNG ptEXtAIGC labeling chunks", () => {
+    const hit = analyzeProvenance(
+      bytesFrom('ptEXtAIGC{"Label":"1","ContentProducer":"vendor"}'),
+    );
+    expect(hit.shortCircuit).toBe(true);
+    expect(hit.detail).toMatch(/AIGC|ContentProducer/i);
+  });
+
   it("handles empty input", () => {
     const hit = analyzeProvenance(new Uint8Array());
     expect(hit.detail).toBe("empty-bytes");

@@ -9,6 +9,7 @@ import {
 import { fuseDetection } from "./fusion";
 import {
   asAiConfidence,
+  type AiConfidence,
   type DetectionResult,
   type InferenceBackend,
 } from "../shared/types";
@@ -43,7 +44,9 @@ export async function detectAiImage(
 
   let spectralScore = asAiConfidence(0.5);
   let spectralDetail = "skipped";
+  let spectralFeatures: ReturnType<typeof analyzeSpectral>["features"] | undefined;
   let visualScore = asAiConfidence(0.5);
+  let visualSecondary: AiConfidence | undefined;
   let visualDetail = "skipped";
   let backend: InferenceBackend = { kind: "none" };
 
@@ -54,11 +57,13 @@ export async function detectAiImage(
       const spectral = analyzeSpectral(spectralImage);
       spectralScore = spectral.score;
       spectralDetail = spectral.detail;
+      spectralFeatures = spectral.features;
 
       const visual = await classifyVisual(decoded.bitmap, {
         stub: options.stubVisual === true,
       });
       visualScore = visual.score;
+      visualSecondary = visual.secondaryScore;
       visualDetail = visual.detail;
       backend = visual.backend;
     } finally {
@@ -82,6 +87,17 @@ export async function detectAiImage(
       weight: 0.72,
       detail: visualDetail,
     },
+    ...(visualSecondary !== undefined
+      ? {
+          visualSecondary: {
+            tier: "visual" as const,
+            aiScore: visualSecondary,
+            weight: 0.5,
+            detail: "community-forensics",
+          },
+        }
+      : {}),
+    ...(spectralFeatures !== undefined ? { spectralFeatures } : {}),
     ...(options.threshold !== undefined ? { threshold: options.threshold } : {}),
   });
 

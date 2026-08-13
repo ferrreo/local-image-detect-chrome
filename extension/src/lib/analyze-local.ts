@@ -90,6 +90,7 @@ export async function analyzeLocalStub(args: {
         weight: 0.72,
         detail: visual.detail,
       },
+      spectralFeatures: spectral.features,
       ...(args.threshold !== undefined ? { threshold: args.threshold } : {}),
     });
     return {

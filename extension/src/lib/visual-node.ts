@@ -6,7 +6,12 @@ import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 import sharp from "sharp";
-import { VISUAL_MODEL } from "./model-manifest";
+import {
+  ALL_MODELS,
+  DISTILLED_MODEL,
+  FORENSICS_MODEL,
+  type ModelArtifact,
+} from "./model-manifest";
 import { asAiConfidence, type InferenceBackend } from "../shared/types";
 import type { VisualClassification } from "./visual-stub";
 
@@ -32,44 +37,44 @@ type OrtNode = {
   ) => unknown;
 };
 
-let sessionPromise:
-  | Promise<{
-      ort: OrtNode;
-      session: Awaited<ReturnType<OrtNode["InferenceSession"]["create"]>>;
-    }>
-  | undefined;
+type LoadedSession = {
+  model: ModelArtifact;
+  ort: OrtNode;
+  session: Awaited<ReturnType<OrtNode["InferenceSession"]["create"]>>;
+};
 
-function resolveModelPath(): string {
+let sessionsPromise: Promise<LoadedSession[]> | undefined;
+
+function resolveModelPath(model: ModelArtifact): string {
   const candidates = [
-    path.resolve("models/ai-image-detect-distilled/model_fp16.onnx"),
-    path.resolve(
-      process.cwd(),
-      "models/ai-image-detect-distilled/model_fp16.onnx",
-    ),
+    path.resolve(model.localPath),
+    path.resolve(process.cwd(), model.localPath),
   ];
   for (const candidate of candidates) {
     if (existsSync(candidate)) return candidate;
   }
   throw new Error(
-    "ONNX model missing. Run npm run setup:models before TRUEPIXEL_STUB=0 eval.",
+    `ONNX model missing (${model.id}). Run npm run setup:models before eval.`,
   );
 }
 
-async function getSession() {
-  if (!sessionPromise) {
-    sessionPromise = (async () => {
+async function getSessions(): Promise<LoadedSession[]> {
+  if (!sessionsPromise) {
+    sessionsPromise = (async () => {
       const ort = require("onnxruntime-node") as OrtNode;
-      const modelPath = resolveModelPath();
-      const bytes = new Uint8Array(readFileSync(modelPath));
-      // fp16 export breaks SimplifiedLayerNormFusion under ORT node; keep opts off.
-      const session = await ort.InferenceSession.create(bytes, {
-        executionProviders: ["cpu"],
-        graphOptimizationLevel: "disabled",
-      });
-      return { ort, session };
+      const loaded: LoadedSession[] = [];
+      for (const model of ALL_MODELS) {
+        const bytes = new Uint8Array(readFileSync(resolveModelPath(model)));
+        const session = await ort.InferenceSession.create(bytes, {
+          executionProviders: ["cpu"],
+          graphOptimizationLevel: model.graphOptimizationLevel,
+        });
+        loaded.push({ model, ort, session });
+      }
+      return loaded;
     })();
   }
-  return sessionPromise;
+  return sessionsPromise;
 }
 
 function softmax2(a: number, b: number): [number, number] {
@@ -80,18 +85,13 @@ function softmax2(a: number, b: number): [number, number] {
   return [ea / sum, eb / sum];
 }
 
-/** Center-crop + bilinear resize to model size, then NCHW normalize (ViT mean/std 0.5). */
-async function bytesToModelTensor(bytes: Uint8Array): Promise<Float32Array> {
-  const size = VISUAL_MODEL.inputSize;
-  const meta = await sharp(bytes).metadata();
-  const width = meta.width ?? size;
-  const height = meta.height ?? size;
-  const side = Math.min(width, height);
-  const left = Math.floor((width - side) / 2);
-  const top = Math.floor((height - side) / 2);
-
+async function bytesToModelTensor(
+  bytes: Uint8Array,
+  size: number,
+  mean: readonly [number, number, number],
+  std: readonly [number, number, number],
+): Promise<Float32Array> {
   const { data } = await sharp(bytes)
-    .extract({ left, top, width: side, height: side })
     .resize(size, size, { kernel: "lanczos3", fit: "fill" })
     .removeAlpha()
     .raw()
@@ -99,8 +99,6 @@ async function bytesToModelTensor(bytes: Uint8Array): Promise<Float32Array> {
 
   const plane = size * size;
   const out = new Float32Array(3 * plane);
-  const mean = VISUAL_MODEL.mean;
-  const std = VISUAL_MODEL.std;
   for (let i = 0, p = 0; i < plane; i += 1, p += 3) {
     out[i] = ((data[p] ?? 0) / 255 - mean[0]) / std[0];
     out[plane + i] = ((data[p + 1] ?? 0) / 255 - mean[1]) / std[1];
@@ -109,49 +107,71 @@ async function bytesToModelTensor(bytes: Uint8Array): Promise<Float32Array> {
   return out;
 }
 
+async function runOne(
+  loaded: LoadedSession,
+  bytes: Uint8Array,
+): Promise<{ aiProb: number; inferMs: number; detail: string }> {
+  const prep = await bytesToModelTensor(
+    bytes,
+    loaded.model.inputSize,
+    loaded.model.mean,
+    loaded.model.std,
+  );
+  const inputName = loaded.session.inputNames[0];
+  if (!inputName) throw new Error(`${loaded.model.id}: no inputs`);
+  const feeds: Record<string, unknown> = {
+    [inputName]: new loaded.ort.Tensor("float32", prep, [
+      1,
+      3,
+      loaded.model.inputSize,
+      loaded.model.inputSize,
+    ]),
+  };
+  const started = performance.now();
+  const output = await loaded.session.run(feeds);
+  const inferMs = performance.now() - started;
+  const outName = loaded.session.outputNames[0];
+  if (!outName) throw new Error(`${loaded.model.id}: no outputs`);
+  const outTensor = output[outName];
+  if (!outTensor) throw new Error(`${loaded.model.id}: missing tensor`);
+  const logits = Array.from(outTensor.data, (v) => Number(v));
+  const [p0, p1] = softmax2(logits[0] ?? 0, logits[1] ?? 0);
+  const aiProb = loaded.model.aiLabelIndex === 0 ? p0 : p1;
+  return {
+    aiProb,
+    inferMs,
+    detail: `${loaded.model.id}=${aiProb.toFixed(3)}`,
+  };
+}
+
 export async function classifyVisualNodeFromBytes(
   bytes: Uint8Array,
 ): Promise<VisualClassification & { inferMs: number; preprocessMs: number }> {
-  const prepStarted = performance.now();
-  const tensorData = await bytesToModelTensor(bytes);
-  const preprocessMs = performance.now() - prepStarted;
-
-  const { ort, session } = await getSession();
-  const inputName = session.inputNames[0];
-  if (!inputName) throw new Error("Model has no inputs");
-
-  const feeds: Record<string, unknown> = {
-    [inputName]: new ort.Tensor("float32", tensorData, [
-      1,
-      3,
-      VISUAL_MODEL.inputSize,
-      VISUAL_MODEL.inputSize,
-    ]),
-  };
-
+  const sessions = await getSessions();
   const started = performance.now();
-  const output = await session.run(feeds);
+  const byId = new Map<string, Awaited<ReturnType<typeof runOne>>>();
+  for (const session of sessions) {
+    byId.set(session.model.id, await runOne(session, bytes));
+  }
   const inferMs = performance.now() - started;
 
-  const outName = session.outputNames[0];
-  if (!outName) throw new Error("Model has no outputs");
-  const outTensor = output[outName];
-  if (!outTensor) throw new Error("Missing output tensor");
+  const distilled = byId.get(DISTILLED_MODEL.id);
+  const forensics = byId.get(FORENSICS_MODEL.id);
+  if (!distilled) throw new Error("Distilled model result missing");
 
-  const logits = Array.from(outTensor.data, (v) => Number(v));
-  const [p0, p1] = softmax2(logits[0] ?? 0, logits[1] ?? 0);
-  const aiProb = VISUAL_MODEL.aiLabelIndex === 0 ? p0 : p1;
   const backend: InferenceBackend = { kind: "wasm" };
-
   return {
-    score: asAiConfidence(aiProb),
+    score: asAiConfidence(distilled.aiProb),
+    ...(forensics
+      ? { secondaryScore: asAiConfidence(forensics.aiProb) }
+      : {}),
     backend,
-    detail: `node-ort logits=[${(logits[0] ?? 0).toFixed(3)},${(logits[1] ?? 0).toFixed(3)}]`,
+    detail: [...byId.values()].map((r) => r.detail).join(","),
     inferMs,
-    preprocessMs,
+    preprocessMs: 0,
   };
 }
 
 export async function warmVisualNode(): Promise<void> {
-  await getSession();
+  await getSessions();
 }

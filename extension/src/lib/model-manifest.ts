@@ -26,7 +26,7 @@ export type ModelArtifact = {
 export const MODEL_CACHE_NAME = "truepixel-models-v1";
 
 /** Models required by the extension runtime (Cache Storage). */
-export const MODEL_VERSION = "ai-image-detect-distilled-fp16-v1";
+export const MODEL_VERSION = "distilled-fp16+community-forensics-q4-v1";
 
 /**
  * Distilled ViT AI image detector (MIT).
@@ -49,19 +49,19 @@ export const DISTILLED_MODEL = {
 } as const satisfies ModelArtifact;
 
 /**
- * CapCheck ViT-base AI image detector (Apache-2.0), q4 ONNX.
- * Source: https://huggingface.co/onnx-community/ai-image-detection-ONNX
- * Labels: 0=REAL, 1=FAKE
+ * Community Forensics ViT-Small detector (MIT), q4 ONNX.
+ * Source: https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX
+ * Labels: softmax index 1 treated as AI/fake for this export.
  */
-export const CAPCHECK_MODEL = {
-  id: "ai-image-detection-capcheck",
-  cacheKey: "models/ai-image-detection/model_q4.onnx",
-  localPath: "models/ai-image-detection/model_q4.onnx",
-  url: "https://huggingface.co/onnx-community/ai-image-detection-ONNX/resolve/main/onnx/model_q4.onnx",
-  sha256: "28c7f06d5aa87bc7e023c023eab1fbf473deef54e9c62f9838a99e50422810ec",
-  bytes: 56_757_898,
+export const FORENSICS_MODEL = {
+  id: "community-forensics-deepfake-det",
+  cacheKey: "models/community-forensics/model_q4.onnx",
+  localPath: "models/community-forensics/model_q4.onnx",
+  url: "https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX/resolve/main/onnx/model_q4.onnx",
+  sha256: "263c46052167a15b981848465b8adb9f28dbd1f9ad8ecf8157cb05d876f7091b",
+  bytes: 24_416_892,
   role: "visual-classifier",
-  inputSize: 224,
+  inputSize: 384,
   aiLabelIndex: 1,
   mean: [0.5, 0.5, 0.5],
   std: [0.5, 0.5, 0.5],
@@ -72,10 +72,7 @@ export const CAPCHECK_MODEL = {
 export const VISUAL_MODEL = DISTILLED_MODEL;
 
 /** Required for browser Cache Storage / extension readiness. */
-export const ALL_MODELS: readonly ModelArtifact[] = [DISTILLED_MODEL];
-
-/**
- * Extra weights downloaded by `npm run setup:models` for Node eval experiments.
- * Not required by the extension runtime until an ensemble is wired in.
- */
-export const EVAL_EXTRA_MODELS: readonly ModelArtifact[] = [CAPCHECK_MODEL];
+export const ALL_MODELS: readonly ModelArtifact[] = [
+  DISTILLED_MODEL,
+  FORENSICS_MODEL,
+];

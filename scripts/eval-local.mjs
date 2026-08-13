@@ -122,8 +122,10 @@ async function detectWithTimings(item, bytes) {
 
   let spectralScore = asAiConfidence(0.5);
   let spectralDetail = "skipped";
+  let spectralFeatures;
   let spectralMs = 0;
   let visualScore = asAiConfidence(0.5);
+  let visualSecondary;
   let visualDetail = "skipped";
   let visualMs = 0;
   let inferMs = 0;
@@ -141,6 +143,7 @@ async function detectWithTimings(item, bytes) {
       spectralMs = performance.now() - specStart;
       spectralScore = spectral.score;
       spectralDetail = spectral.detail;
+      spectralFeatures = spectral.features;
 
       const visStart = performance.now();
       if (stubVisual) {
@@ -159,6 +162,7 @@ async function detectWithTimings(item, bytes) {
       } else {
         const visual = await classifyVisualNodeFromBytes(bytesView);
         visualScore = visual.score;
+        visualSecondary = visual.secondaryScore;
         visualDetail = visual.detail;
         backend = visual.backend;
         inferMs = visual.inferMs;
@@ -192,6 +196,17 @@ async function detectWithTimings(item, bytes) {
       weight: 0.72,
       detail: visualDetail,
     },
+    ...(visualSecondary !== undefined
+      ? {
+          visualSecondary: {
+            tier: "visual",
+            aiScore: visualSecondary,
+            weight: 0.5,
+            detail: "community-forensics",
+          },
+        }
+      : {}),
+    ...(spectralFeatures !== undefined ? { spectralFeatures } : {}),
     threshold: 0.65,
   });
   const fuseMs = performance.now() - fuseStart;

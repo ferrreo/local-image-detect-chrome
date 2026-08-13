@@ -10,10 +10,10 @@ Install the extension, open the popup, download models once, then browse. TruePi
 
 Detection pipeline:
 
-1. **Provenance** — EXIF/XMP/C2PA/string fingerprints for known generators
+1. **Provenance** — EXIF/XMP/C2PA/AIGC/string fingerprints (scans file head + tail)
 2. **Spectral forensics** — FFT / noise / chroma features in plain TypeScript
-3. **Visual classifier** — distilled ViT ONNX model through `onnxruntime-web`
-4. **Fusion** — calibrated score with a default **65%** AI threshold (bounty evaluation point)
+3. **Visual classifiers** — distilled ViT + Community Forensics ONNX via `onnxruntime-web`
+4. **Fusion** — calibrated ensemble at a default **65%** AI threshold (bounty evaluation point)
 
 ## Requirements
 
@@ -111,7 +111,7 @@ MIT. See [LICENSE](LICENSE) and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)
 | Item | Value |
 | --- | --- |
 | Extension | Manifest V3, TypeScript → esbuild bundle in `dist/` |
-| Visual model | `onnx-community/ai-image-detect-distilled-ONNX` (`model_fp16.onnx`) |
+| Visual models | `ai-image-detect-distilled` fp16 + `CommunityForensics-DeepfakeDet-ViT` q4 |
 | Model license | MIT |
 | Runtime | `onnxruntime-web` WebGPU → WASM fallback |
 | Threshold default | 0.65 |

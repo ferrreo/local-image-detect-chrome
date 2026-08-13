@@ -1,7 +1,10 @@
 import { asAiConfidence, type AiConfidence, type InferenceBackend } from "../shared/types";
 
 export type VisualClassification = {
+  /** Primary (distilled) AI probability. */
   score: AiConfidence;
+  /** Optional secondary model AI probability (Community Forensics). */
+  secondaryScore?: AiConfidence;
   backend: InferenceBackend;
   detail: string;
 };
