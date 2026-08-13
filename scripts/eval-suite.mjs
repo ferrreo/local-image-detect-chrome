@@ -103,19 +103,18 @@ if (runBrowser) {
     "--project=eval",
     "--reporter=line",
   ];
-  const useXvfb =
-    process.env.EVAL_SUITE_XVFB === "1" ||
-    (process.env.CI === "1" && process.platform === "linux");
+  // Browser suite uses Chromium --headless=new (see tests/eval/eval-suite.spec.ts).
+  // EVAL_SUITE_HEADED=1 opens a window; EVAL_SUITE_XVFB=1 still wraps for old CI images.
+  const useXvfb = process.env.EVAL_SUITE_XVFB === "1";
+  const env = {
+    EVAL_SUITE_BROWSER_PROVIDERS:
+      process.env.EVAL_SUITE_BROWSER_PROVIDERS ??
+      (process.env.CI === "1" ? "wasm" : "wasm,webgpu"),
+  };
   if (useXvfb) {
-    run("xvfb-run", ["--auto-servernum", "npx", ...pw], {
-      EVAL_SUITE_BROWSER_PROVIDERS:
-        process.env.EVAL_SUITE_BROWSER_PROVIDERS ?? "wasm",
-    });
+    run("xvfb-run", ["--auto-servernum", "npx", ...pw], env);
   } else {
-    run("npx", pw, {
-      EVAL_SUITE_BROWSER_PROVIDERS:
-        process.env.EVAL_SUITE_BROWSER_PROVIDERS ?? "wasm,webgpu",
-    });
+    run("npx", pw, env);
   }
 }
 

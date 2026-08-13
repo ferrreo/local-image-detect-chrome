@@ -75,8 +75,10 @@ async function launchExtensionContext(): Promise<{
   }
 
   const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "truepixel-eval-"));
+  // Extensions need Chromium's new headless; headed only when EVAL_SUITE_HEADED=1.
+  const headed = process.env.EVAL_SUITE_HEADED === "1";
   const launchOptions: Parameters<typeof chromium.launchPersistentContext>[1] = {
-    headless: false,
+    headless: !headed,
     channel: "chromium",
     args: [
       `--disable-extensions-except=${extensionPath}`,
@@ -86,6 +88,7 @@ async function launchExtensionContext(): Promise<{
       "--disable-gpu-sandbox",
       "--enable-unsafe-webgpu",
       "--enable-features=Vulkan,UseSkiaRenderer",
+      ...(headed ? [] : ["--headless=new"]),
     ],
   };
   if (process.env.CHROME_FOR_TESTING_PATH) {

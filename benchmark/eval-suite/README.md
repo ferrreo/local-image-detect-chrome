@@ -21,7 +21,9 @@ If you see `Cannot find package 'esbuild'`, you’re missing `node_modules` — 
 
 ## CI
 
-`npm run eval:suite:ci` — limited corpus, host CPU modes, browser WASM under xvfb.
+`npm run eval:suite:ci` — limited corpus, host CPU modes, browser WASM (Chromium `--headless=new`).
+
+Playwright defaults to headless. For a visible window: `EVAL_SUITE_HEADED=1 npm run eval:suite:browser` (or `PW_HEADED=1` for integration tests).
 
 ## Extension page
 

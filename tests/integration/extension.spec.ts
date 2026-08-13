@@ -25,8 +25,10 @@ async function launchExtensionContext(): Promise<{
 
   // Branded Google Chrome removed --load-extension (137+).
   // Playwright's Chromium / Chrome for Testing still supports it.
+  // New headless supports MV3 extensions; PW_HEADED=1 forces a window.
+  const headed = process.env.PW_HEADED === "1";
   const launchOptions: Parameters<typeof chromium.launchPersistentContext>[1] = {
-    headless: false,
+    headless: !headed,
     channel: "chromium",
     args: [
       `--disable-extensions-except=${extensionPath}`,
@@ -34,6 +36,7 @@ async function launchExtensionContext(): Promise<{
       "--no-first-run",
       "--no-default-browser-check",
       "--disable-gpu-sandbox",
+      ...(headed ? [] : ["--headless=new"]),
     ],
   };
 

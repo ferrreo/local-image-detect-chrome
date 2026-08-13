@@ -10,6 +10,7 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
     ...devices["Desktop Chrome"],
+    headless: process.env.PW_HEADED !== "1",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
