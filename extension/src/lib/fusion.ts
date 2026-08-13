@@ -69,32 +69,32 @@ export function fuseDetection(input: FusionInput): FusionOutput {
 
   let confidence: AiConfidence;
   let detail: string;
+  const baseline = calibrate(
+    asAiConfidence(0.78 * distilled + 0.22 * spectral),
+  );
 
   if (
+    // Both heads mid/high but not decisive — the group-selfie FP band
+    // (observed AI 72% blur on real restaurant photos). Hold under threshold.
+    forensics !== undefined &&
+    distilled >= 0.6 &&
+    distilled < 0.75 &&
+    forensics >= 0.6 &&
+    forensics < 0.8
+  ) {
+    confidence = asAiConfidence(Math.min(baseline, 0.64));
+    detail = "dual-mild-hold";
+  } else if (
     // Strong distilled alone — only when clearly over the eval line.
-    distilled >= 0.72 &&
+    distilled >= 0.75 &&
     spectral <= 0.43
   ) {
     confidence = asAiConfidence(Math.max(distilled, 0.66));
     detail = "distilled-near-threshold";
   } else if (
-    // Near-threshold distilled needs CF agreement. Solo promote was stamping
-    // busy real photos (group selfies / restaurant) at ~70% without CF.
-    forensics !== undefined &&
-    distilled >= 0.63 &&
-    distilled < 0.72 &&
-    spectral <= 0.43 &&
-    forensics >= 0.72 &&
-    forensics >= distilled - 0.02
-  ) {
-    confidence = asAiConfidence(
-      Math.max(0.66, 0.45 * distilled + 0.55 * forensics),
-    );
-    detail = "distilled-near-threshold-cf";
-  } else if (
     forensics !== undefined &&
     feats &&
-    forensics >= 0.78 &&
+    forensics >= 0.8 &&
     distilled >= 0.3 &&
     feats.laplacianVariance >= 580 &&
     feats.chromaFlatness >= 0.34 &&
@@ -106,7 +106,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     forensics !== undefined &&
     feats &&
     distilled >= 0.62 &&
-    forensics >= 0.72 &&
+    forensics >= 0.8 &&
     feats.chromaFlatness >= 0.74 &&
     feats.laplacianVariance >= 700
   ) {
@@ -115,7 +115,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   } else if (
     forensics !== undefined &&
     feats &&
-    forensics >= 0.78 &&
+    forensics >= 0.8 &&
     distilled >= 0.4 &&
     feats.laplacianVariance >= 800 &&
     feats.chromaFlatness >= 0.6 &&
@@ -126,21 +126,19 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     detail = "forensics-high-flat-texture";
   } else if (
     // StyleGAN / TPDNE: distilled stuck mid-low + decisive CF.
-    // Mild CF (~0.72) over-fires on real restaurant / busy photos.
     forensics !== undefined &&
     feats &&
     distilled >= 0.5 &&
     distilled < 0.6 &&
-    forensics >= 0.78 &&
-    forensics >= distilled + 0.18 &&
+    forensics >= 0.8 &&
+    forensics >= distilled + 0.2 &&
     feats.laplacianVariance >= 600 &&
     feats.chromaFlatness <= 0.58
   ) {
     confidence = asAiConfidence(Math.max(forensics, 0.66));
     detail = "forensics-ambiguous-distilled";
   } else {
-    const fused = 0.78 * distilled + 0.22 * spectral;
-    confidence = asAiConfidence(calibrate(asAiConfidence(fused)));
+    confidence = asAiConfidence(baseline);
     detail = `threshold=${threshold}`;
   }
 

@@ -5,7 +5,7 @@ describe("needsForensicsCascade", () => {
   it("skips forensics only when distilled is already decisive", () => {
     expect(
       needsForensicsCascade({
-        distilled: 0.72,
+        distilled: 0.75,
         spectral: 0.4,
         laplacianVariance: 900,
         chromaFlatness: 0.5,

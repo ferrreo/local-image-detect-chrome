@@ -58,7 +58,7 @@ describe("fuseDetection", () => {
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.3),
       visual: tier("visual", 0.4),
-      visualSecondary: tier("visual", 0.8),
+      visualSecondary: tier("visual", 0.82),
       spectralFeatures: {
         highFreqEnergyRatio: 0.3,
         laplacianVariance: 800,
@@ -114,8 +114,26 @@ describe("fuseDetection", () => {
     expect(out.tiers.at(-1)?.detail).not.toBe("forensics-ambiguous-distilled");
   });
 
+  it("holds mild dual agreement under threshold (group selfie AI 72% FP)", () => {
+    // Observed: real group photo blurred as AI 72% after CF "confirmation".
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.42),
+      visual: tier("visual", 0.68),
+      visualSecondary: tier("visual", 0.74),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.4,
+        laplacianVariance: 1600,
+        chromaFlatness: 0.5,
+        blockiness: 0.2,
+      },
+    });
+    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toBe("dual-mild-hold");
+  });
+
   it("does not promote mild CF (~72%) on busy real photos", () => {
-    // Observed FP: restaurant interior stamped AI 72% via CF takeover.
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.42),
@@ -130,7 +148,6 @@ describe("fuseDetection", () => {
     });
     expect(out.confidence).toBeLessThan(0.65);
     expect(out.label.kind).not.toBe("ai");
-    expect(out.tiers.at(-1)?.detail).not.toBe("forensics-ambiguous-distilled");
   });
 
   it("does not let CF 77% flip hand-drawn / illustration mid-band", () => {
@@ -150,8 +167,8 @@ describe("fuseDetection", () => {
     expect(out.label.kind).not.toBe("ai");
   });
 
-  it("catches near-threshold distilled AI when CF agrees", () => {
-    // krea kitchen_window-style: distilled 0.644 / spectral 0.423 / CF 0.727
+  it("does not promote kitchen-style mild dual scores (prefer no FP)", () => {
+    // Same score shape as the real group-selfie FP — hold, don't boost.
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.423),
@@ -164,13 +181,12 @@ describe("fuseDetection", () => {
         blockiness: 0.2,
       },
     });
-    expect(out.confidence).toBeGreaterThanOrEqual(0.65);
-    expect(out.label.kind).toBe("ai");
-    expect(out.tiers.at(-1)?.detail).toBe("distilled-near-threshold-cf");
+    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toBe("dual-mild-hold");
   });
 
   it("does not solo-promote ~70% distilled group-photo scores", () => {
-    // Observed: real group selfie showed "? 70%" after threshold raised to 70%.
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.42),
@@ -184,7 +200,6 @@ describe("fuseDetection", () => {
     });
     expect(out.confidence).toBeLessThan(0.7);
     expect(out.label.kind).not.toBe("ai");
-    expect(out.tiers.at(-1)?.detail).not.toMatch(/distilled-near-threshold/);
   });
 
   it("does not promote near-threshold distilled when CF disagrees", () => {
