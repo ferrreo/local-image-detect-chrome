@@ -25,6 +25,7 @@ import {
 } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -62,6 +63,35 @@ const PAGE_DELAY_MS = Math.max(
 );
 const UA = "TruePixelBenchmark/1.0 (+local eval corpus)";
 
+/** Rotate queries — empty feed alone cycles ~700 unique IDs. */
+const SEARCH_QUERIES = (
+  process.env.LEXICA_QUERIES ||
+  [
+    "",
+    "portrait photo",
+    "landscape",
+    "cyberpunk city",
+    "anime character",
+    "oil painting",
+    "product photo",
+    "wildlife",
+    "architecture",
+    "food photography",
+    "fantasy dragon",
+    "street photography",
+    "sci-fi spaceship",
+    "watercolor flowers",
+    "cinematic still",
+    "robot",
+    "medieval castle",
+    "underwater",
+    "fashion editorial",
+    "cozy interior",
+  ].join("|")
+)
+  .split("|")
+  .map((s) => s.trim());
+
 mkdirSync(holdoutDir, { recursive: true });
 mkdirSync(trainDir, { recursive: true });
 
@@ -83,8 +113,9 @@ const index = loadJson(indexPath, { images: [] });
 if (!Array.isArray(index.images)) index.images = [];
 
 const registry = loadJson(registryPath, {
-  version: 1,
+  version: 2,
   cursor: 1,
+  queryCursors: {},
   holdoutIds: [],
   trainIds: [],
   failedIds: [],
@@ -92,7 +123,9 @@ const registry = loadJson(registryPath, {
 const holdoutIds = new Set(registry.holdoutIds || []);
 const trainIds = new Set(registry.trainIds || []);
 const failedIds = new Set(registry.failedIds || []);
-let cursor = Number(registry.cursor || 1) || 1;
+const queryCursors = { ...(registry.queryCursors || {}) };
+let queryIndex = Number(registry.queryIndex || 0) || 0;
+let stalePages = 0;
 
 // Seal every existing Lexica eval image as holdout (never train on these IDs).
 for (const entry of index.images) {
@@ -121,11 +154,12 @@ for (const name of listImages(trainDir)) {
   if (!holdoutIds.has(id)) trainIds.add(id);
 }
 
-async function fetchFeedPage(pageCursor) {
+async function fetchFeedPage(pageCursor, query) {
   const url = new URL("https://lexica.art/api/infinite-prompts");
-  url.searchParams.set("cursor", String(pageCursor));
+  url.searchParams.set("cursor", String(pageCursor ?? ""));
   url.searchParams.set("model", "search");
   url.searchParams.set("searchMode", "images");
+  if (query) url.searchParams.set("q", query);
   const res = await fetch(url, {
     headers: {
       Accept: "application/json",
@@ -143,14 +177,21 @@ async function downloadImage(id) {
     headers: {
       "User-Agent": UA,
       Referer: "https://lexica.art/",
-      Accept: "image/jpeg,image/*;q=0.8,*/*;q=0.5",
+      Accept: "image/jpeg,image/webp,image/png,image/*;q=0.8,*/*;q=0.5",
     },
     redirect: "follow",
   });
   if (!res.ok) throw new Error(`image HTTP ${res.status}`);
-  const buf = Buffer.from(await res.arrayBuffer());
-  if (buf.byteLength < 1024) throw new Error(`image too small (${buf.byteLength})`);
-  if (!(buf[0] === 0xff && buf[1] === 0xd8)) throw new Error("not jpeg");
+  const raw = Buffer.from(await res.arrayBuffer());
+  if (raw.byteLength < 1024) throw new Error(`image too small (${raw.byteLength})`);
+  // Lexica's "full_jpg" path sometimes serves WebP/PNG — normalize to JPEG.
+  const isJpeg = raw[0] === 0xff && raw[1] === 0xd8;
+  const buf = isJpeg
+    ? raw
+    : await sharp(raw).jpeg({ quality: 92 }).toBuffer();
+  if (!(buf[0] === 0xff && buf[1] === 0xd8)) {
+    throw new Error("could not decode to jpeg");
+  }
   return { buf, url };
 }
 
@@ -173,8 +214,11 @@ async function mapPool(items, limit, fn) {
 }
 
 function persistRegistry() {
+  registry.version = 2;
   registry.updatedAt = new Date().toISOString();
-  registry.cursor = cursor;
+  registry.queryIndex = queryIndex;
+  registry.queryCursors = queryCursors;
+  registry.cursor = queryCursors[SEARCH_QUERIES[queryIndex] || ""] ?? 1;
   registry.holdoutIds = [...holdoutIds];
   registry.trainIds = [...trainIds];
   registry.failedIds = [...failedIds];
@@ -340,7 +384,7 @@ async function flushDownloads() {
 
 console.log(
   `Lexica split: mode=${MODE} holdout=${holdoutIds.size}/${HOLDOUT_TARGET} ` +
-    `train=${trainIds.size}/${TRAIN_TARGET} cursor=${cursor}`,
+    `train=${trainIds.size}/${TRAIN_TARGET} queries=${SEARCH_QUERIES.length}`,
 );
 
 while (pages < MAX_PAGES) {
@@ -350,13 +394,15 @@ while (pages < MAX_PAGES) {
     wantTrain && trainIds.size + pendingTrain.length < TRAIN_TARGET;
   if (!needHoldout && !needTrain) break;
 
+  const query = SEARCH_QUERIES[queryIndex % SEARCH_QUERIES.length] || "";
+  const cursor = queryCursors[query] ?? "";
   console.log(
-    `feed page=${pages + 1} cursor=${cursor} ` +
+    `feed page=${pages + 1} q=${JSON.stringify(query)} cursor=${cursor || 1} ` +
       `queue holdout=${pendingHoldout.length} train=${pendingTrain.length}`,
   );
   let data;
   try {
-    data = await fetchFeedPage(cursor);
+    data = await fetchFeedPage(cursor, query);
   } catch (err) {
     console.warn(`feed error: ${err instanceof Error ? err.message : err}`);
     await sleep(1000 * Math.min(8, pages + 1));
@@ -368,7 +414,9 @@ while (pages < MAX_PAGES) {
   const images = data.images ?? [];
   if (!images.length) {
     emptyPages += 1;
-    if (emptyPages >= 3) break;
+    queryIndex = (queryIndex + 1) % Math.max(1, SEARCH_QUERIES.length);
+    queryCursors[query] = "";
+    if (emptyPages >= SEARCH_QUERIES.length * 2) break;
   } else {
     emptyPages = 0;
   }
@@ -378,6 +426,7 @@ while (pages < MAX_PAGES) {
     ...pendingTrain.map((x) => x.id),
   ]);
 
+  let fresh = 0;
   for (const img of images) {
     if (!img?.id) continue;
     if (
@@ -388,6 +437,7 @@ while (pages < MAX_PAGES) {
     ) {
       continue;
     }
+    fresh += 1;
     if (needHoldout && holdoutIds.size + pendingHoldout.length < HOLDOUT_TARGET) {
       pendingHoldout.push(img);
       pendingIds.add(img.id);
@@ -400,8 +450,18 @@ while (pages < MAX_PAGES) {
     }
   }
 
-  cursor = data.nextCursor ?? cursor + 50;
+  queryCursors[query] = data.nextCursor ?? "";
   pages += 1;
+  if (fresh === 0) {
+    stalePages += 1;
+    if (stalePages >= 2) {
+      queryIndex = (queryIndex + 1) % Math.max(1, SEARCH_QUERIES.length);
+      stalePages = 0;
+      console.log(`rotate query → ${SEARCH_QUERIES[queryIndex] || "(feed)"}`);
+    }
+  } else {
+    stalePages = 0;
+  }
   if (PAGE_DELAY_MS) await sleep(PAGE_DELAY_MS);
 
   if (
@@ -422,5 +482,5 @@ persistRegistry();
 
 console.log(
   `Lexica done: holdout=${holdoutIds.size}/${HOLDOUT_TARGET} ` +
-    `train=${trainIds.size}/${TRAIN_TARGET} cursor=${cursor} → ${registryPath}`,
+    `train=${trainIds.size}/${TRAIN_TARGET} → ${registryPath}`,
 );
