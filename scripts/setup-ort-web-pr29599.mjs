@@ -48,6 +48,22 @@ function ensureNinja() {
   run("pip3", ["install", "--user", "ninja"]);
 }
 
+/** ORT cmake requires node+npm from the same install (not /exec-daemon/node). */
+function ensureNodeForOrt() {
+  delete process.env.npm_config_prefix;
+  const nvmNode = "/home/ubuntu/.nvm/versions/node/v22.22.2/bin";
+  if (existsSync(path.join(nvmNode, "node")) && existsSync(path.join(nvmNode, "npm"))) {
+    process.env.PATH = `${nvmNode}:${process.env.PATH ?? ""}`;
+    process.env.NODE_EXECUTABLE = path.join(nvmNode, "node");
+    process.env.NPM_CLI = path.join(nvmNode, "npm");
+    return;
+  }
+  const which = spawnSync("bash", ["-lc", "type -P node"], { encoding: "utf8" });
+  const nodePath = (which.stdout ?? "").trim();
+  if (!nodePath) throw new Error("node not found for ORT cmake");
+  process.env.NODE_EXECUTABLE = nodePath;
+}
+
 function ensureEmsdk(ort) {
   const emsdk = path.join(ort, "cmake/external/emsdk");
   if (!existsSync(path.join(emsdk, "emsdk"))) {
@@ -56,17 +72,21 @@ function ensureEmsdk(ort) {
   run("./emsdk", ["install", "latest"], { cwd: emsdk });
   run("./emsdk", ["activate", "latest"], { cwd: emsdk });
   const envFile = path.join(emsdk, "emsdk_env.sh");
-  // Source into this process via printed exports.
-  const printed = execFileSync("bash", ["-lc", `source '${envFile}' && env`], {
-    encoding: "utf8",
-  });
+  const printed = execFileSync(
+    "bash",
+    ["-lc", `unset npm_config_prefix; source '${envFile}' && env`],
+    { encoding: "utf8" },
+  );
+  const keepPath = process.env.PATH ?? "";
   for (const line of printed.split("\n")) {
     const i = line.indexOf("=");
     if (i <= 0) continue;
     const k = line.slice(0, i);
     const v = line.slice(i + 1);
-    if (
-      k === "PATH" ||
+    if (k === "PATH") {
+      // Prepend emsdk, keep our node-first PATH.
+      process.env.PATH = `${v}:${keepPath}`;
+    } else if (
       k === "EMSDK" ||
       k === "EMSDK_NODE" ||
       k.startsWith("EM_") ||
@@ -75,6 +95,7 @@ function ensureEmsdk(ort) {
       process.env[k] = v;
     }
   }
+  ensureNodeForOrt();
 }
 
 if (existsSync(path.join(vendor, "dist/ort.webgpu.bundle.min.mjs")) && !force) {
@@ -86,6 +107,7 @@ if (existsSync(path.join(vendor, "dist/ort.webgpu.bundle.min.mjs")) && !force) {
 mkdirSync(srcRoot, { recursive: true });
 mkdirSync(stage, { recursive: true });
 ensureNinja();
+ensureNodeForOrt();
 
 if (!existsSync(path.join(ortSrc, ".git"))) {
   run(
@@ -123,29 +145,33 @@ const common = [
   "--disable_wasm_exception_catching",
   "--disable_rtti",
   "--parallel",
+  // cmake find_program(NODE) needs a node+npm co-located install.
+  "--cmake_extra_defines",
+  `NODE_EXECUTABLE=${process.env.NODE_EXECUTABLE}`,
 ];
 
-// Non-JSEP (WASM EP) + JSEP (WebGPU) artifacts required by ort-web.
+// ort.webgpu.* loads asyncify.wasm (native WebGPU EP) — that is where
+// preferredMatmulAccumulatorPrecision from #29599 lives. Plain wasm = CPU EP.
 run("bash", [buildSh, ...common], { cwd: ortSrc });
-run("bash", [buildSh, ...common, "--use_jsep", "--use_webnn"], { cwd: ortSrc });
+run("bash", [buildSh, ...common, "--use_webgpu"], { cwd: ortSrc });
 
 const wasmOut = path.join(ortSrc, "build/Linux/Release");
 const needed = [
   "ort-wasm-simd-threaded.wasm",
   "ort-wasm-simd-threaded.mjs",
-  "ort-wasm-simd-threaded.jsep.wasm",
-  "ort-wasm-simd-threaded.jsep.mjs",
+  "ort-wasm-simd-threaded.asyncify.wasm",
+  "ort-wasm-simd-threaded.asyncify.mjs",
 ];
 for (const f of needed) {
   const p = path.join(wasmOut, f);
   if (!existsSync(p)) {
-    // ORT sometimes nests under a different folder — search.
     const found = execFileSync(
       "bash",
       ["-lc", `find '${ortSrc}/build' -name '${f}' | head -1`],
       { encoding: "utf8" },
     ).trim();
     if (!found) throw new Error(`Missing build artifact ${f}`);
+    mkdirSync(wasmOut, { recursive: true });
     copyFileSync(found, path.join(wasmOut, f));
   }
 }

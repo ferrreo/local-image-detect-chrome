@@ -55,6 +55,12 @@ type OrtModule = {
   };
 };
 
+let forensicsBackend: InferenceBackend = { kind: "none" };
+
+export function getForensicsBackend(): InferenceBackend {
+  return forensicsBackend;
+}
+
 type LoadedSession = {
   model: ModelArtifact;
   session: OrtSession;
@@ -180,17 +186,13 @@ type EpConfig =
       preferredMatmulAccumulatorPrecision?: "f16" | "f32";
     };
 
-function epConfigs(providers: string[]): EpConfig[] {
-  return providers.map((provider) => {
-    if (provider === "webgpu") {
-      return {
-        name: "webgpu",
-        // Portable strict-rounding fix from microsoft/onnxruntime#29599.
-        preferredMatmulAccumulatorPrecision: "f32",
-      };
-    }
-    return provider;
-  });
+function webgpuEp(withAccF32: boolean): EpConfig {
+  if (!withAccF32) return "webgpu";
+  return {
+    name: "webgpu",
+    // Portable strict-rounding fix from microsoft/onnxruntime#29599.
+    preferredMatmulAccumulatorPrecision: "f32",
+  };
 }
 
 async function createOneSession(
@@ -205,17 +207,23 @@ async function createOneSession(
 
   let lastError: unknown;
   for (const provider of providers) {
-    try {
-      const session = await ort.InferenceSession.create(modelBytes, {
-        executionProviders: epConfigs([provider]),
-        graphOptimizationLevel: model.graphOptimizationLevel,
-      });
-      return {
-        session,
-        backend: provider === "webgpu" ? { kind: "webgpu" } : { kind: "wasm" },
-      };
-    } catch (error) {
-      lastError = error;
+    const attempts: EpConfig[] =
+      provider === "webgpu"
+        ? [webgpuEp(true), webgpuEp(false)]
+        : [provider];
+    for (const ep of attempts) {
+      try {
+        const session = await ort.InferenceSession.create(modelBytes, {
+          executionProviders: [ep],
+          graphOptimizationLevel: model.graphOptimizationLevel,
+        });
+        return {
+          session,
+          backend: provider === "webgpu" ? { kind: "webgpu" } : { kind: "wasm" },
+        };
+      } catch (error) {
+        lastError = error;
+      }
     }
   }
   throw lastError instanceof Error
@@ -287,6 +295,7 @@ async function createSessions(ort: OrtModule): Promise<LoadedSession[]> {
     FORENSICS_MODEL,
     forensicsProviders,
   );
+  forensicsBackend = forensics.backend;
   loaded.push({
     model: FORENSICS_MODEL,
     session: forensics.session,
@@ -475,6 +484,8 @@ export async function classifyVisual(
         : "distilled=fp16",
       cascade ? "cascade" : "dual",
       runForensics ? "ranForensics" : "skipForensics",
+      `distilledEp=${(activeBackend.kind === "none" ? "wasm" : activeBackend.kind)}`,
+      `forensicsEp=${forensicsBackend.kind === "none" ? "wasm" : forensicsBackend.kind}`,
       `distilledMs=${distilledMs.toFixed(1)}`,
       `forensicsMs=${forensicsMs.toFixed(1)}`,
     ].join(","),
@@ -487,6 +498,7 @@ export function resetVisualClassifierForTests(): void {
   sessionsPromise = undefined;
   ortModulePromise = undefined;
   activeBackend = { kind: "none" };
+  forensicsBackend = { kind: "none" };
   gpuCapsPromise = undefined;
 }
 
@@ -494,5 +506,6 @@ export function resetVisualClassifierForTests(): void {
 export function resetVisualClassifier(): void {
   sessionsPromise = undefined;
   activeBackend = { kind: "none" };
+  forensicsBackend = { kind: "none" };
   // Keep gpuCapsPromise — re-probing every reset is what made GPU look flaky.
 }
