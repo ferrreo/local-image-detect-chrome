@@ -16,6 +16,10 @@ import {
 import { ensureModelsReady, getModelStatus } from "../lib/model-cache";
 import { analyzeLocalStub } from "../lib/analyze-local";
 import { guessMimeType } from "../lib/image-decode";
+import {
+  arrayBufferToBase64,
+  coerceArrayBuffer,
+} from "../lib/bytes-codec";
 import { asAiConfidence } from "../shared/types";
 
 const OFFSCREEN_URL = "offscreen.html";
@@ -64,6 +68,8 @@ async function ensureOffscreen(): Promise<void> {
     justification:
       "Run ONNX Runtime WebGPU/WASM inference off the service worker.",
   });
+  // First message right after createDocument often races the module listener.
+  await new Promise((r) => setTimeout(r, 50));
 }
 
 async function fetchImageBytes(
@@ -93,11 +99,13 @@ async function inferViaOffscreen(args: {
   if (!chrome.offscreen) return undefined;
   try {
     await ensureOffscreen();
+    // Wait a tick so the offscreen listener is registered after createDocument.
+    await new Promise((r) => setTimeout(r, 0));
     const message: OffscreenInferRequest = {
       kind: "offscreen-infer",
       requestId: args.requestId,
       imageId: args.imageId,
-      bytes: args.bytes,
+      bytesBase64: arrayBufferToBase64(args.bytes),
       mimeType: args.mimeType,
     };
     const response: unknown = await chrome.runtime.sendMessage(message);
@@ -109,8 +117,20 @@ async function inferViaOffscreen(args: {
     ) {
       return response as OffscreenInferResponse;
     }
-  } catch {
-    return undefined;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return {
+      kind: "offscreen-infer-result",
+      requestId: args.requestId,
+      result: {
+        imageId: args.imageId,
+        label: { kind: "error", message: `offscreen send failed: ${message}` },
+        confidence: asAiConfidence(0.5),
+        tiers: [],
+        backend: { kind: "none" },
+        elapsedMs: 0,
+      },
+    };
   }
   return undefined;
 }
@@ -248,7 +268,7 @@ async function analyzeBytes(
   try {
     const result = await detectFromBytes({
       imageId: request.imageId,
-      bytes: request.bytes,
+      bytes: coerceArrayBuffer(request.bytes),
       mimeType: request.mimeType,
     });
     return {
@@ -344,11 +364,20 @@ async function handleRequest(
     }
     case "reset-visual": {
       const options = await loadOptions();
-      const reset = await resetViaOffscreen({
+      let reset = await resetViaOffscreen({
         requestId: request.requestId,
         ...(request.warm !== undefined ? { warm: request.warm } : {}),
         visualProvider: options.visualProvider,
       });
+      // One retry — first warm after offscreen boot is flaky under headless.
+      if (!reset || reset.backend.kind === "none") {
+        await new Promise((r) => setTimeout(r, 100));
+        reset = await resetViaOffscreen({
+          requestId: request.requestId,
+          warm: true,
+          visualProvider: options.visualProvider,
+        });
+      }
       if (reset) {
         backendCache = reset.backend;
         gpuAvailableCache = reset.gpuAvailable;

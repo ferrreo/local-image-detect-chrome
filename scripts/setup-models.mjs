@@ -33,6 +33,14 @@ const MODELS = [
     license: "MIT",
   },
   {
+    id: "ai-image-detect-distilled-fp32",
+    url: "https://huggingface.co/onnx-community/ai-image-detect-distilled-ONNX/resolve/main/onnx/model.onnx",
+    outPath: path.join(root, "models/ai-image-detect-distilled/model.onnx"),
+    sha256: "87b4331f22418a4cb50901851a1c28f64a0ca4f58728442d073b4bed9922ba86",
+    bytes: 58_410_332,
+    license: "MIT",
+  },
+  {
     id: "community-forensics-deepfake-det",
     url: "https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX/resolve/main/onnx/model_q4.onnx",
     outPath: path.join(root, "models/community-forensics/model_q4.onnx"),
@@ -83,7 +91,7 @@ writeFileSync(
   path.join(root, "models/manifest.json"),
   JSON.stringify(
     {
-      version: "distilled-fp16+community-forensics-q4-v1",
+      version: "distilled-fp16+fp32+community-forensics-q4-v1",
       models: MODELS.map((m) => ({
         id: m.id,
         path: path.relative(path.join(root, "models"), m.outPath),

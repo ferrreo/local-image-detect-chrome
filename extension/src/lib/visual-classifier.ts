@@ -1,8 +1,9 @@
 import {
-  ALL_MODELS,
   DISTILLED_MODEL,
+  DISTILLED_MODEL_FP32,
   FORENSICS_MODEL,
   VISUAL_MODEL,
+  isDistilledModelId,
   type ModelArtifact,
 } from "./model-manifest";
 import { readCachedModel } from "./model-cache";
@@ -57,12 +58,31 @@ type OrtModule = {
 type LoadedSession = {
   model: ModelArtifact;
   session: OrtSession;
+  backend: InferenceBackend;
+};
+
+export type WebGpuCaps = {
+  available: boolean;
+  /** Adapter reports WGSL shader-f16. Required for distilled fp16 on WebGPU. */
+  shaderF16: boolean;
+};
+
+type GpuNavigator = Navigator & {
+  gpu?: {
+    requestAdapter: (opts?: {
+      powerPreference?: string;
+    }) => Promise<{
+      features?: { has: (feature: string) => boolean };
+    } | null>;
+  };
 };
 
 let ortModulePromise: Promise<OrtModule> | undefined;
 let sessionsPromise: Promise<LoadedSession[]> | undefined;
 let activeBackend: InferenceBackend = { kind: "none" };
 let preferredProvider: VisualProvider["kind"] = "auto";
+/** Cached adapter probe — `'gpu' in navigator` alone is flaky under headless. */
+let gpuCapsPromise: Promise<WebGpuCaps> | undefined;
 
 export function isGpuAvailable(): boolean {
   try {
@@ -70,6 +90,39 @@ export function isGpuAvailable(): boolean {
   } catch {
     return false;
   }
+}
+
+/** Probe WebGPU once: adapter presence + shader-f16. */
+export async function probeWebGpuCapabilities(): Promise<WebGpuCaps> {
+  if (!isGpuAvailable()) return { available: false, shaderF16: false };
+  if (!gpuCapsPromise) {
+    gpuCapsPromise = (async (): Promise<WebGpuCaps> => {
+      const gpu = (navigator as GpuNavigator).gpu;
+      if (!gpu?.requestAdapter) return { available: false, shaderF16: false };
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          const adapter = await gpu.requestAdapter({
+            powerPreference: "high-performance",
+          });
+          if (adapter) {
+            return {
+              available: true,
+              shaderF16: adapter.features?.has("shader-f16") === true,
+            };
+          }
+        } catch {
+          // retry
+        }
+        await new Promise((r) => setTimeout(r, 50 * (attempt + 1)));
+      }
+      return { available: false, shaderF16: false };
+    })();
+  }
+  return gpuCapsPromise;
+}
+
+export async function probeWebGpuAvailable(): Promise<boolean> {
+  return (await probeWebGpuCapabilities()).available;
 }
 
 export function setPreferredVisualProvider(
@@ -84,7 +137,8 @@ export function getPreferredVisualProvider(): VisualProvider["kind"] {
 
 async function loadOrt(): Promise<OrtModule> {
   if (!ortModulePromise) {
-    ortModulePromise = import("onnxruntime-web").then((mod) => {
+    // WebGPU entry includes WASM fallback providers.
+    ortModulePromise = import("onnxruntime-web/webgpu").then((mod) => {
       const resolved = ("default" in mod ? mod.default : mod) as unknown;
       return resolved as OrtModule;
     });
@@ -102,15 +156,17 @@ function configureWasmPaths(ort: OrtModule): void {
   ort.env.wasm.simd = true;
 }
 
-function providerList(prefer: VisualProvider["kind"]): string[] {
-  const gpu = isGpuAvailable();
+async function providerList(
+  prefer: VisualProvider["kind"],
+): Promise<string[]> {
   if (prefer === "wasm") return ["wasm"];
+  const caps = await probeWebGpuCapabilities();
   if (prefer === "webgpu") {
-    if (!gpu) throw new Error("WebGPU requested but navigator.gpu is unavailable");
-    return ["webgpu"];
+    // Prefer WebGPU but keep WASM fallback — adapter presence flickers
+    // under headless / early offscreen boot.
+    return caps.available ? ["webgpu", "wasm"] : ["wasm"];
   }
-  // auto
-  return gpu ? ["webgpu", "wasm"] : ["wasm"];
+  return caps.available ? ["webgpu", "wasm"] : ["wasm"];
 }
 
 async function createOneSession(
@@ -143,18 +199,70 @@ async function createOneSession(
     : new Error(`Failed to create ORT session for ${model.id}`);
 }
 
+/**
+ * Pick distilled artifact + EP so WebGPU never sees an unsupported graph.
+ * - WebGPU + shader-f16 → fp16 on WebGPU
+ * - WebGPU without f16 → fp32 on WebGPU (fp16 Transpose requires f16)
+ * - WASM → fp16
+ *
+ * Community Forensics q4 hangs / OOMs on browser WebGPU EP — always WASM.
+ */
 async function createSessions(ort: OrtModule): Promise<LoadedSession[]> {
   configureWasmPaths(ort);
-  const providers = providerList(preferredProvider);
+  const providers = await providerList(preferredProvider);
+  const caps = await probeWebGpuCapabilities();
+  const wantWebgpu = providers[0] === "webgpu";
+
+  let distilledModel: ModelArtifact = DISTILLED_MODEL;
+  let distilledProviders = providers;
+  if (wantWebgpu && caps.available) {
+    if (caps.shaderF16) {
+      distilledModel = DISTILLED_MODEL;
+      distilledProviders = ["webgpu", "wasm"];
+    } else {
+      distilledModel = DISTILLED_MODEL_FP32;
+      // fp32 on WebGPU; if session create fails, fall back to fp16 WASM.
+      distilledProviders = ["webgpu"];
+    }
+  } else {
+    distilledModel = DISTILLED_MODEL;
+    distilledProviders = ["wasm"];
+  }
 
   const loaded: LoadedSession[] = [];
-  let backend: InferenceBackend = { kind: "wasm" };
-  for (const model of ALL_MODELS) {
-    const created = await createOneSession(ort, model, providers);
-    loaded.push({ model, session: created.session });
-    backend = created.backend;
+  try {
+    const distilled = await createOneSession(
+      ort,
+      distilledModel,
+      distilledProviders,
+    );
+    loaded.push({
+      model: distilledModel,
+      session: distilled.session,
+      backend: distilled.backend,
+    });
+  } catch (error) {
+    if (distilledModel.id !== DISTILLED_MODEL.id) {
+      const fallback = await createOneSession(ort, DISTILLED_MODEL, ["wasm"]);
+      loaded.push({
+        model: DISTILLED_MODEL,
+        session: fallback.session,
+        backend: fallback.backend,
+      });
+    } else {
+      throw error;
+    }
   }
-  activeBackend = backend;
+
+  const forensics = await createOneSession(ort, FORENSICS_MODEL, ["wasm"]);
+  loaded.push({
+    model: FORENSICS_MODEL,
+    session: forensics.session,
+    backend: forensics.backend,
+  });
+
+  const distilledLoaded = loaded.find((s) => isDistilledModelId(s.model.id));
+  activeBackend = distilledLoaded?.backend ?? { kind: "wasm" };
   return loaded;
 }
 
@@ -173,6 +281,8 @@ export function getVisualBackend(): InferenceBackend {
 }
 
 export async function warmVisualClassifier(): Promise<InferenceBackend> {
+  // Prime adapter cache before session create so prefer=webgpu is stable.
+  await probeWebGpuCapabilities();
   await getSessions();
   return activeBackend;
 }
@@ -246,8 +356,10 @@ export async function classifyVisual(
 
   const ort = await loadOrt();
   const sessions = await getSessions();
-  const distilledSession = sessions.find((s) => s.model.id === DISTILLED_MODEL.id);
-  const forensicsSession = sessions.find((s) => s.model.id === FORENSICS_MODEL.id);
+  const distilledSession = sessions.find((s) => isDistilledModelId(s.model.id));
+  const forensicsSession = sessions.find(
+    (s) => s.model.id === FORENSICS_MODEL.id,
+  );
   if (!distilledSession) {
     throw new Error("Distilled visual session missing");
   }
@@ -320,6 +432,9 @@ export async function classifyVisual(
     backend: activeBackend.kind === "none" ? { kind: "wasm" } : activeBackend,
     detail: [
       ...[...scores.entries()].map(([id, v]) => `${id}=${v.toFixed(3)}`),
+      distilledSession.model.id === DISTILLED_MODEL_FP32.id
+        ? "distilled=fp32"
+        : "distilled=fp16",
       cascade ? "cascade" : "dual",
       runForensics ? "ranForensics" : "skipForensics",
     ].join(","),
@@ -330,10 +445,12 @@ export function resetVisualClassifierForTests(): void {
   sessionsPromise = undefined;
   ortModulePromise = undefined;
   activeBackend = { kind: "none" };
+  gpuCapsPromise = undefined;
 }
 
 /** Drop sessions so the next warm recreates with the current provider preference. */
 export function resetVisualClassifier(): void {
   sessionsPromise = undefined;
   activeBackend = { kind: "none" };
+  // Keep gpuCapsPromise — re-probing every reset is what made GPU look flaky.
 }

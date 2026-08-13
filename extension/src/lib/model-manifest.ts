@@ -25,13 +25,19 @@ export type ModelArtifact = {
 
 export const MODEL_CACHE_NAME = "truepixel-models-v1";
 
-/** Models required by the extension runtime (Cache Storage). */
-export const MODEL_VERSION = "distilled-fp16+community-forensics-q4-v1";
+/**
+ * Cache / package version. Bump when the required artifact set changes.
+ * fp32 distilled is required for WebGPU adapters without shader-f16.
+ */
+export const MODEL_VERSION =
+  "distilled-fp16+fp32+community-forensics-q4-v1";
 
 /**
- * Distilled ViT AI image detector (MIT).
+ * Distilled ViT AI image detector (MIT), fp16 ONNX.
  * Source: https://huggingface.co/onnx-community/ai-image-detect-distilled-ONNX
  * Labels: 0=fake, 1=real
+ *
+ * Prefer on WASM, and on WebGPU when the adapter supports shader-f16.
  */
 export const DISTILLED_MODEL = {
   id: "ai-image-detect-distilled",
@@ -49,9 +55,30 @@ export const DISTILLED_MODEL = {
 } as const satisfies ModelArtifact;
 
 /**
+ * Same distilled detector, fp32 ONNX.
+ * Required for WebGPU when the adapter lacks shader-f16 (fp16 Transpose fails).
+ */
+export const DISTILLED_MODEL_FP32 = {
+  id: "ai-image-detect-distilled-fp32",
+  cacheKey: "models/ai-image-detect-distilled/model.onnx",
+  localPath: "models/ai-image-detect-distilled/model.onnx",
+  url: "https://huggingface.co/onnx-community/ai-image-detect-distilled-ONNX/resolve/main/onnx/model.onnx",
+  sha256: "87b4331f22418a4cb50901851a1c28f64a0ca4f58728442d073b4bed9922ba86",
+  bytes: 58_410_332,
+  role: "visual-classifier",
+  inputSize: 224,
+  aiLabelIndex: 0,
+  mean: [0.5, 0.5, 0.5],
+  std: [0.5, 0.5, 0.5],
+  graphOptimizationLevel: "disabled",
+} as const satisfies ModelArtifact;
+
+/**
  * Community Forensics ViT-Small detector (MIT), q4 ONNX.
  * Source: https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX
  * Labels: softmax index 1 treated as AI/fake for this export.
+ *
+ * Browser WebGPU EP hangs / OOMs on this export — always run on WASM in-browser.
  */
 export const FORENSICS_MODEL = {
   id: "community-forensics-deepfake-det",
@@ -71,8 +98,25 @@ export const FORENSICS_MODEL = {
 /** Primary model kept for backwards-compatible imports. */
 export const VISUAL_MODEL = DISTILLED_MODEL;
 
-/** Required for browser Cache Storage / extension readiness. */
+/**
+ * Artifacts that must be present in Cache Storage / packaged models/.
+ * Includes both distilled precision variants so WebGPU can pick at runtime.
+ */
 export const ALL_MODELS: readonly ModelArtifact[] = [
+  DISTILLED_MODEL,
+  DISTILLED_MODEL_FP32,
+  FORENSICS_MODEL,
+];
+
+/**
+ * Heads used by Node dual / cascade eval (fp16 distilled + forensics).
+ * Do not include the WebGPU-only fp32 distilled variant here.
+ */
+export const INFERENCE_MODELS: readonly ModelArtifact[] = [
   DISTILLED_MODEL,
   FORENSICS_MODEL,
 ];
+
+export function isDistilledModelId(id: string): boolean {
+  return id === DISTILLED_MODEL.id || id === DISTILLED_MODEL_FP32.id;
+}

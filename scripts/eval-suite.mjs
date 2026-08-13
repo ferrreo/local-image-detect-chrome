@@ -69,7 +69,10 @@ const runBrowser = process.env.EVAL_SUITE_BROWSER !== "0";
 
 ensureNpmDeps();
 
-if (!existsSync(path.join(root, "models/ai-image-detect-distilled/model_fp16.onnx"))) {
+if (
+  !existsSync(path.join(root, "models/ai-image-detect-distilled/model_fp16.onnx")) ||
+  !existsSync(path.join(root, "models/ai-image-detect-distilled/model.onnx"))
+) {
   run("node", ["scripts/setup-models.mjs"]);
 }
 

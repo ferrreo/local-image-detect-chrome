@@ -159,8 +159,11 @@ export type OffscreenInferRequest = {
   kind: "offscreen-infer";
   requestId: string;
   imageId: string;
-  /** Transferable ArrayBuffer of image bytes. */
-  bytes: ArrayBuffer;
+  /**
+   * Image bytes as base64. ArrayBuffer is not reliable across SW↔offscreen
+   * structured clone (often arrives non-buffer → decode failures).
+   */
+  bytesBase64: string;
   mimeType: string;
 };
 

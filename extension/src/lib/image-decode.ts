@@ -8,13 +8,51 @@ export async function decodeImageBytes(
   bytes: ArrayBuffer,
   mimeType = "image/jpeg",
 ): Promise<DecodedImage> {
-  const blob = new Blob([bytes], { type: mimeType });
-  const bitmap = await createImageBitmap(blob);
-  return {
-    bitmap,
-    width: bitmap.width,
-    height: bitmap.height,
-  };
+  if (bytes.byteLength === 0) {
+    throw new Error("The source image could not be decoded. (empty buffer)");
+  }
+  // Copy first — callers may pass a buffer that structured-clone will detach.
+  const copy = bytes.slice(0);
+  const view = new Uint8Array(copy);
+  const type = mimeType.startsWith("image/")
+    ? mimeType
+    : guessMimeType(view);
+
+  // ImageDecoder handles progressive JPEG reliably in workers/offscreen.
+  if (typeof ImageDecoder !== "undefined") {
+    try {
+      const decoder = new ImageDecoder({ data: view, type });
+      const { image } = await decoder.decode({ frameIndex: 0 });
+      try {
+        const bitmap = await createImageBitmap(image);
+        return {
+          bitmap,
+          width: bitmap.width,
+          height: bitmap.height,
+        };
+      } finally {
+        image.close();
+        decoder.close();
+      }
+    } catch {
+      // fall through to createImageBitmap(Blob)
+    }
+  }
+
+  const blob = new Blob([copy], { type });
+  try {
+    const bitmap = await createImageBitmap(blob);
+    return {
+      bitmap,
+      width: bitmap.width,
+      height: bitmap.height,
+    };
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `The source image could not be decoded. (${type}, ${copy.byteLength} bytes: ${detail})`,
+    );
+  }
 }
 
 export async function rasterizeForModel(

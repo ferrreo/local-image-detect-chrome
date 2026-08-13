@@ -7,9 +7,9 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import sharp from "sharp";
 import {
-  ALL_MODELS,
   DISTILLED_MODEL,
   FORENSICS_MODEL,
+  INFERENCE_MODELS,
   type ModelArtifact,
 } from "./model-manifest";
 import { asAiConfidence, type InferenceBackend } from "../shared/types";
@@ -63,7 +63,7 @@ async function getSessions(): Promise<LoadedSession[]> {
     sessionsPromise = (async () => {
       const ort = require("onnxruntime-node") as OrtNode;
       const loaded: LoadedSession[] = [];
-      for (const model of ALL_MODELS) {
+      for (const model of INFERENCE_MODELS) {
         const bytes = new Uint8Array(readFileSync(resolveModelPath(model)));
         const session = await ort.InferenceSession.create(bytes, {
           executionProviders: ["cpu"],

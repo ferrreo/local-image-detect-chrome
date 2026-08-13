@@ -239,6 +239,9 @@ async function runEval() {
       setStatus(`(${i + 1}/${images.length}) ${item.file}`);
       try {
         const { result, totalMs } = await analyzeOne(corpusBase, item);
+        if (result.label.kind === "error") {
+          throw new Error(result.label.message);
+        }
         const predicted: "ai" | "real" =
           result.confidence >= threshold ? "ai" : "real";
         const actualAi = item.label === "ai";
@@ -261,9 +264,6 @@ async function runEval() {
           tiers: result.tiers
             .map((t) => `${t.tier}:${Number(t.aiScore).toFixed(3)}`)
             .join("|"),
-          ...(result.label.kind === "error"
-            ? { error: result.label.message }
-            : {}),
         };
         rows.push(row);
         appendRow(row);

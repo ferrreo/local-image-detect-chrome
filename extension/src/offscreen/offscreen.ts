@@ -1,7 +1,7 @@
 import { detectAiImage } from "../lib/pipeline";
 import {
   getVisualBackend,
-  isGpuAvailable,
+  probeWebGpuAvailable,
   resetVisualClassifier,
   setPreferredVisualProvider,
   warmVisualClassifier,
@@ -14,6 +14,7 @@ import type {
   VisualProvider,
 } from "../shared/types";
 import { asAiConfidence } from "../shared/types";
+import { base64ToArrayBuffer } from "../lib/bytes-codec";
 
 async function loadProviderPreference(): Promise<VisualProvider["kind"]> {
   try {
@@ -38,9 +39,10 @@ async function loadProviderPreference(): Promise<VisualProvider["kind"]> {
 async function handleInfer(
   request: OffscreenInferRequest,
 ): Promise<OffscreenInferResponse> {
+  const bytes = base64ToArrayBuffer(request.bytesBase64);
   const result = await detectAiImage({
     imageId: request.imageId,
-    bytes: request.bytes,
+    bytes,
     mimeType: request.mimeType,
   });
 
@@ -66,7 +68,7 @@ async function handleReset(
     kind: "offscreen-reset-result",
     requestId: request.requestId,
     backend,
-    gpuAvailable: isGpuAvailable(),
+    gpuAvailable: await probeWebGpuAvailable(),
   };
 }
 
@@ -115,8 +117,7 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
 });
 
 void (async () => {
+  // Only set preference here — do not auto-warm. Concurrent warm with
+  // reset-visual triggers onnxruntime-web "multiple calls to initWasm()".
   setPreferredVisualProvider(await loadProviderPreference());
-  await warmVisualClassifier().catch(() => {
-    // Model may not be installed yet; popup/eval setup handles download.
-  });
 })();
