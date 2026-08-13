@@ -104,6 +104,24 @@ OpenRouter corpus (76 images, threshold 65%), same machine:
 
 Distilled-alone misses hard Krea/Riverflow cases; dual/cascade recover them via Community Forensics. The Zig host tries WebGPU → Vulkan → XNNPACK → CPU (AVX2 via `x86_64_v3` / ORT MLAS); stock Linux ORT is CPU-only and falls through immediately.
 
+### Full offline suite (CPU + GPU modes)
+
+Runs the **real unpacked extension** in Playwright Chromium (ORT WebGPU / WASM) plus host Node/Zig matrices, then writes `benchmark/eval-suite/index.html`.
+
+```bash
+npm run setup:models && npm run setup:ort && npm run build:zig
+npm run build
+npm run eval:suite                 # local PC: host + browser wasm/webgpu
+npm run eval:suite:ci              # CI-sized subset (wasm + key host modes)
+# EVAL_SUITE_LIMIT=16 EVAL_SUITE_BROWSER_PROVIDERS=webgpu,wasm npm run eval:suite
+```
+
+Live page inside the extension (after Load unpacked `dist/`):
+
+`chrome-extension://<id>/eval.html?corpus=http://127.0.0.1:<port>&provider=webgpu&autorun=1`
+
+Serve the corpus with any static server rooted at `benchmark/openrouter` (the Playwright harness starts one automatically).
+
 Refresh that corpus incrementally when OpenRouter adds models (needs `OPENROUTER_API_KEY` in `.env`):
 
 ```bash

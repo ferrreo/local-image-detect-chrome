@@ -25,6 +25,9 @@ export type ZigInferResult = VisualClassification & {
   ranForensics: boolean;
   inferMs: number;
   preprocessMs: number;
+  preferEp?: string;
+  distilledEp?: string;
+  forensicsEp?: string;
 };
 
 type Pending = {
@@ -105,6 +108,9 @@ function ensureChild(): Promise<void> {
           ranForensics: false,
           inferMs: Number(msg.ms ?? 0),
           preprocessMs: 0,
+          preferEp: String(msg.preferEp ?? "auto"),
+          distilledEp: String(msg.distilledEp ?? "unknown"),
+          forensicsEp: String(msg.forensicsEp ?? "unknown"),
         });
         flush();
         return;
@@ -181,8 +187,24 @@ function send(line: string): Promise<ZigInferResult> {
   );
 }
 
-export async function warmVisualZig(): Promise<void> {
-  await send('{"cmd":"warm"}');
+export type ZigPreferEp = "WebGPU" | "Vulkan" | "XNNPACK" | "CPU";
+
+export async function warmVisualZig(preferEp?: ZigPreferEp): Promise<{
+  preferEp: string;
+  distilledEp: string;
+  forensicsEp: string;
+  ms: number;
+}> {
+  const payload = preferEp
+    ? JSON.stringify({ cmd: "warm", preferEp })
+    : '{"cmd":"warm"}';
+  const result = await send(payload);
+  return {
+    preferEp: result.preferEp ?? preferEp ?? "auto",
+    distilledEp: result.distilledEp ?? "unknown",
+    forensicsEp: result.forensicsEp ?? "unknown",
+    ms: result.inferMs,
+  };
 }
 
 export async function classifyZigVisual(
@@ -233,14 +255,26 @@ export function needsForensicsCascade(args: {
 
 export async function shutdownVisualZig(): Promise<void> {
   if (!child) return;
-  try {
-    child.stdin.write('{"cmd":"quit"}\n');
-  } catch {
-    /* ignore */
-  }
-  child.kill();
+  const proc = child;
   child = undefined;
   ready = undefined;
   queue = [];
   inFlight = false;
+  await new Promise<void>((resolve) => {
+    const done = () => resolve();
+    proc.once("exit", done);
+    try {
+      proc.stdin.write('{"cmd":"quit"}\n');
+    } catch {
+      /* ignore */
+    }
+    // Hard kill if quit doesn't land promptly (avoids stuck GPU EP probes).
+    setTimeout(() => {
+      try {
+        proc.kill("SIGKILL");
+      } catch {
+        /* ignore */
+      }
+    }, 1500);
+  });
 }

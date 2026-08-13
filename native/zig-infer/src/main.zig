@@ -23,6 +23,21 @@ const Engine = struct {
     forensics: ?ort_session.Session = null,
     distilled_spec: ModelSpec,
     forensics_spec: ModelSpec,
+    prefer_ep: ?ort_session.EpKind = null,
+
+    fn clearSessions(self: *Engine) void {
+        if (self.distilled) |*s| s.deinit();
+        if (self.forensics) |*s| s.deinit();
+        self.distilled = null;
+        self.forensics = null;
+    }
+
+    fn setPreferEp(self: *Engine, prefer: ?ort_session.EpKind) void {
+        if (self.prefer_ep == null and prefer == null) return;
+        if (self.prefer_ep != null and prefer != null and self.prefer_ep.? == prefer.?) return;
+        self.clearSessions();
+        self.prefer_ep = prefer;
+    }
 
     fn ensure(self: *Engine, kind: ModelKind) !*ort_session.Session {
         switch (kind) {
@@ -32,6 +47,7 @@ const Engine = struct {
                         self.allocator,
                         self.distilled_spec.path,
                         self.distilled_spec.graph_opt_disabled,
+                        self.prefer_ep,
                     );
                 }
                 return &self.distilled.?;
@@ -42,6 +58,7 @@ const Engine = struct {
                         self.allocator,
                         self.forensics_spec.path,
                         self.forensics_spec.graph_opt_disabled,
+                        self.prefer_ep,
                     );
                 }
                 return &self.forensics.?;
@@ -50,10 +67,17 @@ const Engine = struct {
     }
 
     fn deinit(self: *Engine) void {
-        if (self.distilled) |*s| s.deinit();
-        if (self.forensics) |*s| s.deinit();
+        self.clearSessions();
     }
 };
+
+fn parsePreferEp(line: []const u8) ?ort_session.EpKind {
+    if (std.mem.indexOf(u8, line, "\"preferEp\":\"WebGPU\"") != null) return .webgpu;
+    if (std.mem.indexOf(u8, line, "\"preferEp\":\"Vulkan\"") != null) return .vulkan;
+    if (std.mem.indexOf(u8, line, "\"preferEp\":\"XNNPACK\"") != null) return .xnnpack;
+    if (std.mem.indexOf(u8, line, "\"preferEp\":\"CPU\"") != null) return .cpu;
+    return null;
+}
 
 fn resolveRepoRoot(allocator: std.mem.Allocator, io: Io) ![]u8 {
     if (std.c.getenv("TRUEPIXEL_ROOT")) |root_z| {
@@ -184,6 +208,8 @@ pub fn main(init: std.process.Init) !void {
             break;
         }
         if (std.mem.indexOf(u8, line, "\"cmd\":\"warm\"") != null) {
+            const prefer = parsePreferEp(line);
+            engine.setPreferEp(prefer);
             const t0 = Io.Clock.awake.now(io);
             _ = try engine.ensure(.distilled);
             _ = try engine.ensure(.forensics);
@@ -191,9 +217,10 @@ pub fn main(init: std.process.Init) !void {
             const ms = @as(f64, @floatFromInt(elapsed.toNanoseconds())) / 1_000_000.0;
             const ep_d = if (engine.distilled) |s| @tagName(s.ep) else "none";
             const ep_f = if (engine.forensics) |s| @tagName(s.ep) else "none";
+            const pref_name = if (prefer) |p| @tagName(p) else "auto";
             try stdout.print(
-                "{{\"ok\":true,\"event\":\"warm\",\"ms\":{d:.3},\"distilledEp\":\"{s}\",\"forensicsEp\":\"{s}\"}}\n",
-                .{ ms, ep_d, ep_f },
+                "{{\"ok\":true,\"event\":\"warm\",\"ms\":{d:.3},\"preferEp\":\"{s}\",\"distilledEp\":\"{s}\",\"forensicsEp\":\"{s}\"}}\n",
+                .{ ms, pref_name, ep_d, ep_f },
             );
             try stdout.flush();
             continue;

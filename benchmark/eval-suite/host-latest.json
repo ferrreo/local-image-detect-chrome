@@ -1,0 +1,299 @@
+{
+  "generatedAt": "2026-08-13T14:51:19.796Z",
+  "host": "linux",
+  "arch": "x64",
+  "modes": [
+    "js-node-cpu-distilled",
+    "zig-cpu-cascade",
+    "zig-webgpu-dual",
+    "zig-vulkan-dual"
+  ],
+  "results": [
+    {
+      "mode": "js-node-cpu-distilled",
+      "runtime": "host",
+      "engine": "onnxruntime-node",
+      "preferEp": "CPU",
+      "device": "cpu",
+      "threshold": 0.65,
+      "balancedAccuracy": 1,
+      "confusion": {
+        "tp": 2,
+        "tn": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "timing": {
+        "avgTotalMs": 58.673369750000006,
+        "count": 4
+      },
+      "wallMs": 432,
+      "rows": [
+        {
+          "file": "ai/bytedance-seed__seedream-5-0-pro/kitchen_window.jpg",
+          "label": "ai",
+          "model": "bytedance-seed/seedream-5-0-pro",
+          "confidence": 0.98,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "none",
+          "totalMs": 20.86886400000003,
+          "inferMs": 0,
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+        },
+        {
+          "file": "ai/x-ai__grok-imagine-image-2.0/kitchen_window.jpg",
+          "label": "ai",
+          "model": "x-ai/grok-imagine-image-2.0",
+          "confidence": 0.98,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "none",
+          "totalMs": 4.171091000000047,
+          "inferMs": 0,
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+        },
+        {
+          "file": "real/picsum_10.jpg",
+          "label": "real",
+          "model": null,
+          "confidence": 0.31148081909939285,
+          "predicted": "real",
+          "correct": true,
+          "backend": "cpu",
+          "totalMs": 140.83884899999998,
+          "inferMs": 20.051378999999997,
+          "tiers": "provenance:0.500|spectral:0.326|visual:0.307|fusion:0.311"
+        },
+        {
+          "file": "real/picsum_15.jpg",
+          "label": "real",
+          "model": null,
+          "confidence": 0.5249536132793994,
+          "predicted": "real",
+          "correct": true,
+          "backend": "cpu",
+          "totalMs": 68.81467499999997,
+          "inferMs": 26.737361999999962,
+          "tiers": "provenance:0.500|spectral:0.375|visual:0.566|fusion:0.525"
+        }
+      ]
+    },
+    {
+      "mode": "zig-cpu-cascade",
+      "runtime": "host",
+      "engine": "zig-ort",
+      "preferEp": "cpu",
+      "distilledEp": "cpu",
+      "forensicsEp": "cpu",
+      "warmMs": 157.262,
+      "threshold": 0.65,
+      "balancedAccuracy": 1,
+      "confusion": {
+        "tp": 2,
+        "tn": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "timing": {
+        "avgTotalMs": 82.90193600000003,
+        "count": 4
+      },
+      "wallMs": 518,
+      "rows": [
+        {
+          "file": "ai/bytedance-seed__seedream-5-0-pro/kitchen_window.jpg",
+          "label": "ai",
+          "model": "bytedance-seed/seedream-5-0-pro",
+          "confidence": 0.98,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "none",
+          "totalMs": 9.73874699999999,
+          "inferMs": 0,
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+        },
+        {
+          "file": "ai/x-ai__grok-imagine-image-2.0/kitchen_window.jpg",
+          "label": "ai",
+          "model": "x-ai/grok-imagine-image-2.0",
+          "confidence": 0.98,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "none",
+          "totalMs": 6.921893000000068,
+          "inferMs": 0,
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+        },
+        {
+          "file": "real/picsum_10.jpg",
+          "label": "real",
+          "model": null,
+          "confidence": 0.3105487356895835,
+          "predicted": "real",
+          "correct": true,
+          "backend": "cpu",
+          "totalMs": 66.578078,
+          "inferMs": 49.09,
+          "tiers": "provenance:0.500|spectral:0.326|visual:0.306|fusion:0.311"
+        },
+        {
+          "file": "real/picsum_15.jpg",
+          "label": "real",
+          "model": null,
+          "confidence": 0.5192809907078278,
+          "predicted": "real",
+          "correct": true,
+          "backend": "cpu",
+          "totalMs": 248.36902600000008,
+          "inferMs": 229.586,
+          "tiers": "provenance:0.500|spectral:0.375|visual:0.559|visual:0.544|fusion:0.519"
+        }
+      ]
+    },
+    {
+      "mode": "zig-webgpu-dual",
+      "runtime": "host",
+      "engine": "zig-ort",
+      "preferEp": "webgpu",
+      "distilledEp": "cpu",
+      "forensicsEp": "cpu",
+      "warmMs": 138.079,
+      "threshold": 0.65,
+      "balancedAccuracy": 1,
+      "confusion": {
+        "tp": 2,
+        "tn": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "timing": {
+        "avgTotalMs": 119.91530574999996,
+        "count": 4
+      },
+      "wallMs": 644,
+      "rows": [
+        {
+          "file": "ai/bytedance-seed__seedream-5-0-pro/kitchen_window.jpg",
+          "label": "ai",
+          "model": "bytedance-seed/seedream-5-0-pro",
+          "confidence": 0.98,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "none",
+          "totalMs": 5.108822000000146,
+          "inferMs": 0,
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+        },
+        {
+          "file": "ai/x-ai__grok-imagine-image-2.0/kitchen_window.jpg",
+          "label": "ai",
+          "model": "x-ai/grok-imagine-image-2.0",
+          "confidence": 0.98,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "none",
+          "totalMs": 4.636203999999907,
+          "inferMs": 0,
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+        },
+        {
+          "file": "real/picsum_10.jpg",
+          "label": "real",
+          "model": null,
+          "confidence": 0.3105487356895835,
+          "predicted": "real",
+          "correct": true,
+          "backend": "cpu",
+          "totalMs": 228.70208599999978,
+          "inferMs": 212.458,
+          "tiers": "provenance:0.500|spectral:0.326|visual:0.306|visual:0.364|fusion:0.311"
+        },
+        {
+          "file": "real/picsum_15.jpg",
+          "label": "real",
+          "model": null,
+          "confidence": 0.5192809907078278,
+          "predicted": "real",
+          "correct": true,
+          "backend": "cpu",
+          "totalMs": 241.214111,
+          "inferMs": 220.63400000000001,
+          "tiers": "provenance:0.500|spectral:0.375|visual:0.559|visual:0.544|fusion:0.519"
+        }
+      ]
+    },
+    {
+      "mode": "zig-vulkan-dual",
+      "runtime": "host",
+      "engine": "zig-ort",
+      "preferEp": "vulkan",
+      "distilledEp": "cpu",
+      "forensicsEp": "cpu",
+      "warmMs": 130.756,
+      "threshold": 0.65,
+      "balancedAccuracy": 1,
+      "confusion": {
+        "tp": 2,
+        "tn": 2,
+        "fp": 0,
+        "fn": 0
+      },
+      "timing": {
+        "avgTotalMs": 124.89193775000001,
+        "count": 4
+      },
+      "wallMs": 658,
+      "rows": [
+        {
+          "file": "ai/bytedance-seed__seedream-5-0-pro/kitchen_window.jpg",
+          "label": "ai",
+          "model": "bytedance-seed/seedream-5-0-pro",
+          "confidence": 0.98,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "none",
+          "totalMs": 5.4585839999999735,
+          "inferMs": 0,
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+        },
+        {
+          "file": "ai/x-ai__grok-imagine-image-2.0/kitchen_window.jpg",
+          "label": "ai",
+          "model": "x-ai/grok-imagine-image-2.0",
+          "confidence": 0.98,
+          "predicted": "ai",
+          "correct": true,
+          "backend": "none",
+          "totalMs": 11.758769999999913,
+          "inferMs": 0,
+          "tiers": "provenance:0.980|spectral:0.500|visual:0.500|fusion:0.980"
+        },
+        {
+          "file": "real/picsum_10.jpg",
+          "label": "real",
+          "model": null,
+          "confidence": 0.3105487356895835,
+          "predicted": "real",
+          "correct": true,
+          "backend": "cpu",
+          "totalMs": 234.316644,
+          "inferMs": 216.086,
+          "tiers": "provenance:0.500|spectral:0.326|visual:0.306|visual:0.364|fusion:0.311"
+        },
+        {
+          "file": "real/picsum_15.jpg",
+          "label": "real",
+          "model": null,
+          "confidence": 0.5192809907078278,
+          "predicted": "real",
+          "correct": true,
+          "backend": "cpu",
+          "totalMs": 248.03375300000016,
+          "inferMs": 227.626,
+          "tiers": "provenance:0.500|spectral:0.375|visual:0.559|visual:0.544|fusion:0.519"
+        }
+      ]
+    }
+  ]
+}

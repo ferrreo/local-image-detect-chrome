@@ -38,6 +38,12 @@ export type InferenceBackend =
   | { kind: "stub" }
   | { kind: "none" };
 
+/** Browser ORT execution provider preference for eval / options. */
+export type VisualProvider =
+  | { kind: "auto" }
+  | { kind: "webgpu" }
+  | { kind: "wasm" };
+
 export type ModelStatus =
   | { kind: "missing" }
   | { kind: "downloading"; progress: number }
@@ -83,6 +89,8 @@ export type GetStatusResponse = {
   backend: InferenceBackend;
   autoScan: boolean;
   threshold: number;
+  visualProvider: VisualProvider["kind"];
+  gpuAvailable: boolean;
 };
 
 export type SetOptionsRequest = {
@@ -91,6 +99,8 @@ export type SetOptionsRequest = {
   autoScan?: boolean;
   threshold?: number;
   debug?: boolean;
+  visualProvider?: VisualProvider["kind"];
+  stubInference?: boolean;
 };
 
 export type SetOptionsResponse = {
@@ -99,17 +109,50 @@ export type SetOptionsResponse = {
   ok: true;
 };
 
+/** Offline eval: analyze raw image bytes without a network image URL. */
+export type AnalyzeBytesRequest = {
+  kind: "analyze-bytes";
+  requestId: string;
+  imageId: string;
+  bytes: ArrayBuffer;
+  mimeType: string;
+};
+
+export type AnalyzeBytesResponse = {
+  kind: "analyze-bytes-result";
+  requestId: string;
+  result: DetectionResult;
+};
+
+/** Reset ORT sessions (switch WebGPU ↔ WASM) and optionally re-warm. */
+export type ResetVisualRequest = {
+  kind: "reset-visual";
+  requestId: string;
+  warm?: boolean;
+};
+
+export type ResetVisualResponse = {
+  kind: "reset-visual-result";
+  requestId: string;
+  backend: InferenceBackend;
+  gpuAvailable: boolean;
+};
+
 export type ExtensionRequest =
   | AnalyzeImageRequest
+  | AnalyzeBytesRequest
   | SetupModelsRequest
   | GetStatusRequest
-  | SetOptionsRequest;
+  | SetOptionsRequest
+  | ResetVisualRequest;
 
 export type ExtensionResponse =
   | AnalyzeImageResponse
+  | AnalyzeBytesResponse
   | SetupModelsResponse
   | GetStatusResponse
   | SetOptionsResponse
+  | ResetVisualResponse
   | { kind: "error"; requestId: string; message: string };
 
 export type OffscreenInferRequest = {
@@ -127,6 +170,20 @@ export type OffscreenInferResponse = {
   result: DetectionResult;
 };
 
+export type OffscreenResetRequest = {
+  kind: "offscreen-reset";
+  requestId: string;
+  warm?: boolean;
+  visualProvider?: VisualProvider["kind"];
+};
+
+export type OffscreenResetResponse = {
+  kind: "offscreen-reset-result";
+  requestId: string;
+  backend: InferenceBackend;
+  gpuAvailable: boolean;
+};
+
 export type ExtensionOptions = {
   autoScan: boolean;
   /** Evaluation threshold; default 0.65 per bounty brief. */
@@ -134,6 +191,8 @@ export type ExtensionOptions = {
   debug: boolean;
   /** When true, skip network model fetch and use deterministic stub. */
   stubInference: boolean;
+  /** ORT EP preference for the offscreen visual classifier. */
+  visualProvider: VisualProvider["kind"];
 };
 
 export const DEFAULT_OPTIONS = {
@@ -141,6 +200,7 @@ export const DEFAULT_OPTIONS = {
   threshold: 0.65,
   debug: false,
   stubInference: false,
+  visualProvider: "auto",
 } as const satisfies ExtensionOptions;
 
 export const EVAL_CONFIDENCE_THRESHOLD = 0.65;

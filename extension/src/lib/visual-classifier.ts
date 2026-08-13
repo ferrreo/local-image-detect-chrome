@@ -13,6 +13,7 @@ import {
 import {
   asAiConfidence,
   type InferenceBackend,
+  type VisualProvider,
 } from "../shared/types";
 import {
   stubVisualClassify,
@@ -60,6 +61,25 @@ type LoadedSession = {
 let ortModulePromise: Promise<OrtModule> | undefined;
 let sessionsPromise: Promise<LoadedSession[]> | undefined;
 let activeBackend: InferenceBackend = { kind: "none" };
+let preferredProvider: VisualProvider["kind"] = "auto";
+
+export function isGpuAvailable(): boolean {
+  try {
+    return typeof navigator !== "undefined" && "gpu" in navigator;
+  } catch {
+    return false;
+  }
+}
+
+export function setPreferredVisualProvider(
+  provider: VisualProvider["kind"],
+): void {
+  preferredProvider = provider;
+}
+
+export function getPreferredVisualProvider(): VisualProvider["kind"] {
+  return preferredProvider;
+}
 
 async function loadOrt(): Promise<OrtModule> {
   if (!ortModulePromise) {
@@ -81,48 +101,59 @@ function configureWasmPaths(ort: OrtModule): void {
   ort.env.wasm.simd = true;
 }
 
+function providerList(prefer: VisualProvider["kind"]): string[] {
+  const gpu = isGpuAvailable();
+  if (prefer === "wasm") return ["wasm"];
+  if (prefer === "webgpu") {
+    if (!gpu) throw new Error("WebGPU requested but navigator.gpu is unavailable");
+    return ["webgpu"];
+  }
+  // auto
+  return gpu ? ["webgpu", "wasm"] : ["wasm"];
+}
+
 async function createOneSession(
   ort: OrtModule,
   model: ModelArtifact,
   providers: string[],
-): Promise<OrtSession> {
+): Promise<{ session: OrtSession; backend: InferenceBackend }> {
   const modelBytes = await readCachedModel(model);
   if (!modelBytes) {
     throw new Error(`${model.id} missing from cache. Run setup first.`);
   }
-  try {
-    return await ort.InferenceSession.create(modelBytes, {
-      executionProviders: providers,
-      graphOptimizationLevel: model.graphOptimizationLevel,
-    });
-  } catch {
-    return ort.InferenceSession.create(modelBytes, {
-      executionProviders: ["wasm"],
-      graphOptimizationLevel: model.graphOptimizationLevel,
-    });
+
+  let lastError: unknown;
+  for (const provider of providers) {
+    try {
+      const session = await ort.InferenceSession.create(modelBytes, {
+        executionProviders: [provider],
+        graphOptimizationLevel: model.graphOptimizationLevel,
+      });
+      return {
+        session,
+        backend: provider === "webgpu" ? { kind: "webgpu" } : { kind: "wasm" },
+      };
+    } catch (error) {
+      lastError = error;
+    }
   }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error(`Failed to create ORT session for ${model.id}`);
 }
 
 async function createSessions(ort: OrtModule): Promise<LoadedSession[]> {
   configureWasmPaths(ort);
-
-  const providers: string[] = [];
-  try {
-    if (typeof navigator !== "undefined" && "gpu" in navigator) {
-      providers.push("webgpu");
-    }
-  } catch {
-    // ignore
-  }
-  providers.push("wasm");
+  const providers = providerList(preferredProvider);
 
   const loaded: LoadedSession[] = [];
+  let backend: InferenceBackend = { kind: "wasm" };
   for (const model of ALL_MODELS) {
-    const session = await createOneSession(ort, model, providers);
-    loaded.push({ model, session });
+    const created = await createOneSession(ort, model, providers);
+    loaded.push({ model, session: created.session });
+    backend = created.backend;
   }
-  activeBackend =
-    providers[0] === "webgpu" ? { kind: "webgpu" } : { kind: "wasm" };
+  activeBackend = backend;
   return loaded;
 }
 
@@ -223,5 +254,11 @@ export async function classifyVisual(
 export function resetVisualClassifierForTests(): void {
   sessionsPromise = undefined;
   ortModulePromise = undefined;
+  activeBackend = { kind: "none" };
+}
+
+/** Drop sessions so the next warm recreates with the current provider preference. */
+export function resetVisualClassifier(): void {
+  sessionsPromise = undefined;
   activeBackend = { kind: "none" };
 }

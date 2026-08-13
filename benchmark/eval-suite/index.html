@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>TruePixel eval suite</title>
+<style>
+:root { --ink:#18201c; --muted:#5b655e; --line:#cdc6b8; --ok:#1f6b3a; --bad:#8b2e2e; }
+body { margin:0; font-family:"IBM Plex Sans",Segoe UI,sans-serif; color:var(--ink);
+  background:linear-gradient(180deg,#efebe1,#e7e0d3); }
+main { max-width:1100px; margin:0 auto; padding:2rem 1.25rem 4rem; }
+h1 { margin:0; font-size:clamp(2.2rem,5vw,3.4rem); letter-spacing:-.04em; }
+.lede { color:var(--muted); max-width:40rem; }
+table { width:100%; border-collapse:collapse; margin-top:1.5rem; background:rgba(255,253,248,.75); }
+th,td { border-bottom:1px solid var(--line); padding:.55rem .5rem; text-align:left; font-size:.9rem; }
+th { font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
+.skip td, .err td { color:var(--bad); }
+code { font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.85em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>TruePixel</h1>
+  <p class="lede">Offline eval suite — Node/Zig host CPU+GPU prefs and Chromium extension WebGPU/WASM via Playwright.</p>
+  <p>Generated <code>2026-08-13T15:05:01.442Z</code>. Live runner: load unpacked <code>dist/</code> → <code>chrome-extension://&lt;id&gt;/eval.html</code>.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>mode</th><th>engine</th><th>prefer</th><th>actual</th>
+        <th>BA</th><th>tp/tn/fp/fn</th><th>avg ms</th><th>gpu</th><th>runtime</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+      <td>js-node-cpu-distilled</td>
+      <td>onnxruntime-node</td>
+      <td>CPU</td>
+      <td></td>
+      <td>100.0%</td>
+      <td>2/2/0/0</td>
+      <td>58.7</td>
+      <td></td>
+      <td>host</td>
+    </tr>
+<tr>
+      <td>zig-cpu-cascade</td>
+      <td>zig-ort</td>
+      <td>cpu</td>
+      <td>cpu</td>
+      <td>100.0%</td>
+      <td>2/2/0/0</td>
+      <td>82.9</td>
+      <td></td>
+      <td>host</td>
+    </tr>
+<tr>
+      <td>zig-webgpu-dual</td>
+      <td>zig-ort</td>
+      <td>webgpu</td>
+      <td>cpu</td>
+      <td>100.0%</td>
+      <td>2/2/0/0</td>
+      <td>119.9</td>
+      <td></td>
+      <td>host</td>
+    </tr>
+<tr>
+      <td>zig-vulkan-dual</td>
+      <td>zig-ort</td>
+      <td>vulkan</td>
+      <td>cpu</td>
+      <td>100.0%</td>
+      <td>2/2/0/0</td>
+      <td>124.9</td>
+      <td></td>
+      <td>host</td>
+    </tr>
+<tr>
+      <td>js-ext-wasm-dual</td>
+      <td>onnxruntime-web</td>
+      <td>wasm</td>
+      <td>wasm</td>
+      <td>100.0%</td>
+      <td>1/1/0/0</td>
+      <td>88.1</td>
+      <td>yes</td>
+      <td>extension-chromium</td>
+    </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

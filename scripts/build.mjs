@@ -22,6 +22,7 @@ const entryPoints = {
   offscreen: path.join(root, "extension/src/offscreen/offscreen.ts"),
   popup: path.join(root, "extension/src/popup/popup.ts"),
   options: path.join(root, "extension/src/options/options.ts"),
+  eval: path.join(root, "extension/src/eval/eval.ts"),
 };
 
 function copyStatic() {
@@ -49,6 +50,14 @@ function copyStatic() {
   cpSync(
     path.join(root, "extension/src/options/options.css"),
     path.join(outdir, "options.css"),
+  );
+  cpSync(
+    path.join(root, "extension/src/eval/eval.html"),
+    path.join(outdir, "eval.html"),
+  );
+  cpSync(
+    path.join(root, "extension/src/eval/eval.css"),
+    path.join(outdir, "eval.css"),
   );
   cpSync(
     path.join(root, "extension/src/content/overlay.css"),
@@ -112,6 +121,7 @@ async function buildOnce() {
       content: entryPoints.content,
       popup: entryPoints.popup,
       options: entryPoints.options,
+      eval: entryPoints.eval,
     },
     outdir,
     entryNames: "[name]",

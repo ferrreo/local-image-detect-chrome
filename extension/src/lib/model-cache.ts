@@ -6,6 +6,15 @@ import {
 } from "./model-manifest";
 import type { ModelStatus } from "../shared/types";
 
+/**
+ * Cache Storage only accepts http(s) request schemes. Relative keys resolve to
+ * chrome-extension:// in extension pages/SW and fail with
+ * "Request scheme 'chrome-extension' is unsupported".
+ */
+function cacheUrl(model: ModelArtifact): string {
+  return `https://truepixel.local/${model.cacheKey}`;
+}
+
 async function sha256Hex(buffer: ArrayBuffer): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", buffer);
   return [...new Uint8Array(digest)]
@@ -21,7 +30,9 @@ export async function getModelStatus(): Promise<ModelStatus> {
   const cache = await caches.open(MODEL_CACHE_NAME);
   let total = 0;
   for (const model of ALL_MODELS) {
-    const match = await cache.match(model.cacheKey);
+    const match =
+      (await cache.match(cacheUrl(model))) ??
+      (await cache.match(model.cacheKey));
     if (!match) return { kind: "missing" };
     const buf = await match.arrayBuffer();
     total += buf.byteLength;
@@ -34,7 +45,9 @@ export async function readCachedModel(
 ): Promise<ArrayBuffer | undefined> {
   if (typeof caches === "undefined") return undefined;
   const cache = await caches.open(MODEL_CACHE_NAME);
-  const match = await cache.match(model.cacheKey);
+  const match =
+    (await cache.match(cacheUrl(model))) ??
+    (await cache.match(model.cacheKey));
   if (!match) return undefined;
   return match.arrayBuffer();
 }
@@ -64,14 +77,21 @@ export async function downloadModels(args?: {
     let totalBytes = 0;
 
     for (const model of ALL_MODELS) {
-      const existing = await cache.match(model.cacheKey);
+      const key = cacheUrl(model);
+      const existing =
+        (await cache.match(key)) ?? (await cache.match(model.cacheKey));
       if (existing) {
         const buf = await existing.arrayBuffer();
         const digest = await sha256Hex(buf);
         if (digest === model.sha256) {
           totalBytes += buf.byteLength;
+          // Migrate legacy relative keys to https://truepixel.local/…
+          if (!(await cache.match(key))) {
+            await cache.put(key, existing.clone());
+          }
           continue;
         }
+        await cache.delete(key);
         await cache.delete(model.cacheKey);
       }
 
@@ -115,7 +135,7 @@ export async function downloadModels(args?: {
       }
 
       await cache.put(
-        model.cacheKey,
+        cacheUrl(model),
         new Response(buffer, {
           headers: {
             "Content-Type": "application/octet-stream",
@@ -158,7 +178,7 @@ export async function installModelBytes(
   }
   const cache = await caches.open(MODEL_CACHE_NAME);
   await cache.put(
-    model.cacheKey,
+    cacheUrl(model),
     new Response(bytes, {
       headers: {
         "Content-Type": "application/octet-stream",
@@ -167,4 +187,43 @@ export async function installModelBytes(
       },
     }),
   );
+}
+
+/**
+ * Seed Cache Storage from packaged `dist/models/...` (offline CI / local suite).
+ * Falls back to network downloadModels when packaged files are absent.
+ */
+export async function seedPackagedModels(): Promise<ModelStatus> {
+  if (typeof caches === "undefined" || typeof chrome === "undefined") {
+    return { kind: "error", message: "Packaged seed unavailable" };
+  }
+  try {
+    let total = 0;
+    for (const model of ALL_MODELS) {
+      const url = chrome.runtime.getURL(model.localPath);
+      const response = await fetch(url);
+      if (!response.ok) {
+        return { kind: "missing" };
+      }
+      const bytes = await response.arrayBuffer();
+      await installModelBytes(model, bytes);
+      total += bytes.byteLength;
+    }
+    return { kind: "ready", version: MODEL_VERSION, bytes: total };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { kind: "error", message };
+  }
+}
+
+/** Prefer packaged models; otherwise one-time public download. */
+export async function ensureModelsReady(args?: {
+  onProgress?: (p: DownloadProgress) => void;
+  fetchImpl?: typeof fetch;
+}): Promise<ModelStatus> {
+  const status = await getModelStatus();
+  if (status.kind === "ready") return status;
+  const seeded = await seedPackagedModels();
+  if (seeded.kind === "ready") return seeded;
+  return downloadModels(args);
 }

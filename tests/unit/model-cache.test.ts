@@ -54,7 +54,7 @@ describe("model-cache", () => {
     // Monkey-patch by downloading with a custom model list is not exposed;
     // instead assert install left a cache entry.
     const cache = await caches.open("truepixel-models-v1");
-    const hit = await cache.match(model.cacheKey);
+    const hit = await cache.match(`https://truepixel.local/${model.cacheKey}`);
     expect(hit).toBeTruthy();
     expect(fetchImpl).not.toHaveBeenCalled();
   });
