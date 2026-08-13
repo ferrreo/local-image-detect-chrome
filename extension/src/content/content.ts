@@ -13,6 +13,7 @@ import {
 
 const MIN_SIDE = 96;
 const OVERLAY_ATTR = "data-truepixel-id";
+const STATE_ATTR = "data-truepixel-state";
 const BADGE_CLASS = "truepixel-badge";
 const CONCEAL_BLUR = "truepixel-conceal-blur";
 const CONCEAL_BLANK = "truepixel-conceal-blank";
@@ -41,11 +42,16 @@ function isEligible(img: HTMLImageElement): boolean {
   if (!img.isConnected) return false;
   const src = imageKey(img);
   if (!src || src.startsWith("data:image/svg")) return false;
+  const attrW = Number(img.getAttribute("width")) || 0;
+  const attrH = Number(img.getAttribute("height")) || 0;
+  const w = img.naturalWidth || img.width || attrW;
+  const h = img.naturalHeight || img.height || attrH;
+  // Unknown size: still eligible (blur first, clear later) to avoid flash.
+  if (w > 0 && w < MIN_SIDE) return false;
+  if (h > 0 && h < MIN_SIDE) return false;
   const rect = img.getBoundingClientRect();
-  if (rect.width < MIN_SIDE || rect.height < MIN_SIDE) return false;
-  // Skip tiny decorative icons even if CSS scales them.
-  if (img.naturalWidth > 0 && img.naturalWidth < MIN_SIDE) return false;
-  if (img.naturalHeight > 0 && img.naturalHeight < MIN_SIDE) return false;
+  if (rect.width > 0 && rect.width < MIN_SIDE) return false;
+  if (rect.height > 0 && rect.height < MIN_SIDE) return false;
   return true;
 }
 
@@ -53,28 +59,40 @@ function clearConcealClasses(img: HTMLImageElement): void {
   img.classList.remove(CONCEAL_BLUR, CONCEAL_BLANK, CONCEAL_PENDING);
 }
 
-/** True until we have a decisive AI / Real label (not pending / uncertain). */
-function isUndecided(entry: TrackedImage): boolean {
-  if (entry.inFlight) return true;
-  const kind = entry.result?.label.kind;
-  return kind === undefined || kind === "uncertain" || kind === "error";
-}
-
+/**
+ * Blur only while analyzing, or when the final label is AI (per aiConceal).
+ * Below-threshold results (real / uncertain) must show clearly.
+ */
 function applyConcealment(entry: TrackedImage): void {
   const img = entry.element;
   clearConcealClasses(img);
-  if (entry.revealed) return;
-
-  // Blur until sure — don't flash AI pixels during refine.
-  if (isUndecided(entry)) {
-    img.classList.add(CONCEAL_PENDING);
+  if (entry.revealed) {
+    img.setAttribute(STATE_ATTR, "clear");
     return;
   }
 
-  if (entry.result?.label.kind !== "ai") return;
-  const mode: AiConcealMode = options.aiConceal;
-  if (mode === "blur") img.classList.add(CONCEAL_BLUR);
-  else if (mode === "blank") img.classList.add(CONCEAL_BLANK);
+  if (entry.inFlight || !entry.result) {
+    img.classList.add(CONCEAL_PENDING);
+    img.setAttribute(STATE_ATTR, "pending");
+    return;
+  }
+
+  if (entry.result.label.kind === "ai") {
+    const mode: AiConcealMode = options.aiConceal;
+    if (mode === "blur") {
+      img.classList.add(CONCEAL_BLUR);
+      img.setAttribute(STATE_ATTR, "ai");
+    } else if (mode === "blank") {
+      img.classList.add(CONCEAL_BLANK);
+      img.setAttribute(STATE_ATTR, "ai");
+    } else {
+      img.setAttribute(STATE_ATTR, "clear");
+    }
+    return;
+  }
+
+  // real / uncertain / error — not over AI threshold → unblur
+  img.setAttribute(STATE_ATTR, "clear");
 }
 
 function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
@@ -98,16 +116,16 @@ function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
       event.stopPropagation();
       const entry = tracked.get(id);
       if (!entry) return;
-      // Allow peek while pending/uncertain or when AI is concealed.
       const canToggle =
-        isUndecided(entry) ||
-        (entry.result?.label.kind === "ai" && options.aiConceal !== "none");
+        entry.inFlight ||
+        !entry.result ||
+        (entry.result.label.kind === "ai" && options.aiConceal !== "none");
       if (!canToggle) return;
       entry.revealed = !entry.revealed;
       if (entry.result) renderResult(entry.element, entry.result);
       else {
         applyConcealment(entry);
-        badge.classList.toggle("truepixel-clickable", true);
+        badge.classList.add("truepixel-clickable");
         badge.textContent = entry.revealed ? "hide" : "…";
         badge.title = entry.revealed
           ? "TruePixel: click to hide again"
@@ -176,11 +194,8 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
       break;
     case "uncertain":
       badge.classList.add("truepixel-uncertain");
-      badge.classList.add("truepixel-clickable");
-      badge.textContent = entry?.revealed ? `? ${pct}% · hide` : `? ${pct}%`;
-      badge.title = entry?.revealed
-        ? `TruePixel: still checking (${pct}% AI). Click to hide.`
-        : `TruePixel: checking (${pct}% AI) — blurred until sure. Click to peek.`;
+      badge.textContent = `? ${pct}%`;
+      badge.title = `TruePixel: below AI threshold (${pct}% AI confidence)${timingHint}`;
       break;
     case "error":
       badge.classList.add("truepixel-error");
@@ -249,22 +264,21 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
   const pendingBadge = ensureBadge(img, id);
   pendingBadge.classList.add("truepixel-pending", "truepixel-clickable");
   pendingBadge.textContent = "…";
-  pendingBadge.title = "TruePixel: analyzing… blurred until sure";
+  pendingBadge.title = "TruePixel: analyzing… blurred until scored";
   applyConcealment(entry);
 
   try {
-    // Fast badge from distilled+spectral, then CF cascade when ambiguous.
     const quick = await requestAnalyze(img, id, "realtime");
+    // Keep blur only while CF refine is still running.
     entry.inFlight = needsForensicsRefine(quick);
     entry.result = quick;
     renderResult(img, quick);
 
     if (needsForensicsRefine(quick)) {
       const refined = await requestAnalyze(img, id, "accurate");
-      // Ignore stale refine if the img src changed mid-flight.
       if (tracked.get(id)?.src === entry.src) {
-        entry.result = refined;
         entry.inFlight = false;
+        entry.result = refined;
         renderResult(img, refined);
       }
     } else {
@@ -284,45 +298,61 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
     });
   } finally {
     const current = tracked.get(id);
-    if (current) current.inFlight = false;
+    if (current) {
+      current.inFlight = false;
+      applyConcealment(current);
+    }
   }
+}
+
+function trackAndMaybeAnalyze(img: HTMLImageElement): void {
+  if (!options.autoScan) return;
+  if (!isEligible(img)) return;
+  const src = imageKey(img);
+  let id = img.getAttribute(OVERLAY_ATTR);
+  if (!id) {
+    id = `tp_${Math.random().toString(16).slice(2)}_${tracked.size}`;
+    img.setAttribute(OVERLAY_ATTR, id);
+  }
+  const existing = tracked.get(id);
+  if (existing && existing.src === src && existing.result && !existing.inFlight) {
+    renderResult(img, existing.result);
+    return;
+  }
+  if (existing?.inFlight) return;
+
+  const entry: TrackedImage = {
+    id,
+    element: img,
+    src,
+    inFlight: false,
+    revealed: false,
+    ...(existing?.result && existing.src === src
+      ? { result: existing.result }
+      : {}),
+  };
+  tracked.set(id, entry);
+  // Blur immediately on discovery — before analyze round-trip.
+  if (!entry.result) {
+    entry.inFlight = true;
+    applyConcealment(entry);
+    // analyze() sets inFlight again; clear the peek flag used only for CSS.
+    entry.inFlight = false;
+  }
+  void analyze(img, id);
 }
 
 function discover(): void {
   if (!options.autoScan) return;
-  const images = document.querySelectorAll("img");
-  for (const img of images) {
-    if (!(img instanceof HTMLImageElement)) continue;
-    if (!isEligible(img)) continue;
-    const src = imageKey(img);
-    let id = img.getAttribute(OVERLAY_ATTR);
-    if (!id) {
-      id = `tp_${Math.random().toString(16).slice(2)}_${tracked.size}`;
-      img.setAttribute(OVERLAY_ATTR, id);
-    }
-    const existing = tracked.get(id);
-    if (existing && existing.src === src && existing.result) {
-      renderResult(img, existing.result);
-      continue;
-    }
-    const entry: TrackedImage = {
-      id,
-      element: img,
-      src,
-      inFlight: false,
-      revealed: false,
-      ...(existing?.result ? { result: existing.result } : {}),
-    };
-    tracked.set(id, entry);
-    if (!entry.result) applyConcealment(entry);
-    void analyze(img, id);
+  for (const img of document.querySelectorAll("img")) {
+    if (img instanceof HTMLImageElement) trackAndMaybeAnalyze(img);
   }
 }
 
 function reapplyAllResults(): void {
   for (const entry of tracked.values()) {
-    if (!entry.result) continue;
-    renderResult(entry.element, entry.result);
+    applyConcealment(entry);
+    if (entry.result) renderResult(entry.element, entry.result);
   }
 }
 
@@ -330,7 +360,7 @@ function scheduleScan(): void {
   if (scanTimer !== undefined) window.clearTimeout(scanTimer);
   scanTimer = window.setTimeout(() => {
     discover();
-  }, 250);
+  }, 80);
 }
 
 async function refreshOptions(): Promise<void> {
@@ -353,9 +383,7 @@ async function refreshOptions(): Promise<void> {
           : DEFAULT_OPTIONS.aiConceal;
       options = {
         ...options,
-        autoScan: Boolean(
-          (response as { autoScan?: unknown }).autoScan,
-        ),
+        autoScan: Boolean((response as { autoScan?: unknown }).autoScan),
         threshold:
           Number((response as { threshold?: unknown }).threshold) ||
           DEFAULT_OPTIONS.threshold,
@@ -363,22 +391,41 @@ async function refreshOptions(): Promise<void> {
       };
     }
   } catch {
-    // ignore
+    // ignore — use defaults until SW is up
   }
 }
 
 function start(): void {
+  // Blur ASAP (document_start); options refresh in parallel.
+  observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === "attributes" && mutation.target instanceof HTMLImageElement) {
+        trackAndMaybeAnalyze(mutation.target);
+        continue;
+      }
+      for (const node of mutation.addedNodes) {
+        if (node instanceof HTMLImageElement) trackAndMaybeAnalyze(node);
+        else if (node instanceof Element) {
+          for (const img of node.querySelectorAll("img")) {
+            if (img instanceof HTMLImageElement) trackAndMaybeAnalyze(img);
+          }
+        }
+      }
+    }
+  });
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["src", "srcset"],
+  });
+  discover();
+  window.addEventListener("scroll", scheduleScan, { passive: true });
+  window.addEventListener("resize", scheduleScan);
+
   void refreshOptions().then(() => {
     discover();
-    observer = new MutationObserver(() => scheduleScan());
-    observer.observe(document.documentElement, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["src", "srcset"],
-    });
-    window.addEventListener("scroll", scheduleScan, { passive: true });
-    window.addEventListener("resize", scheduleScan);
+    reapplyAllResults();
   });
 }
 
@@ -390,7 +437,9 @@ chrome.runtime.onMessage.addListener((message: unknown) => {
     for (const entry of tracked.values()) {
       delete entry.result;
       entry.revealed = false;
+      entry.inFlight = false;
       clearConcealClasses(entry.element);
+      entry.element.removeAttribute(STATE_ATTR);
     }
     scheduleScan();
     return;
