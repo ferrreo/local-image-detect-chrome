@@ -4,6 +4,8 @@ Generated `2026-08-13T22:00:31.060Z` · **130** images · **6** hardcases · **4
 
 Two requested models lacked usable detector ONNX weights; substitutes noted below. Soylent hardcase is a local proxy. We do not fetch private Proofmark quants — train truepixel-accurate-v1 with npm run distill:accurate.
 
+**Leakage warning:** `truepixel-accurate-v1` below was trained on this same OpenRouter+Lexica tree. Full-corpus 99% BA is not a promotion signal. Use `models/truepixel-accurate-v1/manifest.json` → `onnxHoldoutAt065` (and grow the corpus) before swapping FORENSICS_MODEL.
+
 ## Unavailable requested models
 
 - **ai-human-generated-image-detection-ONNX** — Hugging Face repo has no weights (only .gitattributes). Substituted by zonn-ai/ai-image-detection-ONNX.
