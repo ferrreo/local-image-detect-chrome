@@ -37,6 +37,19 @@
           Automatically analyze images while browsing
         </label>
 
+        <label>
+          Hide AI-labeled images
+          <select id="aiConceal" name="aiConceal">
+            <option value="none">Off (badge only)</option>
+            <option value="blur">Blur</option>
+            <option value="blank">Blank out</option>
+          </select>
+        </label>
+        <p class="hint">
+          When Blur or Blank out is selected, click the red AI badge on a page to
+          reveal that image (click again to hide).
+        </p>
+
         <label class="row">
           <input id="debug" type="checkbox" />
           Debug mode

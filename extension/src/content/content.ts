@@ -1,14 +1,21 @@
 import { newRequestId } from "../shared/messages";
 import type {
+  AiConcealMode,
   AnalyzeImageResponse,
   DetectionResult,
   ExtensionOptions,
 } from "../shared/types";
-import { asAiConfidence, DEFAULT_OPTIONS } from "../shared/types";
+import {
+  asAiConfidence,
+  DEFAULT_OPTIONS,
+  parseAiConcealMode,
+} from "../shared/types";
 
 const MIN_SIDE = 96;
 const OVERLAY_ATTR = "data-truepixel-id";
 const BADGE_CLASS = "truepixel-badge";
+const CONCEAL_BLUR = "truepixel-conceal-blur";
+const CONCEAL_BLANK = "truepixel-conceal-blank";
 
 type TrackedImage = {
   id: string;
@@ -16,6 +23,8 @@ type TrackedImage = {
   src: string;
   inFlight: boolean;
   result?: DetectionResult;
+  /** User clicked the AI badge to temporarily show the image. */
+  revealed: boolean;
 };
 
 const tracked = new Map<string, TrackedImage>();
@@ -39,6 +48,20 @@ function isEligible(img: HTMLImageElement): boolean {
   return true;
 }
 
+function clearConcealClasses(img: HTMLImageElement): void {
+  img.classList.remove(CONCEAL_BLUR, CONCEAL_BLANK);
+}
+
+function applyConcealment(entry: TrackedImage): void {
+  const img = entry.element;
+  clearConcealClasses(img);
+  const mode: AiConcealMode = options.aiConceal;
+  const isAi = entry.result?.label.kind === "ai";
+  if (!isAi || mode === "none" || entry.revealed) return;
+  if (mode === "blur") img.classList.add(CONCEAL_BLUR);
+  else img.classList.add(CONCEAL_BLANK);
+}
+
 function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
   const parent = img.parentElement ?? document.body;
   const computed = getComputedStyle(parent);
@@ -50,10 +73,20 @@ function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
     `.${BADGE_CLASS}[${OVERLAY_ATTR}="${id}"]`,
   );
   if (!badge) {
-    badge = document.createElement("div");
+    badge = document.createElement("button");
+    badge.type = "button";
     badge.className = `${BADGE_CLASS} truepixel-pending`;
     badge.setAttribute(OVERLAY_ATTR, id);
     badge.textContent = "…";
+    badge.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const entry = tracked.get(id);
+      if (!entry || entry.result?.label.kind !== "ai") return;
+      if (options.aiConceal === "none") return;
+      entry.revealed = !entry.revealed;
+      renderResult(entry.element, entry.result);
+    });
     parent.appendChild(badge);
   }
   positionBadge(img, badge);
@@ -69,6 +102,7 @@ function positionBadge(img: HTMLImageElement, badge: HTMLElement): void {
 }
 
 function renderResult(img: HTMLImageElement, result: DetectionResult): void {
+  const entry = tracked.get(result.imageId);
   const badge = ensureBadge(img, result.imageId);
   badge.classList.remove(
     "truepixel-pending",
@@ -76,6 +110,7 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
     "truepixel-real",
     "truepixel-uncertain",
     "truepixel-error",
+    "truepixel-clickable",
   );
 
   const pct = Math.round(result.confidence * 100);
@@ -88,11 +123,25 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
       ? ` · ${result.elapsedMs.toFixed(0)}ms`
       : "";
   switch (result.label.kind) {
-    case "ai":
+    case "ai": {
       badge.classList.add("truepixel-ai");
-      badge.textContent = `AI ${pct}%`;
-      badge.title = `TruePixel: likely AI-generated (${pct}% confidence)${timingHint}`;
+      const concealed =
+        options.aiConceal !== "none" && entry && !entry.revealed;
+      badge.textContent = concealed
+        ? `AI ${pct}% · show`
+        : entry?.revealed && options.aiConceal !== "none"
+          ? `AI ${pct}% · hide`
+          : `AI ${pct}%`;
+      badge.title = concealed
+        ? `TruePixel: likely AI-generated (${pct}%)${timingHint}. Click to reveal.`
+        : entry?.revealed && options.aiConceal !== "none"
+          ? `TruePixel: revealed. Click to hide again.${timingHint}`
+          : `TruePixel: likely AI-generated (${pct}% confidence)${timingHint}`;
+      if (options.aiConceal !== "none") {
+        badge.classList.add("truepixel-clickable");
+      }
       break;
+    }
     case "real":
       badge.classList.add("truepixel-real");
       badge.textContent = `Real ${pct}%`;
@@ -112,6 +161,11 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
       const _exhaustive: never = result.label;
       void _exhaustive;
     }
+  }
+
+  if (entry) {
+    entry.result = result;
+    applyConcealment(entry);
   }
 }
 
@@ -173,9 +227,17 @@ function discover(): void {
       element: img,
       src,
       inFlight: false,
+      revealed: existing?.revealed ?? false,
       ...(existing?.result ? { result: existing.result } : {}),
     });
     void analyze(img, id);
+  }
+}
+
+function reapplyAllResults(): void {
+  for (const entry of tracked.values()) {
+    if (!entry.result) continue;
+    renderResult(entry.element, entry.result);
   }
 }
 
@@ -198,10 +260,21 @@ async function refreshOptions(): Promise<void> {
       "autoScan" in response &&
       "threshold" in response
     ) {
+      const aiConceal =
+        "aiConceal" in response
+          ? parseAiConcealMode(
+              (response as { aiConceal?: unknown }).aiConceal,
+            )
+          : DEFAULT_OPTIONS.aiConceal;
       options = {
         ...options,
-        autoScan: Boolean(response.autoScan),
-        threshold: Number(response.threshold) || DEFAULT_OPTIONS.threshold,
+        autoScan: Boolean(
+          (response as { autoScan?: unknown }).autoScan,
+        ),
+        threshold:
+          Number((response as { threshold?: unknown }).threshold) ||
+          DEFAULT_OPTIONS.threshold,
+        aiConceal,
       };
     }
   } catch {
@@ -225,16 +298,23 @@ function start(): void {
 }
 
 chrome.runtime.onMessage.addListener((message: unknown) => {
-  if (
-    typeof message === "object" &&
-    message !== null &&
-    "kind" in message &&
-    message.kind === "truepixel-rescan"
-  ) {
+  if (typeof message !== "object" || message === null || !("kind" in message)) {
+    return;
+  }
+  if (message.kind === "truepixel-rescan") {
     for (const entry of tracked.values()) {
       delete entry.result;
+      entry.revealed = false;
+      clearConcealClasses(entry.element);
     }
     scheduleScan();
+    return;
+  }
+  if (message.kind === "truepixel-options") {
+    void refreshOptions().then(() => {
+      reapplyAllResults();
+      scheduleScan();
+    });
   }
 });
 

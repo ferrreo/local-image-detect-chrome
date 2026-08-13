@@ -1,5 +1,6 @@
 import {
   DEFAULT_OPTIONS,
+  parseAiConcealMode,
   type AnalyzeBytesRequest,
   type AnalyzeImageRequest,
   type AnalyzeSpeedMode,
@@ -40,15 +41,34 @@ let gpuAvailableCache = false;
 async function loadOptions(): Promise<ExtensionOptions> {
   const stored = await chrome.storage.local.get(["options", "stubInference"]);
   const raw = stored.options;
+  const partial =
+    typeof raw === "object" && raw !== null
+      ? (raw as Partial<ExtensionOptions>)
+      : {};
   const merged: ExtensionOptions = {
     ...DEFAULT_OPTIONS,
-    ...(typeof raw === "object" && raw !== null
-      ? (raw as Partial<ExtensionOptions>)
-      : {}),
+    ...partial,
+    aiConceal: parseAiConcealMode(partial.aiConceal),
   };
   if (stored.stubInference === true) merged.stubInference = true;
   optionsCache = merged;
   return merged;
+}
+
+async function broadcastOptionsChanged(): Promise<void> {
+  const tabs = await chrome.tabs.query({});
+  await Promise.all(
+    tabs.map(async (tab) => {
+      if (tab.id === undefined) return;
+      try {
+        await chrome.tabs.sendMessage(tab.id, {
+          kind: "truepixel-options",
+        });
+      } catch {
+        // No content script on this tab (chrome://, PDF, etc.).
+      }
+    }),
+  );
 }
 
 async function saveOptions(
@@ -386,6 +406,7 @@ async function handleRequest(
         threshold: options.threshold,
         visualProvider: options.visualProvider,
         gpuAvailable: gpuAvailableCache,
+        aiConceal: options.aiConceal,
       };
     }
     case "set-options": {
@@ -403,7 +424,11 @@ async function handleRequest(
         ...(request.stubInference !== undefined
           ? { stubInference: request.stubInference }
           : {}),
+        ...(request.aiConceal !== undefined
+          ? { aiConceal: parseAiConcealMode(request.aiConceal) }
+          : {}),
       });
+      void broadcastOptionsChanged();
       return {
         kind: "set-options-result",
         requestId: request.requestId,

@@ -26,6 +26,15 @@
           <input id="autoScan" type="checkbox" checked />
           Auto-scan images
         </label>
+        <label class="select-row">
+          <span>Hide AI images</span>
+          <select id="aiConceal" aria-label="Hide AI images">
+            <option value="none">Off (badge only)</option>
+            <option value="blur">Blur</option>
+            <option value="blank">Blank out</option>
+          </select>
+        </label>
+        <p class="hint">Click the AI badge to reveal / hide again.</p>
       </section>
 
       <p id="message" class="message"></p>

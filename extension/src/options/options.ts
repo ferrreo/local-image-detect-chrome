@@ -1,9 +1,11 @@
 import { newRequestId } from "../shared/messages";
 import type { GetStatusResponse } from "../shared/types";
+import { parseAiConcealMode } from "../shared/types";
 
 const form = document.querySelector<HTMLFormElement>("#form");
 const thresholdEl = document.querySelector<HTMLInputElement>("#threshold");
 const autoScanEl = document.querySelector<HTMLInputElement>("#autoScan");
+const aiConcealEl = document.querySelector<HTMLSelectElement>("#aiConceal");
 const debugEl = document.querySelector<HTMLInputElement>("#debug");
 const savedEl = document.querySelector<HTMLElement>("#saved");
 
@@ -15,6 +17,9 @@ async function load(): Promise<void> {
 
   if (thresholdEl) thresholdEl.value = String(response.threshold);
   if (autoScanEl) autoScanEl.checked = response.autoScan;
+  if (aiConcealEl) {
+    aiConcealEl.value = parseAiConcealMode(response.aiConceal);
+  }
 
   const stored = await chrome.storage.local.get(["options"]);
   const options = stored.options;
@@ -38,6 +43,7 @@ form?.addEventListener("submit", (event) => {
       threshold,
       autoScan: autoScanEl?.checked ?? true,
       debug: debugEl?.checked ?? false,
+      aiConceal: parseAiConcealMode(aiConcealEl?.value),
     });
     if (savedEl) {
       savedEl.hidden = false;

@@ -59,14 +59,20 @@ label.row {
   gap: 10px;
 }
 
-input[type="number"] {
-  width: 120px;
+input[type="number"],
+select {
+  width: 220px;
+  max-width: 100%;
   padding: 8px 10px;
   border: 1px solid var(--line);
   border-radius: 3px;
   background: rgba(0, 0, 0, 0.2);
   color: var(--ink);
   font: inherit;
+}
+
+input[type="number"] {
+  width: 120px;
 }
 
 .hint {

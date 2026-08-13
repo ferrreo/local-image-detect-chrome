@@ -12,6 +12,13 @@
   box-shadow: none;
   user-select: none;
   white-space: nowrap;
+  appearance: none;
+  margin: 0;
+}
+
+.truepixel-badge.truepixel-clickable {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .truepixel-badge.truepixel-ai {
@@ -32,4 +39,16 @@
 .truepixel-badge.truepixel-error,
 .truepixel-badge.truepixel-pending {
   background: rgba(40, 44, 48, 0.9);
+}
+
+img.truepixel-conceal-blur {
+  filter: blur(18px) brightness(0.85) saturate(0.7) !important;
+  transition: filter 120ms ease;
+}
+
+img.truepixel-conceal-blank {
+  /* Keep layout; hide pixels under a solid plate. */
+  filter: brightness(0) !important;
+  background: #1a1a1a !important;
+  transition: filter 120ms ease;
 }

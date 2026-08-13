@@ -103,6 +103,9 @@ export type GetStatusRequest = {
   requestId: string;
 };
 
+/** How to hide images labeled AI until the user clicks the badge. */
+export type AiConcealMode = "none" | "blur" | "blank";
+
 export type GetStatusResponse = {
   kind: "get-status-result";
   requestId: string;
@@ -112,6 +115,7 @@ export type GetStatusResponse = {
   threshold: number;
   visualProvider: VisualProvider["kind"];
   gpuAvailable: boolean;
+  aiConceal: AiConcealMode;
 };
 
 export type SetOptionsRequest = {
@@ -122,6 +126,7 @@ export type SetOptionsRequest = {
   debug?: boolean;
   visualProvider?: VisualProvider["kind"];
   stubInference?: boolean;
+  aiConceal?: AiConcealMode;
 };
 
 export type SetOptionsResponse = {
@@ -246,6 +251,8 @@ export type ExtensionOptions = {
   stubInference: boolean;
   /** ORT EP preference for the offscreen visual classifier. */
   visualProvider: VisualProvider["kind"];
+  /** Hide AI-labeled images (click badge to reveal). */
+  aiConceal: AiConcealMode;
 };
 
 export const DEFAULT_OPTIONS = {
@@ -254,7 +261,13 @@ export const DEFAULT_OPTIONS = {
   debug: false,
   stubInference: false,
   visualProvider: "auto",
+  aiConceal: "none",
 } as const satisfies ExtensionOptions;
+
+export function parseAiConcealMode(value: unknown): AiConcealMode {
+  if (value === "blur" || value === "blank" || value === "none") return value;
+  return DEFAULT_OPTIONS.aiConceal;
+}
 
 export const EVAL_CONFIDENCE_THRESHOLD = 0.65;
 
