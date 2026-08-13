@@ -42,15 +42,15 @@ Train / export our accurate head (writes `models/truepixel-accurate-v1/`):
 
 ```bash
 python3 -m pip install -r scripts/requirements-distill.txt
-npm run distill:accurate
-# Honest Lexica generalization check (do not train on Lexica):
-python3 scripts/distill-accurate-head.py --exclude-substr lexica --epochs 40
-npm run eval:compare   # full-corpus numbers are contaminated if Lexica was in train
+npm run fetch:corpus50k   # ~50k train + frozen Lexica holdout (resume-safe)
+npm run distill:loop      # hyperparam sweep until holdout gate clears
+npm run distill:accurate  # single train/export
+npm run eval:compare
 ```
 
-See `benchmark/model-survey/truepixel-accurate-holdout.md`. Domain-holdout Lexica TPR is still ~15% — not ready to replace Community Forensics.
+See `benchmark/model-survey/truepixel-accurate-holdout.md`. Domain-holdout Lexica TPR is still ~15% on the tiny shard — not ready to replace Community Forensics until the 50k loop clears the gate.
 
-Full distill / finetune / quant source map: `benchmark/model-survey/sources-distill-finetune-quant.md`. Pull a Proofmark-scale public train set with `npm run fetch:distill-corpus` (Zitacron + Tiny-GenImage; Lexica stays holdout).
+Full distill / finetune / quant source map: `benchmark/model-survey/sources-distill-finetune-quant.md`. Lexica holdout IDs stay sealed in `lexica-split.json`; train only uses `distill-corpus/ai/lexica__train`.
 
 TruthLens-named image heads on HF (mostly text detectors under that name) can be scored with:
 
