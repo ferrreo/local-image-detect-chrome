@@ -7,6 +7,9 @@ export type VisualClassification = {
   secondaryScore?: AiConfidence;
   backend: InferenceBackend;
   detail: string;
+  distilledMs?: number;
+  forensicsMs?: number;
+  preprocessMs?: number;
 };
 
 function clamp(v: number, lo: number, hi: number): number {

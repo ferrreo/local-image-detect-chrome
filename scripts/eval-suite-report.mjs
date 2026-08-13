@@ -36,6 +36,10 @@ const latest = {
     fp: r.confusion?.fp ?? null,
     fn: r.confusion?.fn ?? null,
     avgMs: r.timing?.avgTotalMs ?? null,
+    p50Ms: r.timing?.p50TotalMs ?? null,
+    p90Ms: r.timing?.p90TotalMs ?? null,
+    forensicsCount: r.timing?.forensicsCount ?? null,
+    avgForensicsMs: r.timing?.avgForensicsMsWhenRun ?? null,
     preferEp: r.preferEp ?? null,
     actualEp: r.distilledEp ?? r.providerActual ?? null,
     gpuAvailable: r.gpuAvailable ?? null,
@@ -53,11 +57,25 @@ writeFileSync(
 const rowsHtml = latest.summary
   .map((s) => {
     if (s.skipped) {
-      return `<tr class="skip"><td>${s.mode}</td><td colspan="8">skipped${s.error ? `: ${s.error}` : ""}</td></tr>`;
+      return `<tr class="skip"><td>${s.mode}</td><td colspan="10">skipped${s.error ? `: ${s.error}` : ""}</td></tr>`;
     }
     if (s.error) {
-      return `<tr class="err"><td>${s.mode}</td><td colspan="8">error: ${s.error}</td></tr>`;
+      return `<tr class="err"><td>${s.mode}</td><td colspan="10">error: ${s.error}</td></tr>`;
     }
+    const latency =
+      s.avgMs != null
+        ? `${s.avgMs.toFixed(1)}` +
+          (s.p50Ms != null && s.p90Ms != null
+            ? ` <span class="muted">p50 ${s.p50Ms.toFixed(0)} / p90 ${s.p90Ms.toFixed(0)}</span>`
+            : "")
+        : "";
+    const cf =
+      s.forensicsCount != null
+        ? `${s.forensicsCount}×` +
+          (s.avgForensicsMs != null
+            ? ` @${s.avgForensicsMs.toFixed(0)}ms`
+            : "")
+        : "";
     return `<tr>
       <td>${s.mode}</td>
       <td>${s.engine ?? ""}</td>
@@ -65,7 +83,8 @@ const rowsHtml = latest.summary
       <td>${s.actualEp ?? ""}</td>
       <td>${s.ba != null ? (s.ba * 100).toFixed(1) + "%" : ""}</td>
       <td>${s.tp}/${s.tn}/${s.fp}/${s.fn}</td>
-      <td>${s.avgMs != null ? s.avgMs.toFixed(1) : ""}</td>
+      <td>${latency}</td>
+      <td>${cf}</td>
       <td>${s.gpuAvailable == null ? "" : s.gpuAvailable ? "yes" : "no"}</td>
       <td>${s.runtime ?? ""}</td>
     </tr>`;
@@ -89,19 +108,20 @@ table { width:100%; border-collapse:collapse; margin-top:1.5rem; background:rgba
 th,td { border-bottom:1px solid var(--line); padding:.55rem .5rem; text-align:left; font-size:.9rem; }
 th { font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); }
 .skip td, .err td { color:var(--bad); }
+.muted { color:var(--muted); font-size:.85em; }
 code { font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.85em; }
 </style>
 </head>
 <body>
 <main>
   <h1>TruePixel</h1>
-  <p class="lede">Offline eval suite — Node/Zig host CPU+GPU prefs and Chromium extension WebGPU/WASM via Playwright.</p>
+  <p class="lede">Offline eval suite — Node/Zig host CPU+GPU prefs and Chromium extension WebGPU/WASM via Playwright. Avg ms hides CF spikes; check p90 and cf columns.</p>
   <p>Generated <code>${latest.generatedAt}</code>. Live runner: load unpacked <code>dist/</code> → <code>chrome-extension://&lt;id&gt;/eval.html</code>.</p>
   <table>
     <thead>
       <tr>
         <th>mode</th><th>engine</th><th>prefer</th><th>actual</th>
-        <th>BA</th><th>tp/tn/fp/fn</th><th>avg ms</th><th>gpu</th><th>runtime</th>
+        <th>BA</th><th>tp/tn/fp/fn</th><th>avg ms</th><th>cf</th><th>gpu</th><th>runtime</th>
       </tr>
     </thead>
     <tbody>

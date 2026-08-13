@@ -2,6 +2,7 @@ import {
   DEFAULT_OPTIONS,
   type AnalyzeBytesRequest,
   type AnalyzeImageRequest,
+  type AnalyzeSpeedMode,
   type ExtensionOptions,
   type ExtensionRequest,
   type ExtensionResponse,
@@ -96,6 +97,7 @@ async function inferViaOffscreen(args: {
   bytes?: ArrayBuffer;
   src?: string;
   mimeType: string;
+  speedMode?: AnalyzeSpeedMode;
 }): Promise<OffscreenInferResponse | undefined> {
   if (!chrome.offscreen) return undefined;
   try {
@@ -107,6 +109,7 @@ async function inferViaOffscreen(args: {
       requestId: args.requestId,
       imageId: args.imageId,
       mimeType: args.mimeType,
+      ...(args.speedMode ? { speedMode: args.speedMode } : {}),
       ...(args.src
         ? { src: args.src }
         : {
@@ -248,6 +251,7 @@ async function analyzeImage(
       imageId: request.imageId,
       src: request.src,
       mimeType: "application/octet-stream",
+      ...(request.speedMode ? { speedMode: request.speedMode } : {}),
     });
     if (offscreen && offscreen.result.label.kind !== "error") {
       backendCache = offscreen.result.backend;

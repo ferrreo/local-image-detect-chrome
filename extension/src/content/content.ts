@@ -79,21 +79,29 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
   );
 
   const pct = Math.round(result.confidence * 100);
+  const timingHint = result.timing
+    ? ` · ${result.timing.totalMs.toFixed(0)}ms` +
+      (result.timing.ranForensics
+        ? ` (cf ${result.timing.forensicsMs.toFixed(0)}ms)`
+        : "")
+    : result.elapsedMs
+      ? ` · ${result.elapsedMs.toFixed(0)}ms`
+      : "";
   switch (result.label.kind) {
     case "ai":
       badge.classList.add("truepixel-ai");
       badge.textContent = `AI ${pct}%`;
-      badge.title = `TruePixel: likely AI-generated (${pct}% confidence)`;
+      badge.title = `TruePixel: likely AI-generated (${pct}% confidence)${timingHint}`;
       break;
     case "real":
       badge.classList.add("truepixel-real");
       badge.textContent = `Real ${pct}%`;
-      badge.title = `TruePixel: likely real photograph (${pct}% confidence)`;
+      badge.title = `TruePixel: likely real photograph (${pct}% confidence)${timingHint}`;
       break;
     case "uncertain":
       badge.classList.add("truepixel-uncertain");
       badge.textContent = `? ${pct}%`;
-      badge.title = `TruePixel: uncertain (${pct}% AI confidence)`;
+      badge.title = `TruePixel: uncertain (${pct}% AI confidence)${timingHint}`;
       break;
     case "error":
       badge.classList.add("truepixel-error");
@@ -121,6 +129,8 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
       src: imageKey(img),
       width: img.naturalWidth || img.width,
       height: img.naturalHeight || img.height,
+      // Overlay must stay snappy; CF on ORT WASM is ~1s+ per image.
+      speedMode: "realtime",
     })) as AnalyzeImageResponse;
 
     if (response.kind !== "analyze-image-result") return;

@@ -70,15 +70,37 @@ async function loadInferBytes(
   throw new Error("offscreen-infer requires src or bytesBase64");
 }
 
+function formatTiming(result: Awaited<ReturnType<typeof detectAiImage>>): string {
+  const t = result.timing;
+  if (!t) return `total=${result.elapsedMs.toFixed(1)}ms`;
+  return [
+    `total=${t.totalMs.toFixed(1)}ms`,
+    `decode=${t.decodeMs.toFixed(1)}`,
+    `spectral=${t.spectralMs.toFixed(1)}`,
+    `prep=${t.preprocessMs.toFixed(1)}`,
+    `distilled=${t.distilledMs.toFixed(1)}`,
+    `cf=${t.forensicsMs.toFixed(1)}${t.ranForensics ? "" : "(skip)"}`,
+    `fuse=${t.fuseMs.toFixed(1)}`,
+  ].join(" ");
+}
+
 async function handleInfer(
   request: OffscreenInferRequest,
 ): Promise<OffscreenInferResponse> {
+  const fetchT0 = performance.now();
   const { bytes, mimeType } = await loadInferBytes(request);
+  const fetchMs = performance.now() - fetchT0;
   const result = await detectAiImage({
     imageId: request.imageId,
     bytes,
     mimeType,
+    ...(request.speedMode ? { speedMode: request.speedMode } : {}),
   });
+
+  // Structured stage times — CF on single-thread ORT WASM is the 1s+ spike.
+  console.info(
+    `[truepixel] ${request.imageId} fetch=${fetchMs.toFixed(1)}ms ${formatTiming(result)} mode=${request.speedMode ?? "accurate"}`,
+  );
 
   return {
     kind: "offscreen-infer-result",

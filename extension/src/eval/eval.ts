@@ -3,6 +3,7 @@ import type {
   DetectionResult,
   ExtensionResponse,
   GetStatusResponse,
+  PipelineTiming,
   ResetVisualResponse,
   SetupModelsResponse,
   VisualProvider,
@@ -24,8 +25,22 @@ type Row = {
   backend: string;
   totalMs: number;
   elapsedMs: number;
+  timing?: PipelineTiming;
   tiers: string;
   error?: string;
+};
+
+type TimingSummary = {
+  avgTotalMs: number;
+  p50TotalMs: number;
+  p90TotalMs: number;
+  count: number;
+  forensicsCount: number;
+  avgDistilledMs: number;
+  avgForensicsMsWhenRun: number;
+  avgDecodeMs: number;
+  avgSpectralMs: number;
+  avgPreprocessMs: number;
 };
 
 type SuiteResult = {
@@ -40,7 +55,7 @@ type SuiteResult = {
   threshold: number;
   balancedAccuracy: number;
   confusion: { tp: number; tn: number; fp: number; fn: number };
-  timing: { avgTotalMs: number; count: number };
+  timing: TimingSummary;
   rows: Row[];
 };
 
@@ -124,15 +139,58 @@ function balancedAccuracy(c: {
   return (tpr + tnr) / 2;
 }
 
+function percentile(sorted: number[], p: number): number {
+  if (sorted.length === 0) return 0;
+  const idx = Math.min(
+    sorted.length - 1,
+    Math.max(0, Math.ceil((p / 100) * sorted.length) - 1),
+  );
+  return sorted[idx] ?? 0;
+}
+
+function summarizeTiming(rows: Row[]): TimingSummary {
+  const totals = rows.map((r) => r.totalMs).sort((a, b) => a - b);
+  const timings = rows.flatMap((r) => (r.timing ? [r.timing] : []));
+  const cfTimings = timings.filter((t) => t.ranForensics);
+  const avg = (xs: number[]) =>
+    xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0;
+  return {
+    avgTotalMs: avg(rows.map((r) => r.totalMs)),
+    p50TotalMs: percentile(totals, 50),
+    p90TotalMs: percentile(totals, 90),
+    count: rows.length,
+    forensicsCount: cfTimings.length,
+    avgDistilledMs: avg(timings.map((t) => t.distilledMs)),
+    avgForensicsMsWhenRun: avg(cfTimings.map((t) => t.forensicsMs)),
+    avgDecodeMs: avg(timings.map((t) => t.decodeMs)),
+    avgSpectralMs: avg(timings.map((t) => t.spectralMs)),
+    avgPreprocessMs: avg(timings.map((t) => t.preprocessMs)),
+  };
+}
+
+function formatStages(t: PipelineTiming | undefined): string {
+  if (!t) return "";
+  return [
+    `d ${t.decodeMs.toFixed(0)}`,
+    `s ${t.spectralMs.toFixed(0)}`,
+    `p ${t.preprocessMs.toFixed(0)}`,
+    `v ${t.distilledMs.toFixed(0)}`,
+    t.ranForensics ? `cf ${t.forensicsMs.toFixed(0)}` : "cf —",
+  ].join(" · ");
+}
+
 function renderSummary(result: SuiteResult) {
   const c = result.confusion;
+  const t = result.timing;
   summaryRow.innerHTML = `
     <td>${(result.balancedAccuracy * 100).toFixed(1)}%</td>
     <td>${c.tp}</td>
     <td>${c.tn}</td>
     <td>${c.fp}</td>
     <td>${c.fn}</td>
-    <td>${result.timing.avgTotalMs.toFixed(1)}</td>
+    <td>${t.avgTotalMs.toFixed(1)}</td>
+    <td>${t.p50TotalMs.toFixed(0)} / ${t.p90TotalMs.toFixed(0)}</td>
+    <td>${t.forensicsCount}× avg ${t.avgForensicsMsWhenRun.toFixed(0)}ms</td>
     <td>${result.providerActual}</td>
     <td>${result.gpuAvailable ? "yes" : "no"}</td>
   `;
@@ -147,6 +205,7 @@ function appendRow(row: Row) {
     <td>${row.confidence.toFixed(3)}</td>
     <td>${row.predicted}</td>
     <td>${row.totalMs.toFixed(1)}</td>
+    <td>${formatStages(row.timing)}</td>
     <td>${row.backend}</td>
     <td>${row.tiers}${row.error ? ` err=${row.error}` : ""}</td>
   `;
@@ -194,6 +253,7 @@ async function analyzeOne(
   item: CorpusImage,
 ): Promise<{ result: DetectionResult; totalMs: number }> {
   // Prefer analyze-image + http(s) URL so the SW/offscreen path matches production.
+  // Eval stays on accurate cascade (default) for BA; overlay uses realtime.
   const url = `${corpusBase.replace(/\/$/, "")}/${item.file}`;
   const t0 = performance.now();
   const res = await send<AnalyzeImageResponse>({
@@ -203,6 +263,7 @@ async function analyzeOne(
     src: url,
     width: 0,
     height: 0,
+    speedMode: "accurate",
   });
   return { result: res.result, totalMs: performance.now() - t0 };
 }
@@ -237,7 +298,6 @@ async function runEval() {
     let tn = 0;
     let fp = 0;
     let fn = 0;
-    let sum = 0;
 
     for (let i = 0; i < images.length; i += 1) {
       const item = images[i]!;
@@ -255,7 +315,6 @@ async function runEval() {
         else if (!actualAi && !predictedAi) tn += 1;
         else if (!actualAi && predictedAi) fp += 1;
         else fn += 1;
-        sum += totalMs;
         const row: Row = {
           file: item.file,
           label: item.label,
@@ -266,6 +325,7 @@ async function runEval() {
           backend: result.backend.kind,
           totalMs,
           elapsedMs: result.elapsedMs,
+          ...(result.timing ? { timing: result.timing } : {}),
           tiers: result.tiers
             .map((t) => {
               const score = `${t.tier}:${Number(t.aiScore).toFixed(3)}`;
@@ -300,6 +360,7 @@ async function runEval() {
     }
 
     const confusion = { tp, tn, fp, fn };
+    const timing = summarizeTiming(rows);
     const suite: SuiteResult = {
       kind: "truepixel-browser-eval",
       generatedAt: new Date().toISOString(),
@@ -311,10 +372,7 @@ async function runEval() {
       threshold,
       balancedAccuracy: balancedAccuracy(confusion),
       confusion,
-      timing: {
-        avgTotalMs: rows.length ? sum / rows.length : 0,
-        count: rows.length,
-      },
+      timing,
       rows,
     };
 
@@ -325,14 +383,21 @@ async function runEval() {
     doneEl.removeAttribute("hidden");
     doneEl.setAttribute("data-ba", String(suite.balancedAccuracy));
     setStatus(
-      `Done BA=${(suite.balancedAccuracy * 100).toFixed(1)}% avg=${suite.timing.avgTotalMs.toFixed(1)}ms`,
+      `Done BA=${(suite.balancedAccuracy * 100).toFixed(1)}% ` +
+        `avg=${timing.avgTotalMs.toFixed(1)}ms p50=${timing.p50TotalMs.toFixed(0)} ` +
+        `p90=${timing.p90TotalMs.toFixed(0)} cf=${timing.forensicsCount}×` +
+        `@${timing.avgForensicsMsWhenRun.toFixed(0)}ms`,
     );
 
     const status = await send<GetStatusResponse>({
       kind: "get-status",
       requestId: crypto.randomUUID(),
     });
-    metaLine.textContent = `provider requested=${provider} actual=${suite.providerActual} statusBackend=${status.backend.kind} gpu=${suite.gpuAvailable}`;
+    metaLine.textContent =
+      `provider requested=${provider} actual=${suite.providerActual} ` +
+      `statusBackend=${status.backend.kind} gpu=${suite.gpuAvailable} ` +
+      `stages decode=${timing.avgDecodeMs.toFixed(0)} spectral=${timing.avgSpectralMs.toFixed(0)} ` +
+      `prep=${timing.avgPreprocessMs.toFixed(0)} distilled=${timing.avgDistilledMs.toFixed(0)}`;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     setStatus(`Error: ${message}`);
@@ -350,25 +415,25 @@ async function runEval() {
   }
 }
 
-function init() {
-  const p = params();
-  corpusBaseInput.value =
-    p.get("corpus") ?? "http://127.0.0.1:4173/benchmark/openrouter";
-  providerSelect.value = p.get("provider") ?? "wasm";
-  if (p.get("threshold")) thresholdInput.value = p.get("threshold")!;
-
-  setupBtn.addEventListener("click", () => {
-    void setupModels().catch((error: unknown) => {
-      setStatus(error instanceof Error ? error.message : String(error));
-    });
+setupBtn.addEventListener("click", () => {
+  void setupModels().catch((error: unknown) => {
+    setStatus(error instanceof Error ? error.message : String(error));
   });
-  runBtn.addEventListener("click", () => {
-    void runEval();
-  });
+});
+runBtn.addEventListener("click", () => {
+  void runEval();
+});
 
-  if (p.get("autorun") === "1") {
-    void runEval();
-  }
+const q = params();
+const corpus = q.get("corpus");
+if (corpus) corpusBaseInput.value = corpus;
+const provider = q.get("provider");
+if (provider === "auto" || provider === "webgpu" || provider === "wasm") {
+  providerSelect.value = provider;
 }
+const threshold = q.get("threshold");
+if (threshold) thresholdInput.value = threshold;
 
-init();
+if (q.get("autorun") === "1") {
+  void runEval();
+}

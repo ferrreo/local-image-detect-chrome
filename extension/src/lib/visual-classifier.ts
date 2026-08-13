@@ -375,12 +375,16 @@ export async function classifyVisual(
     runForensics = !cascade;
   }
 
+  let distilledMs = 0;
+  let forensicsMs = 0;
   const scores = new Map<string, number>();
   if (runDistilled) {
+    const t0 = performance.now();
     scores.set(
       DISTILLED_MODEL.id,
       await runModel(ort, distilledSession, bitmap),
     );
+    distilledMs = performance.now() - t0;
   }
 
   const distilled = scores.get(DISTILLED_MODEL.id);
@@ -408,10 +412,12 @@ export async function classifyVisual(
     if (!forensicsSession) {
       throw new Error("Community Forensics session missing");
     }
+    const t0 = performance.now();
     scores.set(
       FORENSICS_MODEL.id,
       await runModel(ort, forensicsSession, bitmap),
     );
+    forensicsMs = performance.now() - t0;
   }
 
   const forensics = scores.get(FORENSICS_MODEL.id);
@@ -437,7 +443,11 @@ export async function classifyVisual(
         : "distilled=fp16",
       cascade ? "cascade" : "dual",
       runForensics ? "ranForensics" : "skipForensics",
+      `distilledMs=${distilledMs.toFixed(1)}`,
+      `forensicsMs=${forensicsMs.toFixed(1)}`,
     ].join(","),
+    distilledMs,
+    forensicsMs,
   };
 }
 

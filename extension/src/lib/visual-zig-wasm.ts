@@ -248,15 +248,22 @@ export async function classifyVisualZigWasm(
   }
 
   // One native RGBA read; both heads bilinear-resize in Zig (matches host).
+  let preprocessMs = 0;
+  let distilledMs = 0;
+  let forensicsMs = 0;
+  const tPre = performance.now();
   const rgba =
     runDistilled || runForensics ? await bitmapToRgba(bitmap) : undefined;
+  preprocessMs = performance.now() - tPre;
 
   const scores = new Map<string, number>();
   if (runDistilled && rgba) {
+    const t0 = performance.now();
     scores.set(
       DISTILLED_MODEL.id,
       runSessionOnRgba(m, distilledId, rgba, DISTILLED_MODEL),
     );
+    distilledMs = performance.now() - t0;
   }
   const distilled = scores.get(DISTILLED_MODEL.id);
 
@@ -276,10 +283,12 @@ export async function classifyVisualZigWasm(
   }
 
   if (runForensics && rgba) {
+    const t0 = performance.now();
     scores.set(
       FORENSICS_MODEL.id,
       runSessionOnRgba(m, forensicsId, rgba, FORENSICS_MODEL),
     );
+    forensicsMs = performance.now() - t0;
   }
 
   const forensics = scores.get(FORENSICS_MODEL.id);
@@ -297,7 +306,13 @@ export async function classifyVisualZigWasm(
       "engine=zig-ort-wasm",
       cascade ? "cascade" : "dual",
       runForensics ? "ranForensics" : "skipForensics",
+      `distilledMs=${distilledMs.toFixed(1)}`,
+      `forensicsMs=${forensicsMs.toFixed(1)}`,
+      `preprocessMs=${preprocessMs.toFixed(1)}`,
     ].join(","),
+    distilledMs,
+    forensicsMs,
+    preprocessMs,
   };
 }
 

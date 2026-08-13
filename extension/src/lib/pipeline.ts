@@ -17,6 +17,7 @@ import {
   type AiConfidence,
   type DetectionResult,
   type InferenceBackend,
+  type PipelineTiming,
 } from "../shared/types";
 
 export type VisualEngineKind = "onnxruntime-web" | "zig-wasm";
@@ -30,10 +31,13 @@ export type PipelineOptions = {
   /**
    * Distilled → optional Community Forensics (default true).
    * Applies to onnxruntime-web and Zig+ORT WASM visual backends.
+   * Overridden by `speedMode: "realtime"` (cascade off).
    */
   cascade?: boolean;
   /** Prefer Zig+ORT WASM when linked; otherwise onnxruntime-web. */
   visualEngine?: VisualEngineKind | "auto";
+  /** Interactive overlay uses `realtime`; eval leaves unset / `accurate`. */
+  speedMode?: "accurate" | "realtime";
 };
 
 /**
@@ -46,7 +50,17 @@ export async function detectAiImage(
   const started = performance.now();
   const bytesView = new Uint8Array(options.bytes);
   const mimeType = options.mimeType ?? guessMimeType(bytesView);
-  const cascade = options.cascade !== false;
+  const cascade =
+    options.speedMode === "realtime"
+      ? false
+      : options.cascade !== false;
+
+  let decodeMs = 0;
+  let spectralMs = 0;
+  let preprocessMs = 0;
+  let distilledMs = 0;
+  let forensicsMs = 0;
+  let ranForensics = false;
 
   const provenance = analyzeProvenance(bytesView);
   const provenanceTier = {
@@ -66,10 +80,14 @@ export async function detectAiImage(
   let backend: InferenceBackend = { kind: "none" };
 
   if (!provenance.shortCircuit) {
+    const tDecode = performance.now();
     const decoded = await decodeImageBytes(options.bytes, mimeType);
+    decodeMs = performance.now() - tDecode;
     try {
+      const tSpectral = performance.now();
       const spectralImage = await rasterizeForSpectral(decoded.bitmap);
       const spectral = analyzeSpectral(spectralImage);
+      spectralMs = performance.now() - tSpectral;
       spectralScore = spectral.score;
       spectralDetail = spectral.detail;
       spectralFeatures = spectral.features;
@@ -101,6 +119,10 @@ export async function detectAiImage(
       visualSecondary = visual.secondaryScore;
       visualDetail = `${visual.detail}${useZig ? ",engine=zig-ort-wasm" : ",engine=ort-web"}`;
       backend = visual.backend;
+      preprocessMs = visual.preprocessMs ?? 0;
+      distilledMs = visual.distilledMs ?? 0;
+      forensicsMs = visual.forensicsMs ?? 0;
+      ranForensics = visualSecondary !== undefined;
 
       // Defense in depth: if a backend returned only distilled, apply the same gate.
       if (
@@ -115,11 +137,14 @@ export async function detectAiImage(
           chromaFlatness: spectralFeatures.chromaFlatness,
         })
       ) {
+        const tCf = performance.now();
         const forensicsOnly = await classify(decoded.bitmap, {
           cascade: false,
           runDistilled: false,
           runForensics: true,
         });
+        forensicsMs += performance.now() - tCf;
+        ranForensics = true;
         visualSecondary =
           forensicsOnly.secondaryScore ?? forensicsOnly.score;
         visualDetail = `${visualDetail};${forensicsOnly.detail}`;
@@ -132,6 +157,7 @@ export async function detectAiImage(
     backend = { kind: "none" };
   }
 
+  const tFuse = performance.now();
   const fused = fuseDetection({
     provenance: provenanceTier,
     spectral: {
@@ -159,6 +185,19 @@ export async function detectAiImage(
     ...(spectralFeatures !== undefined ? { spectralFeatures } : {}),
     ...(options.threshold !== undefined ? { threshold: options.threshold } : {}),
   });
+  const fuseMs = performance.now() - tFuse;
+  const totalMs = performance.now() - started;
+
+  const timing: PipelineTiming = {
+    decodeMs,
+    spectralMs,
+    preprocessMs,
+    distilledMs,
+    forensicsMs,
+    fuseMs,
+    totalMs,
+    ranForensics,
+  };
 
   return {
     imageId: options.imageId,
@@ -166,6 +205,7 @@ export async function detectAiImage(
     confidence: fused.confidence,
     tiers: fused.tiers,
     backend,
-    elapsedMs: performance.now() - started,
+    elapsedMs: totalMs,
+    timing,
   };
 }

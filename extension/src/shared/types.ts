@@ -22,6 +22,19 @@ export type TierSignal = {
   shortCircuit?: boolean;
 };
 
+/** Per-stage wall times for the local pipeline (milliseconds). */
+export type PipelineTiming = {
+  decodeMs: number;
+  spectralMs: number;
+  /** RGBA / NCHW prep inside the visual backend (when reported). */
+  preprocessMs: number;
+  distilledMs: number;
+  forensicsMs: number;
+  fuseMs: number;
+  totalMs: number;
+  ranForensics: boolean;
+};
+
 export type DetectionResult = {
   imageId: string;
   label: DetectionLabel;
@@ -30,6 +43,7 @@ export type DetectionResult = {
   tiers: TierSignal[];
   backend: InferenceBackend;
   elapsedMs: number;
+  timing?: PipelineTiming;
 };
 
 export type InferenceBackend =
@@ -50,6 +64,12 @@ export type ModelStatus =
   | { kind: "ready"; version: string; bytes: number }
   | { kind: "error"; message: string };
 
+/**
+ * `accurate` — cascade dual (distilled → CF when gated). Eval / offline.
+ * `realtime` — distilled+spectral only; overlay must stay snappy (~CF is 1s+ on WASM).
+ */
+export type AnalyzeSpeedMode = "accurate" | "realtime";
+
 export type AnalyzeImageRequest = {
   kind: "analyze-image";
   requestId: string;
@@ -58,6 +78,7 @@ export type AnalyzeImageRequest = {
   src: string;
   width: number;
   height: number;
+  speedMode?: AnalyzeSpeedMode;
 };
 
 export type AnalyzeImageResponse = {
@@ -174,6 +195,11 @@ export type OffscreenInferRequest = {
    */
   bytesBase64?: string;
   mimeType: string;
+  /**
+   * `realtime` → cascade off (distilled+spectral only).
+   * `accurate` / omitted → full cascade (eval default).
+   */
+  speedMode?: AnalyzeSpeedMode;
 };
 
 export type OffscreenInferResponse = {
