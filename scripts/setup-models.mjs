@@ -44,7 +44,9 @@ const MODELS = [
   },
   {
     id: "proofmark-webwild-v3",
-    url: "",
+    // HF `Proofmark/proofmark-webwild-v3` is private; same Q8 bytes are public
+    // in Dyno-man/Dino-ImageGen-Ext (upstream backbone OwensLab/commfor-model-384).
+    url: "https://raw.githubusercontent.com/Dyno-man/Dino-ImageGen-Ext/main/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
     outPath: path.join(
       root,
       "models/proofmark-webwild-v3/model_quantized.onnx",
@@ -52,7 +54,7 @@ const MODELS = [
     sha256:
       "ed17ceb332bef84d0adcc2fa537eef85ed3ac6fb32c30393c326321fbbe54683",
     bytes: 24_031_833,
-    license: "MIT (Proofmark / OwensLab fine-tune; vendored)",
+    license: "MIT (Proofmark head; OwensLab/commfor-model-384 backbone)",
     seedPaths: [
       path.join(
         root,

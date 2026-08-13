@@ -35,6 +35,8 @@ Optional: prefetch model weights into `./models` (also downloaded in-browser on 
 npm run setup:models
 ```
 
+Proofmark’s accurate head (`proofmark-webwild-v3` Q8) has a private HF repo (`Proofmark/proofmark-webwild-v3`, 401). Setup/extension download the matching public ONNX from [Dyno-man/Dino-ImageGen-Ext](https://github.com/Dyno-man/Dino-ImageGen-Ext) (backbone [OwensLab/commfor-model-384](https://huggingface.co/OwensLab/commfor-model-384)).
+
 Load unpacked:
 
 1. Open `chrome://extensions`
@@ -117,7 +119,7 @@ npm run eval:suite:ci              # CI-sized subset (wasm + key host modes)
 # EVAL_SUITE_LIMIT=16 EVAL_SUITE_BROWSER_PROVIDERS=webgpu,wasm npm run eval:suite
 ```
 
-Browser visual matches the Zig host: **cascade dual** (distilled first, Community Forensics only when fusion gates fire). Silent stub fallback is disabled — if offscreen ORT fails, the result is an error, not a fake score.
+Browser path: **realtime distilled**, then **accurate Proofmark refine** when the first paint is below the AI threshold (Lexica-class near-zero distilled scores included). Silent stub fallback is disabled — if offscreen ORT fails, the result is an error, not a fake score.
 
 Live page inside the extension (after Load unpacked `dist/`):
 

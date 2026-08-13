@@ -142,8 +142,8 @@ const MODELS = [
     id: "proofmark-webwild-v3",
     requested: false,
     status: "ok",
-    hf: "Proofmark/proofmark-webwild-v3 (vendor: Dyno-man/Dino-ImageGen-Ext)",
-    url: null,
+    hf: "Proofmark/proofmark-webwild-v3 (private on HF; public via GitHub bundle)",
+    url: "https://raw.githubusercontent.com/Dyno-man/Dino-ImageGen-Ext/main/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
     localPath: "models/compare/proofmark-webwild-v3/model_quantized.onnx",
     seedPaths: [
       "/tmp/Dino-ImageGen-Ext/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",

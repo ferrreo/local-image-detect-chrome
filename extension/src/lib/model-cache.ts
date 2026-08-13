@@ -98,7 +98,7 @@ export async function downloadModels(args?: {
       if (!model.url) {
         return {
           kind: "error",
-          message: `${model.id} has no public URL — package models/${model.localPath} (npm run setup:models)`,
+          message: `${model.id} has no public URL — package ${model.localPath} (npm run setup:models)`,
         };
       }
       const response = await fetchImpl(model.url, { redirect: "follow" });

@@ -92,7 +92,9 @@ export const DISTILLED_MODEL_FP32 = {
 
 /**
  * Proofmark webwild-v3 Q8 (accurate secondary head).
- * Vendored from Dyno-man/Dino-ImageGen-Ext (OwensLab/commfor-model-384 fine-tune).
+ * Backbone: OwensLab/commfor-model-384; head fine-tune shipped by
+ * Dyno-man/Dino-ImageGen-Ext. HF repo `Proofmark/proofmark-webwild-v3` is
+ * private (401); public bytes match the GitHub-bundled ONNX below.
  * Preprocess: shortest side → 440, center-crop 384, ImageNet norm, logit+sigmoid.
  *
  * Zig+ORT WASM still hardcodes stretch/0.5 — pipeline prefers ort-web while
@@ -102,7 +104,7 @@ export const FORENSICS_MODEL = {
   id: "proofmark-webwild-v3",
   cacheKey: "models/proofmark-webwild-v3/model_quantized.onnx",
   localPath: "models/proofmark-webwild-v3/model_quantized.onnx",
-  url: "",
+  url: "https://raw.githubusercontent.com/Dyno-man/Dino-ImageGen-Ext/main/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
   sha256: "ed17ceb332bef84d0adcc2fa537eef85ed3ac6fb32c30393c326321fbbe54683",
   bytes: 24_031_833,
   role: "visual-classifier",
