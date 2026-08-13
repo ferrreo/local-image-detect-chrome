@@ -414,9 +414,18 @@ async function runEval() {
       kind: "get-status",
       requestId: crypto.randomUUID(),
     });
+    const detailRow = rows.find((r) => r.tiers.includes("distilledEp="));
+    const detail = detailRow?.tiers ?? "";
+    const wasmThreads = detail.match(/wasmThreads=(\d+)/)?.[1] ?? "?";
+    const webgpuSkip = detail.match(/webgpuSkip=([^\s|,]+)/)?.[1];
+    const distilledEp = detail.match(/distilledEp=([a-z0-9-]+)/)?.[1];
+    const forensicsEp = detail.match(/forensicsEp=([a-z0-9-]+)/)?.[1];
     metaLine.textContent =
       `provider requested=${provider} actual=${suite.providerActual} ` +
-      `statusBackend=${status.backend.kind} gpu=${suite.gpuAvailable} ` +
+      `eps distilled=${distilledEp ?? "?"} forensics=${forensicsEp ?? "?"} ` +
+      `wasmThreads=${wasmThreads}` +
+      (webgpuSkip ? ` webgpuSkip=${webgpuSkip}` : "") +
+      ` statusBackend=${status.backend.kind} gpu=${suite.gpuAvailable} ` +
       `stages decode=${timing.avgDecodeMs.toFixed(0)} spectral=${timing.avgSpectralMs.toFixed(0)} ` +
       `prep=${timing.avgPreprocessMs.toFixed(0)} distilled=${timing.avgDistilledMs.toFixed(0)}`;
   } catch (error) {

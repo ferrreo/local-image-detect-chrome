@@ -52,13 +52,13 @@ export const DISTILLED_MODEL = {
   aiLabelIndex: 0,
   mean: [0.5, 0.5, 0.5],
   std: [0.5, 0.5, 0.5],
-  graphOptimizationLevel: "disabled",
+  graphOptimizationLevel: "all",
 } as const satisfies ModelArtifact;
 
 /**
  * Same distilled detector, fp32 ONNX.
- * Packaged for adapters that cannot run fp16 graphs; cascade defaults to
- * WASM fp16 instead of putting this on WebGPU (pathological latency).
+ * Used on real WebGPU adapters that lack shader-f16, and only when a warm
+ * timing probe beats WASM fp16 (software WebGPU must not win).
  */
 export const DISTILLED_MODEL_FP32 = {
   id: "ai-image-detect-distilled-fp32",
@@ -72,7 +72,7 @@ export const DISTILLED_MODEL_FP32 = {
   aiLabelIndex: 0,
   mean: [0.5, 0.5, 0.5],
   std: [0.5, 0.5, 0.5],
-  graphOptimizationLevel: "disabled",
+  graphOptimizationLevel: "all",
 } as const satisfies ModelArtifact;
 
 /**
@@ -80,10 +80,9 @@ export const DISTILLED_MODEL_FP32 = {
  * Source: https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX
  * Labels: softmax index 1 treated as AI/fake for this export.
  *
- * Browser cascade runs this on WASM for latency. ORT #29599
- * (`preferredMatmulAccumulatorPrecision: "f32"`, vendored via
- * `npm run setup:ort-web-pr29599`) can place it on WebGPU when explicitly
- * requested — default cascade does not.
+ * Cascade picks WASM vs WebGPU via a warm timing probe. WebGPU uses ORT
+ * #29599 `preferredMatmulAccumulatorPrecision: "f32"` (vendored via
+ * `npm run setup:ort-web-pr29599`).
  */
 export const FORENSICS_MODEL = {
   id: "community-forensics-deepfake-det",

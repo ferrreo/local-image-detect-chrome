@@ -76,13 +76,13 @@ type LoadedSession = {
 export type WebGpuCaps = {
   /** `navigator.gpu.requestAdapter` returned something. */
   available: boolean;
-  /** Adapter reports WGSL shader-f16 (required for distilled fp16). */
+  /** Adapter reports WGSL shader-f16 (fp16 distilled on WebGPU). */
   shaderF16: boolean;
   /** Fallback / SwiftShader-class adapter — unusable for ML latency. */
   software: boolean;
   /**
-   * Prefer WebGPU for distilled only when this is true.
-   * Requires a non-software adapter with shader-f16.
+   * Non-software adapter — worth a timed WebGPU probe (fp16 or fp32).
+   * Software adapters must never win the probe race.
    */
   usableForMl: boolean;
 };
@@ -119,8 +119,13 @@ const NO_GPU: WebGpuCaps = {
   usableForMl: false,
 };
 
-/** Second warm distilled run above this → abandon WebGPU (software/broken EP). */
-const WEBGPU_DISTILLED_BUDGET_MS = 600;
+/** GPU must beat WASM by this factor (or absolute floor) to win the probe. */
+const WEBGPU_SPEEDUP = 1.4;
+/** Hard ceiling — even "faster than broken WASM" software GPUs lose. */
+const WEBGPU_DISTILLED_MAX_MS = 150;
+const WEBGPU_FORENSICS_MAX_MS = 450;
+
+let wasmThreadCountUsed = 1;
 
 let ortModulePromise: Promise<OrtModule> | undefined;
 let sessionsPromise: Promise<LoadedSession[]> | undefined;
@@ -163,7 +168,8 @@ async function classifyAdapter(adapter: GpuAdapterLike): Promise<WebGpuCaps> {
     available: true,
     shaderF16,
     software,
-    usableForMl: shaderF16 && !software,
+    // Real adapters without shader-f16 can still win via probed fp32.
+    usableForMl: !software,
   };
 }
 
@@ -216,13 +222,31 @@ async function loadOrt(): Promise<OrtModule> {
   return ortModulePromise;
 }
 
+function wasmThreadCount(): number {
+  try {
+    if (typeof SharedArrayBuffer === "undefined") return 1;
+    if (
+      typeof crossOriginIsolated !== "undefined" &&
+      crossOriginIsolated === false
+    ) {
+      return 1;
+    }
+  } catch {
+    return 1;
+  }
+  const hc =
+    typeof navigator !== "undefined" ? (navigator.hardwareConcurrency ?? 2) : 2;
+  return Math.max(1, Math.min(4, hc));
+}
+
 function configureOrt(ort: OrtModule): void {
   const base =
     typeof chrome !== "undefined" && chrome.runtime?.getURL
       ? chrome.runtime.getURL("ort/")
       : "/ort/";
   ort.env.wasm.wasmPaths = base;
-  ort.env.wasm.numThreads = 1;
+  wasmThreadCountUsed = wasmThreadCount();
+  ort.env.wasm.numThreads = wasmThreadCountUsed;
   ort.env.wasm.simd = true;
   if (ort.env.webgpu) {
     ort.env.webgpu.powerPreference = "high-performance";
@@ -235,8 +259,7 @@ async function providerList(
 ): Promise<string[]> {
   if (prefer === "wasm") return ["wasm"];
   const caps = await probeWebGpuCapabilities();
-  // Only advertise WebGPU when fp16 distilled can actually run there.
-  // Adapter-without-f16 used to select fp32-on-WebGPU and tank latency.
+  // Non-software adapters get a timed probe; software never advertised.
   if (prefer === "webgpu") {
     return caps.usableForMl ? ["webgpu", "wasm"] : ["wasm"];
   }
@@ -311,34 +334,32 @@ async function warmBitmap(size: number): Promise<ImageBitmap> {
   return canvas.transferToImageBitmap();
 }
 
-/**
- * Compile shaders / settle EP, then time a second run. Pathological WebGPU
- * (software, broken Dawn) loses to WASM fp16 by a wide margin.
- */
-async function webgpuDistilledIsFastEnough(
+/** Compile shaders / settle EP, then return second-run ms. */
+async function timeSecondRun(
   ort: OrtModule,
   loaded: LoadedSession,
-): Promise<boolean> {
+): Promise<number> {
   const bitmap = await warmBitmap(loaded.model.inputSize);
   try {
     await runModel(ort, loaded, bitmap);
     const t0 = performance.now();
     await runModel(ort, loaded, bitmap);
-    const ms = performance.now() - t0;
-    return ms <= WEBGPU_DISTILLED_BUDGET_MS;
+    return performance.now() - t0;
   } finally {
     bitmap.close();
   }
 }
 
+function gpuBeatsWasm(gpuMs: number, wasmMs: number, maxMs: number): boolean {
+  return gpuMs <= maxMs && gpuMs * WEBGPU_SPEEDUP <= wasmMs;
+}
+
 /**
- * Pick distilled artifact + EP for latency-safe cascade:
- * - usable WebGPU (shader-f16, not software) → fp16 distilled on WebGPU
- * - otherwise → fp16 distilled on WASM (never fp32-on-WebGPU)
- * - Community Forensics q4 → WASM (WebGPU+f32 MatMulNBits is multi-second)
- *
- * ORT #29599 WebGPU CF remains available via createOneSession(..., {matmulAccF32})
- * but is not the default cascade path.
+ * Latency-safe cascade EP pick:
+ * - Always build WASM fp16 distilled (+ threaded when COI/SAB available)
+ * - On non-software adapters, race WebGPU (fp16 if shader-f16 else fp32)
+ * - CF: race WebGPU+#29599 f32 accumulators vs WASM; keep the winner
+ * - Software WebGPU loses the probe (hard ms ceilings)
  */
 async function createSessions(ort: OrtModule): Promise<LoadedSession[]> {
   configureOrt(ort);
@@ -350,40 +371,78 @@ async function createSessions(ort: OrtModule): Promise<LoadedSession[]> {
   if (preferredProvider !== "wasm" && !caps.usableForMl) {
     if (!caps.available) webgpuSkipReason = "no-adapter";
     else if (caps.software) webgpuSkipReason = "software-adapter";
-    else if (!caps.shaderF16) webgpuSkipReason = "no-shader-f16";
   }
 
-  const distilledModel: ModelArtifact = DISTILLED_MODEL;
-  const distilledProviders = wantWebgpu ? ["webgpu", "wasm"] : ["wasm"];
+  const wasmDistilled = await createOneSession(ort, DISTILLED_MODEL, ["wasm"]);
+  let distilledModel: ModelArtifact = DISTILLED_MODEL;
+  let distilled = wasmDistilled;
 
-  const loaded: LoadedSession[] = [];
-  let distilled = await createOneSession(
-    ort,
-    distilledModel,
-    distilledProviders,
-  );
-
-  if (distilled.backend.kind === "webgpu") {
-    const ok = await webgpuDistilledIsFastEnough(ort, {
-      model: distilledModel,
-      session: distilled.session,
-      backend: distilled.backend,
-    });
-    if (!ok) {
-      webgpuSkipReason = `distilled>${WEBGPU_DISTILLED_BUDGET_MS}ms`;
-      // Software / misconfigured WebGPU: prefer WASM fp16 over multi-second GPU.
-      distilled = await createOneSession(ort, distilledModel, ["wasm"]);
+  if (wantWebgpu && caps.usableForMl) {
+    const gpuModel = caps.shaderF16 ? DISTILLED_MODEL : DISTILLED_MODEL_FP32;
+    try {
+      const gpuDistilled = await createOneSession(ort, gpuModel, ["webgpu"]);
+      const wasmMs = await timeSecondRun(ort, {
+        model: DISTILLED_MODEL,
+        session: wasmDistilled.session,
+        backend: wasmDistilled.backend,
+      });
+      const gpuMs = await timeSecondRun(ort, {
+        model: gpuModel,
+        session: gpuDistilled.session,
+        backend: gpuDistilled.backend,
+      });
+      if (gpuBeatsWasm(gpuMs, wasmMs, WEBGPU_DISTILLED_MAX_MS)) {
+        distilledModel = gpuModel;
+        distilled = gpuDistilled;
+        webgpuSkipReason = "";
+      } else {
+        webgpuSkipReason = `distilled-slower(${gpuMs.toFixed(0)}vs${wasmMs.toFixed(0)})`;
+      }
+    } catch {
+      webgpuSkipReason = caps.shaderF16
+        ? "distilled-webgpu-failed"
+        : "distilled-fp32-webgpu-failed";
     }
   }
 
-  loaded.push({
-    model: distilledModel,
-    session: distilled.session,
-    backend: distilled.backend,
-  });
+  const loaded: LoadedSession[] = [
+    {
+      model: distilledModel,
+      session: distilled.session,
+      backend: distilled.backend,
+    },
+  ];
 
-  // CF stays on WASM — q4 @ 384 with f32 MatMulNBits on WebGPU was ~10–25s/img.
-  const forensics = await createOneSession(ort, FORENSICS_MODEL, ["wasm"]);
+  const wasmForensics = await createOneSession(ort, FORENSICS_MODEL, ["wasm"]);
+  let forensics = wasmForensics;
+  if (wantWebgpu && caps.usableForMl) {
+    try {
+      const gpuForensics = await createOneSession(
+        ort,
+        FORENSICS_MODEL,
+        ["webgpu"],
+        { matmulAccF32: true },
+      );
+      const wasmMs = await timeSecondRun(ort, {
+        model: FORENSICS_MODEL,
+        session: wasmForensics.session,
+        backend: wasmForensics.backend,
+      });
+      const gpuMs = await timeSecondRun(ort, {
+        model: FORENSICS_MODEL,
+        session: gpuForensics.session,
+        backend: gpuForensics.backend,
+      });
+      if (gpuBeatsWasm(gpuMs, wasmMs, WEBGPU_FORENSICS_MAX_MS)) {
+        forensics = gpuForensics;
+      } else if (!webgpuSkipReason) {
+        webgpuSkipReason = `forensics-slower(${gpuMs.toFixed(0)}vs${wasmMs.toFixed(0)})`;
+      }
+    } catch {
+      if (!webgpuSkipReason) webgpuSkipReason = "forensics-webgpu-failed";
+    }
+  }
+
   forensicsBackend = forensics.backend;
   loaded.push({
     model: FORENSICS_MODEL,
@@ -575,6 +634,7 @@ export async function classifyVisual(
       runForensics ? "ranForensics" : "skipForensics",
       `distilledEp=${(activeBackend.kind === "none" ? "wasm" : activeBackend.kind)}`,
       `forensicsEp=${forensicsBackend.kind === "none" ? "wasm" : forensicsBackend.kind}`,
+      `wasmThreads=${wasmThreadCountUsed}`,
       ...(webgpuSkipReason ? [`webgpuSkip=${webgpuSkipReason}`] : []),
       `distilledMs=${distilledMs.toFixed(1)}`,
       `forensicsMs=${forensicsMs.toFixed(1)}`,
@@ -590,6 +650,7 @@ export function resetVisualClassifierForTests(): void {
   activeBackend = { kind: "none" };
   forensicsBackend = { kind: "none" };
   webgpuSkipReason = "";
+  wasmThreadCountUsed = 1;
   gpuCapsPromise = undefined;
 }
 

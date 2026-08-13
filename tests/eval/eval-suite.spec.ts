@@ -208,6 +208,8 @@ test.describe("Offline extension eval suite", () => {
             };
             const distilledEp = epFrom("distilledEp", parsed.providerActual);
             const forensicsEp = epFrom("forensicsEp", distilledEp);
+            const wasmThreads = epFrom("wasmThreads", undefined);
+            const webgpuSkip = epFrom("webgpuSkip", undefined);
             browserResults.push({
               mode: `${modePrefix}-${provider}-cascade`,
               runtime: "extension-chromium",
@@ -216,6 +218,8 @@ test.describe("Offline extension eval suite", () => {
               preferEp: provider,
               distilledEp,
               forensicsEp,
+              ...(wasmThreads ? { wasmThreads } : {}),
+              ...(webgpuSkip ? { webgpuSkip } : {}),
               gpuAvailable: parsed.gpuAvailable,
               threshold: parsed.threshold,
               balancedAccuracy: parsed.balancedAccuracy,
