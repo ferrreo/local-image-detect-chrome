@@ -19,6 +19,12 @@ const providers = (process.env.EVAL_SUITE_BROWSER_PROVIDERS ?? "wasm,webgpu")
   .map((s) => s.trim())
   .filter(Boolean);
 
+/** `ort-web` | `zig` | `auto` — comma list. Default ort-web so Zig does not shadow. */
+const engines = (process.env.EVAL_SUITE_BROWSER_ENGINES ?? "ort-web")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
 function contentType(filePath: string): string {
   if (filePath.endsWith(".json")) return "application/json";
   if (filePath.endsWith(".png")) return "image/png";
@@ -129,77 +135,86 @@ test.describe("Offline extension eval suite", () => {
     const browserResults: unknown[] = [];
 
     try {
-      for (const provider of providers) {
-        const page = await context.newPage();
-        const corpusBase = `http://127.0.0.1:${corpus.port}`;
-        const limit = process.env.EVAL_SUITE_LIMIT ?? "0";
-        const url =
-          `chrome-extension://${extensionId}/eval.html` +
-          `?corpus=${encodeURIComponent(corpusBase)}` +
-          `&provider=${encodeURIComponent(provider)}` +
-          `&autorun=1&threshold=0.65&limit=${encodeURIComponent(limit)}`;
+      for (const engine of engines) {
+        for (const provider of providers) {
+          const page = await context.newPage();
+          const corpusBase = `http://127.0.0.1:${corpus.port}`;
+          const limit = process.env.EVAL_SUITE_LIMIT ?? "0";
+          const url =
+            `chrome-extension://${extensionId}/eval.html` +
+            `?corpus=${encodeURIComponent(corpusBase)}` +
+            `&provider=${encodeURIComponent(provider)}` +
+            `&engine=${encodeURIComponent(engine)}` +
+            `&autorun=1&threshold=0.65&limit=${encodeURIComponent(limit)}`;
 
-        page.on("console", (msg) => {
-          console.log(`[eval:${provider}]`, msg.type(), msg.text());
-        });
-        page.on("pageerror", (err) => {
-          console.log(`[eval:${provider}] pageerror`, err.message);
-        });
-        await page.goto(url);
-        // Surface early status while waiting for full corpus.
-        await page.waitForFunction(
-          () => {
-            const el = document.getElementById("statusLine");
-            return Boolean(el && el.textContent && el.textContent !== "Idle");
-          },
-          null,
-          { timeout: 60_000 },
-        );
-        console.log(
-          `[eval:${provider}] status=`,
-          await page.locator("#statusLine").innerText(),
-        );
-        await page.waitForSelector(
-          '#done[data-state="done"], #done[data-state="error"]',
-          { timeout: 25 * 60_000, state: "attached" },
-        );
-        const state = await page.getAttribute("#done", "data-state");
-        const raw = await page.locator("#suite-result").innerText();
-        const parsed = JSON.parse(raw) as Record<string, unknown>;
-        if (state === "error") {
-          browserResults.push({
-            mode: `js-ext-${provider}-cascade`,
-            skipped: provider === "webgpu",
-            error: parsed.message ?? "browser eval failed",
-            providerRequested: provider,
+          const tag = `${engine}/${provider}`;
+          page.on("console", (msg) => {
+            console.log(`[eval:${tag}]`, msg.type(), msg.text());
           });
-          if (provider !== "webgpu") {
-            throw new Error(String(parsed.message ?? "browser eval failed"));
+          page.on("pageerror", (err) => {
+            console.log(`[eval:${tag}] pageerror`, err.message);
+          });
+          await page.goto(url);
+          // Surface early status while waiting for full corpus.
+          await page.waitForFunction(
+            () => {
+              const el = document.getElementById("statusLine");
+              return Boolean(el && el.textContent && el.textContent !== "Idle");
+            },
+            null,
+            { timeout: 60_000 },
+          );
+          console.log(
+            `[eval:${tag}] status=`,
+            await page.locator("#statusLine").innerText(),
+          );
+          await page.waitForSelector(
+            '#done[data-state="done"], #done[data-state="error"]',
+            { timeout: 25 * 60_000, state: "attached" },
+          );
+          const state = await page.getAttribute("#done", "data-state");
+          const raw = await page.locator("#suite-result").innerText();
+          const parsed = JSON.parse(raw) as Record<string, unknown>;
+          if (state === "error") {
+            browserResults.push({
+              mode: `js-ext-${provider}-cascade`,
+              skipped: provider === "webgpu",
+              error: parsed.message ?? "browser eval failed",
+              providerRequested: provider,
+              engineRequested: engine,
+            });
+            if (provider !== "webgpu") {
+              throw new Error(String(parsed.message ?? "browser eval failed"));
+            }
+          } else {
+            const visualEngine =
+              typeof parsed.visualEngine === "string" && parsed.visualEngine
+                ? parsed.visualEngine
+                : "onnxruntime-web";
+            const modePrefix =
+              visualEngine === "zig-ort-wasm" ? "js-ext-zig" : "js-ext";
+            // ort-web: CF is always WASM; distilled follows providerActual.
+            const distilledEp = parsed.providerActual;
+            const forensicsEp =
+              visualEngine === "onnxruntime-web" ? "wasm" : distilledEp;
+            browserResults.push({
+              mode: `${modePrefix}-${provider}-cascade`,
+              runtime: "extension-chromium",
+              engine: visualEngine,
+              visualMode: "cascade",
+              preferEp: provider,
+              distilledEp,
+              forensicsEp,
+              gpuAvailable: parsed.gpuAvailable,
+              threshold: parsed.threshold,
+              balancedAccuracy: parsed.balancedAccuracy,
+              confusion: parsed.confusion,
+              timing: parsed.timing,
+              rows: parsed.rows,
+            });
           }
-        } else {
-          const visualEngine =
-            typeof parsed.visualEngine === "string" && parsed.visualEngine
-              ? parsed.visualEngine
-              : "onnxruntime-web";
-          const modePrefix =
-            visualEngine === "zig-ort-wasm" ? "js-ext-zig" : "js-ext";
-          browserResults.push({
-            mode: `${modePrefix}-${provider}-cascade`,
-            runtime: "extension-chromium",
-            engine: visualEngine,
-            visualMode: "cascade",
-            preferEp: provider,
-            distilledEp: parsed.providerActual,
-            forensicsEp: parsed.providerActual,
-            gpuAvailable: parsed.gpuAvailable,
-            threshold: parsed.threshold,
-            balancedAccuracy: parsed.balancedAccuracy,
-            confusion: parsed.confusion,
-            timing: parsed.timing,
-            rows: parsed.rows,
-          });
+          await page.close();
         }
-        await page.close();
       }
     } finally {
       await context.close();
@@ -215,6 +230,7 @@ test.describe("Offline extension eval suite", () => {
         {
           generatedAt: new Date().toISOString(),
           providers,
+          engines,
           results: browserResults,
         },
         null,

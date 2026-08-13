@@ -6,6 +6,7 @@ import type {
   PipelineTiming,
   ResetVisualResponse,
   SetupModelsResponse,
+  VisualEnginePreference,
   VisualProvider,
 } from "../shared/types";
 
@@ -231,6 +232,7 @@ async function setupModels() {
 async function configureRuntime(
   provider: VisualProvider["kind"],
   threshold: number,
+  visualEngine: VisualEnginePreference,
 ) {
   await send({
     kind: "set-options",
@@ -244,8 +246,15 @@ async function configureRuntime(
     kind: "reset-visual",
     requestId: crypto.randomUUID(),
     warm: true,
+    visualEngine,
   });
   return reset;
+}
+
+function parseEngineParam(raw: string | null): VisualEnginePreference {
+  if (raw === "ort-web" || raw === "onnxruntime-web") return "onnxruntime-web";
+  if (raw === "zig" || raw === "zig-ort-wasm") return "zig-ort-wasm";
+  return "auto";
 }
 
 async function analyzeOne(
@@ -279,15 +288,27 @@ async function runEval() {
     const corpusBase = corpusBaseInput.value.trim();
     const provider = providerSelect.value as VisualProvider["kind"];
     const threshold = Number(thresholdInput.value);
+    const enginePref = parseEngineParam(params().get("engine"));
     if (!corpusBase) throw new Error("Corpus base URL required");
     if (!Number.isFinite(threshold)) throw new Error("Bad threshold");
 
     await setupModels();
-    const reset = await configureRuntime(provider, threshold);
+    const reset = await configureRuntime(provider, threshold, enginePref);
     const visualEngine = reset.visualEngine ?? "none";
+    if (
+      enginePref === "onnxruntime-web" &&
+      visualEngine !== "onnxruntime-web"
+    ) {
+      throw new Error(
+        `Requested onnxruntime-web but warmed ${visualEngine}`,
+      );
+    }
+    if (enginePref === "zig-ort-wasm" && visualEngine !== "zig-ort-wasm") {
+      throw new Error(`Requested zig-ort-wasm but warmed ${visualEngine}`);
+    }
     metaLine.textContent =
       `provider requested=${provider} actual=${reset.backend.kind} ` +
-      `engine=${visualEngine} gpu=${reset.gpuAvailable}`;
+      `engine=${visualEngine} (pref=${enginePref}) gpu=${reset.gpuAvailable}`;
 
     const limit = Number(params().get("limit") ?? "0");
     const images = await loadCorpus(corpusBase, limit);

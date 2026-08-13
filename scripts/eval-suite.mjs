@@ -15,6 +15,7 @@
  *   EVAL_SUITE_BROWSER=0        skip Playwright extension modes
  *   EVAL_SUITE_HOST_MODES=...   comma list
  *   EVAL_SUITE_BROWSER_PROVIDERS=wasm,webgpu
+ *   EVAL_SUITE_BROWSER_ENGINES=ort-web,zig   (default: ort-web)
  *   EVAL_SUITE_LIMIT=N          balanced subset of corpus
  */
 import { spawnSync } from "node:child_process";
@@ -144,6 +145,8 @@ if (runBrowser) {
     EVAL_SUITE_BROWSER_PROVIDERS:
       process.env.EVAL_SUITE_BROWSER_PROVIDERS ??
       (process.env.CI === "1" ? "wasm" : "wasm,webgpu"),
+    EVAL_SUITE_BROWSER_ENGINES:
+      process.env.EVAL_SUITE_BROWSER_ENGINES ?? "ort-web",
   };
   if (useXvfb) {
     run("xvfb-run", ["--auto-servernum", "npx", ...pw], env);

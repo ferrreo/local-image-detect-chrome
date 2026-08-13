@@ -145,11 +145,22 @@ export type AnalyzeBytesResponse = {
   result: DetectionResult;
 };
 
+/** Which visual stack to warm / use for inference. */
+export type VisualEnginePreference =
+  | "auto"
+  | "zig-ort-wasm"
+  | "onnxruntime-web";
+
 /** Reset ORT sessions (switch WebGPU ↔ WASM) and optionally re-warm. */
 export type ResetVisualRequest = {
   kind: "reset-visual";
   requestId: string;
   warm?: boolean;
+  /**
+   * Force engine for this warm. Eval uses `onnxruntime-web` to avoid
+   * Zig WASM shadowing the ort-web cascade path.
+   */
+  visualEngine?: VisualEnginePreference;
 };
 
 /** Which visual runtime the offscreen document warmed. */
@@ -200,6 +211,8 @@ export type OffscreenInferRequest = {
    * `accurate` / omitted → full cascade (eval default).
    */
   speedMode?: AnalyzeSpeedMode;
+  /** Override visual stack for this infer (else last reset preference). */
+  visualEngine?: VisualEnginePreference;
 };
 
 export type OffscreenInferResponse = {
@@ -213,6 +226,7 @@ export type OffscreenResetRequest = {
   requestId: string;
   warm?: boolean;
   visualProvider?: VisualProvider["kind"];
+  visualEngine?: VisualEnginePreference;
 };
 
 export type OffscreenResetResponse = {

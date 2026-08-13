@@ -12,6 +12,7 @@ import {
   type OffscreenInferResponse,
   type OffscreenResetRequest,
   type OffscreenResetResponse,
+  type VisualEnginePreference,
   type VisualProvider,
 } from "../shared/types";
 import { ensureModelsReady, getModelStatus } from "../lib/model-cache";
@@ -98,6 +99,7 @@ async function inferViaOffscreen(args: {
   src?: string;
   mimeType: string;
   speedMode?: AnalyzeSpeedMode;
+  visualEngine?: VisualEnginePreference;
 }): Promise<OffscreenInferResponse | undefined> {
   if (!chrome.offscreen) return undefined;
   try {
@@ -110,6 +112,7 @@ async function inferViaOffscreen(args: {
       imageId: args.imageId,
       mimeType: args.mimeType,
       ...(args.speedMode ? { speedMode: args.speedMode } : {}),
+      ...(args.visualEngine ? { visualEngine: args.visualEngine } : {}),
       ...(args.src
         ? { src: args.src }
         : {
@@ -149,6 +152,7 @@ async function resetViaOffscreen(args: {
   requestId: string;
   warm?: boolean;
   visualProvider?: VisualProvider["kind"];
+  visualEngine?: VisualEnginePreference;
 }): Promise<OffscreenResetResponse | undefined> {
   if (!chrome.offscreen) return undefined;
   try {
@@ -159,6 +163,9 @@ async function resetViaOffscreen(args: {
       ...(args.warm !== undefined ? { warm: args.warm } : {}),
       ...(args.visualProvider !== undefined
         ? { visualProvider: args.visualProvider }
+        : {}),
+      ...(args.visualEngine !== undefined
+        ? { visualEngine: args.visualEngine }
         : {}),
     };
     const response: unknown = await chrome.runtime.sendMessage(message);
@@ -395,10 +402,12 @@ async function handleRequest(
     }
     case "reset-visual": {
       const options = await loadOptions();
+      const visualEngine = request.visualEngine ?? "auto";
       let reset = await resetViaOffscreen({
         requestId: request.requestId,
         ...(request.warm !== undefined ? { warm: request.warm } : {}),
         visualProvider: options.visualProvider,
+        visualEngine,
       });
       // One retry — first warm after offscreen boot is flaky under headless.
       if (!reset || reset.backend.kind === "none") {
@@ -407,6 +416,7 @@ async function handleRequest(
           requestId: request.requestId,
           warm: true,
           visualProvider: options.visualProvider,
+          visualEngine,
         });
       }
       if (reset) {

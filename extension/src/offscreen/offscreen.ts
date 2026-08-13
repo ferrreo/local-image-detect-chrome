@@ -1,4 +1,4 @@
-import { detectAiImage } from "../lib/pipeline";
+import { detectAiImage, type VisualEngineKind } from "../lib/pipeline";
 import {
   getVisualBackend,
   probeWebGpuAvailable,
@@ -17,11 +17,16 @@ import type {
   OffscreenInferResponse,
   OffscreenResetRequest,
   OffscreenResetResponse,
+  VisualEngineId,
+  VisualEnginePreference,
   VisualProvider,
 } from "../shared/types";
 import { asAiConfidence } from "../shared/types";
 import { base64ToArrayBuffer } from "../lib/bytes-codec";
 import { guessMimeType } from "../lib/image-decode";
+
+/** Last warmed engine preference — infer uses this unless overridden. */
+let activeEnginePref: VisualEnginePreference = "auto";
 
 async function loadProviderPreference(): Promise<VisualProvider["kind"]> {
   try {
@@ -84,22 +89,61 @@ function formatTiming(result: Awaited<ReturnType<typeof detectAiImage>>): string
   ].join(" ");
 }
 
+function toPipelineEngine(
+  pref: VisualEnginePreference,
+): VisualEngineKind | "auto" {
+  if (pref === "zig-ort-wasm") return "zig-wasm";
+  if (pref === "onnxruntime-web") return "onnxruntime-web";
+  return "auto";
+}
+
+async function resolveWarmEngine(
+  pref: VisualEnginePreference,
+): Promise<{ backend: ReturnType<typeof getVisualBackend>; visualEngine: VisualEngineId }> {
+  if (pref === "onnxruntime-web") {
+    const backend = await warmVisualClassifier();
+    return { backend, visualEngine: "onnxruntime-web" };
+  }
+  if (pref === "zig-ort-wasm") {
+    if (!(await isZigWasmOrtReady())) {
+      const zigErr = getZigWasmLoadError() ?? "Zig+ORT WASM not ready";
+      throw new Error(`visualEngine=zig-ort-wasm failed: ${zigErr}`);
+    }
+    const backend = await warmVisualZigWasm();
+    return { backend, visualEngine: "zig-ort-wasm" };
+  }
+  // auto: prefer Zig when linked, else ort-web (product default).
+  if (await isZigWasmOrtReady()) {
+    const backend = await warmVisualZigWasm();
+    return { backend, visualEngine: "zig-ort-wasm" };
+  }
+  const zigErr = getZigWasmLoadError();
+  if (zigErr) {
+    console.warn("Zig+ORT WASM unavailable, using onnxruntime-web:", zigErr);
+  }
+  const backend = await warmVisualClassifier();
+  return { backend, visualEngine: "onnxruntime-web" };
+}
+
 async function handleInfer(
   request: OffscreenInferRequest,
 ): Promise<OffscreenInferResponse> {
   const fetchT0 = performance.now();
   const { bytes, mimeType } = await loadInferBytes(request);
   const fetchMs = performance.now() - fetchT0;
+  const enginePref = request.visualEngine ?? activeEnginePref;
   const result = await detectAiImage({
     imageId: request.imageId,
     bytes,
     mimeType,
     ...(request.speedMode ? { speedMode: request.speedMode } : {}),
+    visualEngine: toPipelineEngine(enginePref),
   });
 
   // Structured stage times — CF on single-thread ORT WASM is the 1s+ spike.
   console.info(
-    `[truepixel] ${request.imageId} fetch=${fetchMs.toFixed(1)}ms ${formatTiming(result)} mode=${request.speedMode ?? "accurate"}`,
+    `[truepixel] ${request.imageId} fetch=${fetchMs.toFixed(1)}ms ${formatTiming(result)} ` +
+      `mode=${request.speedMode ?? "accurate"} engine=${enginePref}`,
   );
 
   return {
@@ -114,24 +158,17 @@ async function handleReset(
 ): Promise<OffscreenResetResponse> {
   const provider =
     request.visualProvider ?? (await loadProviderPreference());
+  const enginePref = request.visualEngine ?? "auto";
+  activeEnginePref = enginePref;
   setPreferredVisualProvider(provider);
   resetVisualClassifier();
   resetVisualZigWasm();
   let backend = getVisualBackend();
-  let visualEngine: "zig-ort-wasm" | "onnxruntime-web" | "none" = "none";
+  let visualEngine: VisualEngineId = "none";
   if (request.warm !== false) {
-    // Prefer Zig+ORT WASM (same cascade path as host) when linked.
-    if (await isZigWasmOrtReady()) {
-      backend = await warmVisualZigWasm();
-      visualEngine = "zig-ort-wasm";
-    } else {
-      const zigErr = getZigWasmLoadError();
-      if (zigErr) {
-        console.warn("Zig+ORT WASM unavailable, using onnxruntime-web:", zigErr);
-      }
-      backend = await warmVisualClassifier();
-      visualEngine = "onnxruntime-web";
-    }
+    const warmed = await resolveWarmEngine(enginePref);
+    backend = warmed.backend;
+    visualEngine = warmed.visualEngine;
   }
   return {
     kind: "offscreen-reset-result",
