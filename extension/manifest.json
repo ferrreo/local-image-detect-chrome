@@ -39,7 +39,7 @@
   "host_permissions": ["http://*/*", "https://*/*"],
   "web_accessible_resources": [
     {
-      "resources": ["ort/*", "icons/*"],
+      "resources": ["ort/*", "wasm/*", "icons/*"],
       "matches": ["http://*/*", "https://*/*"]
     }
   ],

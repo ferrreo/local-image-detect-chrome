@@ -6,6 +6,11 @@ import {
   setPreferredVisualProvider,
   warmVisualClassifier,
 } from "../lib/visual-classifier";
+import {
+  isZigWasmOrtReady,
+  resetVisualZigWasm,
+  warmVisualZigWasm,
+} from "../lib/visual-zig-wasm";
 import type {
   OffscreenInferRequest,
   OffscreenInferResponse,
@@ -60,9 +65,15 @@ async function handleReset(
     request.visualProvider ?? (await loadProviderPreference());
   setPreferredVisualProvider(provider);
   resetVisualClassifier();
+  resetVisualZigWasm();
   let backend = getVisualBackend();
   if (request.warm !== false) {
-    backend = await warmVisualClassifier();
+    // Prefer Zig+ORT WASM (same cascade path as host) when linked.
+    if (await isZigWasmOrtReady()) {
+      backend = await warmVisualZigWasm();
+    } else {
+      backend = await warmVisualClassifier();
+    }
   }
   return {
     kind: "offscreen-reset-result",

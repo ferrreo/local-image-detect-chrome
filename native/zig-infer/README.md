@@ -33,10 +33,19 @@ npm run build:zig
 
 EOF on stdin exits immediately (no hang). Use `quit` for a clean bye.
 
-## WASM spike
+## WASM (Zig + ORT static lib)
+
+Links `libonnxruntime_webassembly.a` into the extension module (same cascade dual as the host binary, WASM EP):
 
 ```bash
-zig build -Dwasm=true -Doptimize=ReleaseFast
+npm run setup:ort-wasm   # builds ORT wasm static lib via emscripten (slow, cached)
+npm run build:zig-wasm   # zig → .o, emcc link → zig-out/wasm/truepixel_infer.{js,wasm}
+npm run build            # copies into dist/wasm/
 ```
 
-Exports SIMD preprocess helpers only (`tp_rgb_to_nchw_half`, …). Full in-browser ORT stays on `onnxruntime-web` until a static ORT wasm library is linked.
+Layout:
+- `src/wasm_api.zig` — SIMD preprocess (`tp_rgb_to_nchw_half`, …)
+- `src/wasm_ort_bridge.c` — ORT C API sessions (`tp_session_create` / `tp_session_run`)
+- Linked with `libonnxruntime_webassembly.a` → `tp_has_ort_session() === 1`
+
+The offscreen document prefers this engine when `dist/wasm/` is present; otherwise falls back to `onnxruntime-web`.

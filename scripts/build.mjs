@@ -88,6 +88,24 @@ function copyStatic() {
     cpSync(modelsSrc, path.join(outdir, "models"), { recursive: true });
   }
 
+  // Zig+ORT WASM (linked libonnxruntime_webassembly.a) when built.
+  const zigWasmSrc = path.join(root, "native/zig-infer/zig-out/wasm");
+  if (
+    existsSync(path.join(zigWasmSrc, "truepixel_infer.wasm")) &&
+    existsSync(path.join(zigWasmSrc, "truepixel_infer.js"))
+  ) {
+    const zigWasmOut = path.join(outdir, "wasm");
+    mkdirSync(zigWasmOut, { recursive: true });
+    cpSync(
+      path.join(zigWasmSrc, "truepixel_infer.wasm"),
+      path.join(zigWasmOut, "truepixel_infer.wasm"),
+    );
+    cpSync(
+      path.join(zigWasmSrc, "truepixel_infer.js"),
+      path.join(zigWasmOut, "truepixel_infer.js"),
+    );
+  }
+
   // Stamp build metadata.
   writeFileSync(
     path.join(outdir, "build.json"),
