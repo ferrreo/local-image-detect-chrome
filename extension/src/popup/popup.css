@@ -1,0 +1,119 @@
+:root {
+  --bg0: #122018;
+  --bg1: #1c3226;
+  --ink: #e7f0e8;
+  --muted: #9bb3a2;
+  --accent: #d6a45b;
+  --line: rgba(231, 240, 232, 0.14);
+  --danger: #e08a7a;
+  --ok: #7dcea0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 300px;
+  color: var(--ink);
+  font: 14px/1.4 "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(214, 164, 91, 0.18), transparent 55%),
+    linear-gradient(160deg, var(--bg1), var(--bg0));
+}
+
+.shell {
+  padding: 16px 16px 14px;
+}
+
+.brand {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.tag {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.status {
+  margin-top: 14px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.status p {
+  margin: 4px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.label {
+  color: var(--muted);
+}
+
+.actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+button {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 9px 12px;
+  background: var(--accent);
+  color: #1a140c;
+  font: 600 13px/1 "IBM Plex Mono", "Cascadia Mono", monospace;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.message {
+  min-height: 1.2em;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.message.error {
+  color: var(--danger);
+}
+
+.message.ok {
+  color: var(--ok);
+}
+
+footer {
+  margin-top: 12px;
+}
+
+footer a {
+  color: var(--accent);
+  font-size: 12px;
+}

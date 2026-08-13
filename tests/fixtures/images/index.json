@@ -1,0 +1,28 @@
+{
+  "images": [
+    {
+      "file": "ai_smooth_1.png",
+      "label": "ai"
+    },
+    {
+      "file": "ai_smooth_2.png",
+      "label": "ai"
+    },
+    {
+      "file": "ai_smooth_3.png",
+      "label": "ai"
+    },
+    {
+      "file": "real_noise_1.png",
+      "label": "real"
+    },
+    {
+      "file": "real_noise_2.png",
+      "label": "real"
+    },
+    {
+      "file": "real_noise_3.png",
+      "label": "real"
+    }
+  ]
+}

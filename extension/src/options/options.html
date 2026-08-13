@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TruePixel options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>TruePixel</h1>
+      <p class="lede">
+        All inference runs inside Chrome using WebGPU or WASM. Image pixels never
+        leave your machine after the optional one-time model download.
+      </p>
+
+      <form id="form">
+        <label>
+          Confidence threshold
+          <input
+            id="threshold"
+            name="threshold"
+            type="number"
+            min="0.5"
+            max="0.95"
+            step="0.01"
+            value="0.65"
+          />
+        </label>
+        <p class="hint">
+          Bounty evaluation uses 65%. Images at or above this AI confidence are
+          labeled AI.
+        </p>
+
+        <label class="row">
+          <input id="autoScan" type="checkbox" checked />
+          Automatically analyze images while browsing
+        </label>
+
+        <label class="row">
+          <input id="debug" type="checkbox" />
+          Debug mode
+        </label>
+
+        <button type="submit">Save</button>
+        <p id="saved" class="saved" hidden>Saved</p>
+      </form>
+    </main>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

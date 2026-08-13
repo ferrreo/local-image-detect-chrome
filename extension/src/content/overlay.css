@@ -1,0 +1,35 @@
+.truepixel-badge {
+  position: absolute;
+  z-index: 2147483646;
+  pointer-events: none;
+  font: 600 11px/1.2 "IBM Plex Mono", "Cascadia Mono", "Segoe UI Mono", monospace;
+  letter-spacing: 0.02em;
+  padding: 4px 7px;
+  border-radius: 2px;
+  color: #f4f1ea;
+  background: rgba(20, 24, 28, 0.88);
+  border: 1px solid rgba(244, 241, 234, 0.25);
+  box-shadow: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.truepixel-badge.truepixel-ai {
+  background: rgba(122, 28, 28, 0.92);
+  border-color: rgba(255, 196, 196, 0.35);
+}
+
+.truepixel-badge.truepixel-real {
+  background: rgba(20, 72, 48, 0.92);
+  border-color: rgba(180, 230, 200, 0.35);
+}
+
+.truepixel-badge.truepixel-uncertain {
+  background: rgba(90, 68, 20, 0.92);
+  border-color: rgba(240, 210, 140, 0.35);
+}
+
+.truepixel-badge.truepixel-error,
+.truepixel-badge.truepixel-pending {
+  background: rgba(40, 44, 48, 0.9);
+}
