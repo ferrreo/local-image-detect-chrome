@@ -58,6 +58,13 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--val-frac", type=float, default=0.2)
     p.add_argument("--augment-views", type=int, default=1)
+    p.add_argument(
+        "--exclude-substr",
+        action="append",
+        default=[],
+        help="Drop training images whose relative path contains this substring "
+        "(repeatable). Example: --exclude-substr lexica  (use those only for holdout).",
+    )
     p.add_argument("--skip-export", action="store_true")
     return p.parse_args()
 
