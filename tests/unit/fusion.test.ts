@@ -90,8 +90,8 @@ describe("fuseDetection", () => {
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.5),
-      visual: tier("visual", 0.58),
-      visualSecondary: tier("visual", 0.8),
+      visual: tier("visual", 0.55),
+      visualSecondary: tier("visual", 0.82),
       spectralFeatures: {
         highFreqEnergyRatio: 0.35,
         laplacianVariance: 900,
@@ -109,9 +109,64 @@ describe("fuseDetection", () => {
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.5),
       visual: tier("visual", 0.56),
-      visualSecondary: tier("visual", 0.77),
+      visualSecondary: tier("visual", 0.82),
     });
     expect(out.tiers.at(-1)?.detail).not.toBe("forensics-ambiguous-distilled");
+  });
+
+  it("does not promote mild CF (~72%) on busy real photos", () => {
+    // Observed FP: restaurant interior stamped AI 72% via CF takeover.
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.42),
+      visual: tier("visual", 0.58),
+      visualSecondary: tier("visual", 0.72),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.4,
+        laplacianVariance: 1200,
+        chromaFlatness: 0.52,
+        blockiness: 0.22,
+      },
+    });
+    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).not.toBe("forensics-ambiguous-distilled");
+  });
+
+  it("does not let CF 77% flip hand-drawn / illustration mid-band", () => {
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.48),
+      visual: tier("visual", 0.56),
+      visualSecondary: tier("visual", 0.77),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.38,
+        laplacianVariance: 1400,
+        chromaFlatness: 0.62,
+        blockiness: 0.18,
+      },
+    });
+    expect(out.confidence).toBeLessThan(0.65);
+    expect(out.label.kind).not.toBe("ai");
+  });
+
+  it("still catches near-threshold distilled AI without needing mild CF", () => {
+    // krea kitchen_window-style: distilled 0.644 / spectral 0.423
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.423),
+      visual: tier("visual", 0.644),
+      visualSecondary: tier("visual", 0.727),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.35,
+        laplacianVariance: 900,
+        chromaFlatness: 0.5,
+        blockiness: 0.2,
+      },
+    });
+    expect(out.confidence).toBeGreaterThanOrEqual(0.65);
+    expect(out.label.kind).toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toBe("distilled-near-threshold");
   });
 });
 

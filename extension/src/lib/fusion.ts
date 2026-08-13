@@ -70,13 +70,13 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   let confidence: AiConfidence;
   let detail: string;
 
-  if (distilled >= 0.645 && spectral <= 0.43) {
+  if (distilled >= 0.63 && spectral <= 0.43) {
     confidence = asAiConfidence(Math.max(distilled, 0.66));
     detail = "distilled-near-threshold";
   } else if (
     forensics !== undefined &&
     feats &&
-    forensics >= 0.715 &&
+    forensics >= 0.78 &&
     distilled >= 0.3 &&
     feats.laplacianVariance >= 580 &&
     feats.chromaFlatness >= 0.34 &&
@@ -88,7 +88,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     forensics !== undefined &&
     feats &&
     distilled >= 0.62 &&
-    forensics >= 0.67 &&
+    forensics >= 0.72 &&
     feats.chromaFlatness >= 0.74 &&
     feats.laplacianVariance >= 700
   ) {
@@ -97,7 +97,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   } else if (
     forensics !== undefined &&
     feats &&
-    forensics >= 0.715 &&
+    forensics >= 0.78 &&
     distilled >= 0.4 &&
     feats.laplacianVariance >= 800 &&
     feats.chromaFlatness >= 0.6 &&
@@ -107,16 +107,16 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     confidence = asAiConfidence(Math.max(forensics, 0.66));
     detail = "forensics-high-flat-texture";
   } else if (
-    // StyleGAN / TPDNE: mid-band distilled + strong CF, but only with some
-    // photo-like texture (cuts flat cel-shaded illustration FPs).
+    // StyleGAN / TPDNE: distilled stuck mid-low + decisive CF.
+    // Mild CF (~0.72) over-fires on real restaurant / busy photos.
     forensics !== undefined &&
     feats &&
     distilled >= 0.5 &&
-    distilled < 0.65 &&
-    forensics >= 0.7 &&
-    forensics >= distilled + 0.08 &&
-    feats.laplacianVariance >= 500 &&
-    feats.chromaFlatness <= 0.68
+    distilled < 0.6 &&
+    forensics >= 0.78 &&
+    forensics >= distilled + 0.18 &&
+    feats.laplacianVariance >= 600 &&
+    feats.chromaFlatness <= 0.58
   ) {
     confidence = asAiConfidence(Math.max(forensics, 0.66));
     detail = "forensics-ambiguous-distilled";
