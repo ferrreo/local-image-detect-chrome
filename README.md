@@ -83,10 +83,17 @@ gh run view --log
 
 Balanced accuracy is measured at a **65% confidence threshold**, matching the bounty brief. Configure the threshold on the options page if you need a different operating point for personal use.
 
-Local fixture smoke eval (stub visual path):
+Local eval prefers the stored OpenRouter multi-model corpus under `benchmark/openrouter/` (stub visual path by default):
 
 ```bash
 npm run eval:local
+```
+
+Refresh that corpus incrementally when OpenRouter adds models (needs `OPENROUTER_API_KEY` in `.env`):
+
+```bash
+npm run fetch:openrouter   # skips models already in benchmark/openrouter/registry.json
+npm run fetch:real
 ```
 
 ## Privacy

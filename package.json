@@ -12,6 +12,8 @@
     "build": "node scripts/build.mjs",
     "build:watch": "node scripts/build.mjs --watch",
     "setup:models": "node scripts/setup-models.mjs",
+    "fetch:openrouter": "node scripts/fetch-openrouter-images.mjs",
+    "fetch:real": "node scripts/fetch-real-photos.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:unit": "npm run prepare:assets && vitest run tests/unit",
@@ -34,6 +36,7 @@
     "@types/node": "^24.2.1",
     "esbuild": "^0.25.8",
     "jsdom": "^26.1.0",
+    "sharp": "^0.35.3",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
   }

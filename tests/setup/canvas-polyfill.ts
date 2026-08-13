@@ -1,4 +1,4 @@
-import { inflateSync } from "node:zlib";
+import sharp from "sharp";
 
 type RgbaImage = {
   width: number;
@@ -6,92 +6,34 @@ type RgbaImage = {
   data: Uint8ClampedArray;
 };
 
-function paeth(a: number, b: number, c: number): number {
-  const p = a + b - c;
-  const pa = Math.abs(p - a);
-  const pb = Math.abs(p - b);
-  const pc = Math.abs(p - c);
-  if (pa <= pb && pa <= pc) return a;
-  if (pb <= pc) return b;
-  return c;
-}
-
-function decodePng(buffer: ArrayBuffer): RgbaImage {
-  const bytes = new Uint8Array(buffer);
-  if (
-    bytes[0] !== 0x89 ||
-    bytes[1] !== 0x50 ||
-    bytes[2] !== 0x4e ||
-    bytes[3] !== 0x47
-  ) {
-    throw new Error("Not a PNG");
-  }
-
-  let offset = 8;
-  let width = 0;
-  let height = 0;
-  const idat: Uint8Array[] = [];
-
-  while (offset + 8 <= bytes.length) {
-    const len =
-      ((bytes[offset] ?? 0) << 24) |
-      ((bytes[offset + 1] ?? 0) << 16) |
-      ((bytes[offset + 2] ?? 0) << 8) |
-      (bytes[offset + 3] ?? 0);
-    const type = String.fromCharCode(
-      bytes[offset + 4] ?? 0,
-      bytes[offset + 5] ?? 0,
-      bytes[offset + 6] ?? 0,
-      bytes[offset + 7] ?? 0,
-    );
-    const data = bytes.subarray(offset + 8, offset + 8 + len);
-    if (type === "IHDR") {
-      width =
-        ((data[0] ?? 0) << 24) |
-        ((data[1] ?? 0) << 16) |
-        ((data[2] ?? 0) << 8) |
-        (data[3] ?? 0);
-      height =
-        ((data[4] ?? 0) << 24) |
-        ((data[5] ?? 0) << 16) |
-        ((data[6] ?? 0) << 8) |
-        (data[7] ?? 0);
-    } else if (type === "IDAT") {
-      idat.push(data);
-    } else if (type === "IEND") {
-      break;
+async function decodeAnyImage(buffer: ArrayBuffer): Promise<RgbaImage> {
+  const bytes = Buffer.from(buffer);
+  // Trim trailing latin1 provenance markers after IEND for synthetic fixtures.
+  let end = bytes.length;
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
+    for (let i = 0; i < bytes.length - 8; i += 1) {
+      if (
+        bytes[i] === 0x49 &&
+        bytes[i + 1] === 0x45 &&
+        bytes[i + 2] === 0x4e &&
+        bytes[i + 3] === 0x44
+      ) {
+        end = i + 8;
+        break;
+      }
     }
-    offset += 12 + len;
   }
 
-  const compressed = Buffer.concat(idat.map((c) => Buffer.from(c)));
-  const raw = inflateSync(compressed);
-  const stride = 1 + width * 4;
-  const out = new Uint8ClampedArray(width * height * 4);
-  let prev = new Uint8Array(width * 4);
+  const { data, info } = await sharp(bytes.subarray(0, end))
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
 
-  for (let y = 0; y < height; y += 1) {
-    const rowOffset = y * stride;
-    const filter = raw[rowOffset] ?? 0;
-    const row = raw.subarray(rowOffset + 1, rowOffset + stride);
-    const cur = new Uint8Array(width * 4);
-    for (let i = 0; i < row.length; i += 1) {
-      const x = row[i] ?? 0;
-      const a = i >= 4 ? (cur[i - 4] ?? 0) : 0;
-      const b = prev[i] ?? 0;
-      const c = i >= 4 ? (prev[i - 4] ?? 0) : 0;
-      let val = x;
-      if (filter === 1) val = (x + a) & 255;
-      else if (filter === 2) val = (x + b) & 255;
-      else if (filter === 3) val = (x + Math.floor((a + b) / 2)) & 255;
-      else if (filter === 4) val = (x + paeth(a, b, c)) & 255;
-      cur[i] = val;
-    }
-    out.set(cur, y * width * 4);
-    prev = cur;
-  }
-
-  return { width, height, data: out };
+  return {
+    width: info.width,
+    height: info.height,
+    data: new Uint8ClampedArray(data.buffer, data.byteOffset, data.byteLength),
+  };
 }
 
 class FakeImageBitmap {
@@ -133,7 +75,6 @@ class FakeOffscreenCanvas {
         dw: number,
         dh: number,
       ) {
-        // Nearest-neighbor resize/crop for tests.
         for (let y = 0; y < dh; y += 1) {
           for (let x = 0; x < dw; x += 1) {
             const srcX = Math.min(
@@ -174,40 +115,19 @@ class FakeOffscreenCanvas {
 }
 
 export function installCanvasPolyfills(): void {
-  if (typeof globalThis.createImageBitmap !== "function") {
-    const createImageBitmapPolyfill = async (
-      image: ImageBitmapSource,
-    ): Promise<ImageBitmap> => {
-      if (!(image instanceof Blob)) {
-        throw new Error("Test polyfill only supports Blob sources");
-      }
-      const buffer = await image.arrayBuffer();
-      // Fixtures may append latin1 markers after IEND; trim to PNG stream.
-      const bytes = new Uint8Array(buffer);
-      let end = bytes.length;
-      const marker = [0x49, 0x45, 0x4e, 0x44];
-      for (let i = 0; i < bytes.length - 8; i += 1) {
-        if (
-          bytes[i] === marker[0] &&
-          bytes[i + 1] === marker[1] &&
-          bytes[i + 2] === marker[2] &&
-          bytes[i + 3] === marker[3]
-        ) {
-          end = i + 8;
-          break;
-        }
-      }
-      const png = decodePng(buffer.slice(0, end));
-      return new FakeImageBitmap(png) as unknown as ImageBitmap;
-    };
-    globalThis.createImageBitmap =
-      createImageBitmapPolyfill as typeof createImageBitmap;
-  }
+  globalThis.createImageBitmap = (async (
+    image: ImageBitmapSource,
+  ): Promise<ImageBitmap> => {
+    if (!(image instanceof Blob)) {
+      throw new Error("Test polyfill only supports Blob sources");
+    }
+    const buffer = await image.arrayBuffer();
+    const rgba = await decodeAnyImage(buffer);
+    return new FakeImageBitmap(rgba) as unknown as ImageBitmap;
+  }) as typeof createImageBitmap;
 
-  if (typeof globalThis.OffscreenCanvas !== "function") {
-    globalThis.OffscreenCanvas =
-      FakeOffscreenCanvas as unknown as typeof OffscreenCanvas;
-  }
+  globalThis.OffscreenCanvas =
+    FakeOffscreenCanvas as unknown as typeof OffscreenCanvas;
 }
 
 installCanvasPolyfills();
