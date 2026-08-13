@@ -91,22 +91,27 @@ describe("fuseDetection", () => {
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.5),
       visual: tier("visual", 0.58),
-      visualSecondary: tier("visual", 0.77),
+      visualSecondary: tier("visual", 0.8),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.35,
+        laplacianVariance: 900,
+        chromaFlatness: 0.45,
+        blockiness: 0.2,
+      },
     });
     expect(out.confidence).toBeGreaterThanOrEqual(0.65);
     expect(out.label.kind).toBe("ai");
     expect(out.tiers.at(-1)?.detail).toBe("forensics-ambiguous-distilled");
   });
 
-  it("catches weaker CF mid-band faces (~0.72) that still beat distilled", () => {
+  it("does not apply mid-band CF boost without photo-like texture feats", () => {
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.5),
       visual: tier("visual", 0.56),
-      visualSecondary: tier("visual", 0.72),
+      visualSecondary: tier("visual", 0.77),
     });
-    expect(out.label.kind).toBe("ai");
-    expect(out.tiers.at(-1)?.detail).toBe("forensics-ambiguous-distilled");
+    expect(out.tiers.at(-1)?.detail).not.toBe("forensics-ambiguous-distilled");
   });
 });
 

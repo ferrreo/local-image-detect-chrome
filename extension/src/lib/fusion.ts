@@ -107,13 +107,16 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     confidence = asAiConfidence(Math.max(forensics, 0.66));
     detail = "forensics-high-flat-texture";
   } else if (
-    // StyleGAN / TPDNE: distilled stuck mid-band, CF clearly AI.
-    // d>=0.5 avoids the smooth-real FP case (d~0.45, CF~0.79).
+    // StyleGAN / TPDNE: mid-band distilled + strong CF, but only with some
+    // photo-like texture (cuts flat cel-shaded illustration FPs).
     forensics !== undefined &&
+    feats &&
     distilled >= 0.5 &&
     distilled < 0.65 &&
     forensics >= 0.7 &&
-    forensics >= distilled + 0.08
+    forensics >= distilled + 0.08 &&
+    feats.laplacianVariance >= 500 &&
+    feats.chromaFlatness <= 0.68
   ) {
     confidence = asAiConfidence(Math.max(forensics, 0.66));
     detail = "forensics-ambiguous-distilled";

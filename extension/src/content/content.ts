@@ -15,9 +15,7 @@ const MIN_SIDE = 96;
 const OVERLAY_ATTR = "data-truepixel-id";
 const STATE_ATTR = "data-truepixel-state";
 const BADGE_CLASS = "truepixel-badge";
-const CONCEAL_BLUR = "truepixel-conceal-blur";
-const CONCEAL_BLANK = "truepixel-conceal-blank";
-const CONCEAL_PENDING = "truepixel-conceal-pending";
+const VEIL_CLASS = "truepixel-veil";
 
 type TrackedImage = {
   id: string;
@@ -55,52 +53,100 @@ function isEligible(img: HTMLImageElement): boolean {
   return true;
 }
 
-function clearConcealClasses(img: HTMLImageElement): void {
-  img.classList.remove(CONCEAL_BLUR, CONCEAL_BLANK, CONCEAL_PENDING);
+function ensureParentPositioned(img: HTMLImageElement): HTMLElement {
+  const parent = img.parentElement ?? document.body;
+  const computed = getComputedStyle(parent);
+  if (computed.position === "static") {
+    parent.style.position = "relative";
+  }
+  return parent;
+}
+
+function positionOverImage(
+  img: HTMLImageElement,
+  el: HTMLElement,
+  inset = 0,
+): void {
+  const parent = ensureParentPositioned(img);
+  const imgRect = img.getBoundingClientRect();
+  const parentRect = parent.getBoundingClientRect();
+  const top = Math.max(0, imgRect.top - parentRect.top) + inset;
+  const left = Math.max(0, imgRect.left - parentRect.left) + inset;
+  el.style.top = `${top}px`;
+  el.style.left = `${left}px`;
+  if (inset === 0) {
+    el.style.width = `${Math.max(0, imgRect.width)}px`;
+    el.style.height = `${Math.max(0, imgRect.height)}px`;
+  }
+}
+
+function removeVeil(id: string): void {
+  document
+    .querySelectorAll(`.${VEIL_CLASS}[${OVERLAY_ATTR}="${id}"]`)
+    .forEach((node) => node.remove());
+}
+
+function ensureVeil(
+  img: HTMLImageElement,
+  id: string,
+  mode: "blur" | "blank",
+): HTMLElement {
+  const parent = ensureParentPositioned(img);
+  let veil = parent.querySelector<HTMLElement>(
+    `.${VEIL_CLASS}[${OVERLAY_ATTR}="${id}"]`,
+  );
+  if (!veil) {
+    veil = document.createElement("div");
+    veil.className = VEIL_CLASS;
+    veil.setAttribute(OVERLAY_ATTR, id);
+    veil.setAttribute("aria-hidden", "true");
+    parent.appendChild(veil);
+  }
+  veil.classList.toggle("truepixel-veil-blur", mode === "blur");
+  veil.classList.toggle("truepixel-veil-blank", mode === "blank");
+  positionOverImage(img, veil);
+  return veil;
 }
 
 /**
- * Blur only while analyzing, or when the final label is AI (per aiConceal).
- * Below-threshold results (real / uncertain) must show clearly.
+ * Cover the image with a veil while pending, or when labeled AI (per setting).
+ * CSS filter on <img> is unreliable across sites — use an overlay instead.
  */
 function applyConcealment(entry: TrackedImage): void {
   const img = entry.element;
-  clearConcealClasses(img);
+  const id = entry.id;
+
   if (entry.revealed) {
+    removeVeil(id);
     img.setAttribute(STATE_ATTR, "clear");
     return;
   }
 
   if (entry.inFlight || !entry.result) {
-    img.classList.add(CONCEAL_PENDING);
+    ensureVeil(img, id, "blur");
     img.setAttribute(STATE_ATTR, "pending");
     return;
   }
 
   if (entry.result.label.kind === "ai") {
     const mode: AiConcealMode = options.aiConceal;
-    if (mode === "blur") {
-      img.classList.add(CONCEAL_BLUR);
-      img.setAttribute(STATE_ATTR, "ai");
-    } else if (mode === "blank") {
-      img.classList.add(CONCEAL_BLANK);
+    if (mode === "blur" || mode === "blank") {
+      ensureVeil(img, id, mode);
       img.setAttribute(STATE_ATTR, "ai");
     } else {
+      removeVeil(id);
       img.setAttribute(STATE_ATTR, "clear");
     }
     return;
   }
 
-  // real / uncertain / error — not over AI threshold → unblur
+  // real / uncertain / error — not over AI threshold → show
+  removeVeil(id);
   img.setAttribute(STATE_ATTR, "clear");
 }
 
 function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
-  const parent = img.parentElement ?? document.body;
-  const computed = getComputedStyle(parent);
-  if (computed.position === "static") {
-    parent.style.position = "relative";
-  }
+  const parent = ensureParentPositioned(img);
 
   let badge = parent.querySelector<HTMLElement>(
     `.${BADGE_CLASS}[${OVERLAY_ATTR}="${id}"]`,
@@ -134,16 +180,8 @@ function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
     });
     parent.appendChild(badge);
   }
-  positionBadge(img, badge);
+  positionOverImage(img, badge, 6);
   return badge;
-}
-
-function positionBadge(img: HTMLImageElement, badge: HTMLElement): void {
-  const parent = img.parentElement ?? document.body;
-  const imgRect = img.getBoundingClientRect();
-  const parentRect = parent.getBoundingClientRect();
-  badge.style.top = `${Math.max(0, imgRect.top - parentRect.top) + 6}px`;
-  badge.style.left = `${Math.max(0, imgRect.left - parentRect.left) + 6}px`;
 }
 
 function renderResult(img: HTMLImageElement, result: DetectionResult): void {
@@ -424,7 +462,7 @@ chrome.runtime.onMessage.addListener((message: unknown) => {
       delete entry.result;
       entry.revealed = false;
       entry.inFlight = false;
-      clearConcealClasses(entry.element);
+      removeVeil(entry.id);
       entry.element.removeAttribute(STATE_ATTR);
     }
     scheduleScan();

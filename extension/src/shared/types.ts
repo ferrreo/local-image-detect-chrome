@@ -261,7 +261,7 @@ export const DEFAULT_OPTIONS = {
   debug: false,
   stubInference: false,
   visualProvider: "auto",
-  aiConceal: "none",
+  aiConceal: "blur",
 } as const satisfies ExtensionOptions;
 
 export function parseAiConcealMode(value: unknown): AiConcealMode {
