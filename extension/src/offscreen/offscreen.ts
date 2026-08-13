@@ -68,16 +68,19 @@ async function handleReset(
   resetVisualClassifier();
   resetVisualZigWasm();
   let backend = getVisualBackend();
+  let visualEngine: "zig-ort-wasm" | "onnxruntime-web" | "none" = "none";
   if (request.warm !== false) {
     // Prefer Zig+ORT WASM (same cascade path as host) when linked.
     if (await isZigWasmOrtReady()) {
       backend = await warmVisualZigWasm();
+      visualEngine = "zig-ort-wasm";
     } else {
       const zigErr = getZigWasmLoadError();
       if (zigErr) {
         console.warn("Zig+ORT WASM unavailable, using onnxruntime-web:", zigErr);
       }
       backend = await warmVisualClassifier();
+      visualEngine = "onnxruntime-web";
     }
   }
   return {
@@ -85,6 +88,7 @@ async function handleReset(
     requestId: request.requestId,
     backend,
     gpuAvailable: await probeWebGpuAvailable(),
+    visualEngine,
   };
 }
 

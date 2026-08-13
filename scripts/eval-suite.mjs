@@ -92,6 +92,25 @@ if (runHost) {
 }
 
 if (runBrowser) {
+  // Extension suite must ship Zig+ORT WASM (tp_has_ort_session=1), not ort-web only.
+  const zigWasmJs = path.join(
+    root,
+    "native/zig-infer/zig-out/wasm/truepixel_infer.js",
+  );
+  const ortWasmA = path.join(
+    root,
+    "native/ort-wasm/lib/libonnxruntime_webassembly.a",
+  );
+  if (!existsSync(zigWasmJs)) {
+    if (!existsSync(ortWasmA) && process.env.EVAL_SUITE_SKIP_ZIG_WASM !== "1") {
+      console.log("Building ORT wasm static lib (first time; slow)…");
+      run("npm", ["run", "setup:ort-wasm"]);
+    }
+    if (existsSync(ortWasmA) || process.env.EVAL_SUITE_SKIP_ZIG_WASM !== "1") {
+      console.log("Linking Zig+ORT WASM for extension eval…");
+      run("npm", ["run", "build:zig-wasm"]);
+    }
+  }
   // `npm run build` already runs prepare:assets via prebuild — don't duplicate.
   run("npm", ["run", "build"]);
   if (!existsSync(path.join(root, "dist/models"))) {
@@ -99,6 +118,18 @@ if (runBrowser) {
   }
   if (!existsSync(path.join(root, "dist/eval.html"))) {
     throw new Error("dist/eval.html missing after build");
+  }
+  if (!existsSync(path.join(root, "dist/wasm/truepixel_infer.wasm"))) {
+    if (process.env.EVAL_SUITE_SKIP_ZIG_WASM === "1") {
+      console.warn(
+        "WARNING: dist/wasm missing — browser rows will be onnxruntime-web, not zig-ort-wasm",
+      );
+    } else {
+      throw new Error(
+        "dist/wasm/truepixel_infer.wasm missing after build. " +
+          "Run: npm run setup:ort-wasm && npm run build:zig-wasm && npm run build",
+      );
+    }
   }
   const pw = [
     "playwright",

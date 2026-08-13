@@ -177,10 +177,16 @@ test.describe("Offline extension eval suite", () => {
             throw new Error(String(parsed.message ?? "browser eval failed"));
           }
         } else {
+          const visualEngine =
+            typeof parsed.visualEngine === "string" && parsed.visualEngine
+              ? parsed.visualEngine
+              : "onnxruntime-web";
+          const modePrefix =
+            visualEngine === "zig-ort-wasm" ? "js-ext-zig" : "js-ext";
           browserResults.push({
-            mode: `js-ext-${provider}-cascade`,
+            mode: `${modePrefix}-${provider}-cascade`,
             runtime: "extension-chromium",
-            engine: "onnxruntime-web",
+            engine: visualEngine,
             visualMode: "cascade",
             preferEp: provider,
             distilledEp: parsed.providerActual,

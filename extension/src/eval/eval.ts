@@ -34,6 +34,8 @@ type SuiteResult = {
   corpusBase: string;
   providerRequested: VisualProvider["kind"];
   providerActual: string;
+  /** Runtime that served visual: zig-ort-wasm | onnxruntime-web | … */
+  visualEngine: string;
   gpuAvailable: boolean;
   threshold: number;
   balancedAccuracy: number;
@@ -221,7 +223,10 @@ async function runEval() {
 
     await setupModels();
     const reset = await configureRuntime(provider, threshold);
-    metaLine.textContent = `provider requested=${provider} actual=${reset.backend.kind} gpu=${reset.gpuAvailable}`;
+    const visualEngine = reset.visualEngine ?? "none";
+    metaLine.textContent =
+      `provider requested=${provider} actual=${reset.backend.kind} ` +
+      `engine=${visualEngine} gpu=${reset.gpuAvailable}`;
 
     const limit = Number(params().get("limit") ?? "0");
     const images = await loadCorpus(corpusBase, limit);
@@ -301,6 +306,7 @@ async function runEval() {
       corpusBase,
       providerRequested: provider,
       providerActual: reset.backend.kind,
+      visualEngine,
       gpuAvailable: reset.gpuAvailable,
       threshold,
       balancedAccuracy: balancedAccuracy(confusion),

@@ -111,7 +111,8 @@ Runs the **real unpacked extension** in Playwright Chromium (ORT WebGPU / WASM) 
 ```bash
 npm ci                             # required once (esbuild, playwright, …)
 npm run setup:models && npm run setup:ort && npm run build:zig
-npm run eval:suite                 # local PC: host + browser wasm/webgpu (cascade dual)
+npm run setup:ort-wasm && npm run build:zig-wasm   # once: link ORT into extension WASM
+npm run eval:suite                 # local PC: host + browser zig-ort-wasm / webgpu cascade
 npm run eval:suite:ci              # CI-sized subset (wasm + key host modes)
 # EVAL_SUITE_LIMIT=16 EVAL_SUITE_BROWSER_PROVIDERS=webgpu,wasm npm run eval:suite
 ```

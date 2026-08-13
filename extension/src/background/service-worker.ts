@@ -386,6 +386,7 @@ async function handleRequest(
           requestId: request.requestId,
           backend: reset.backend,
           gpuAvailable: reset.gpuAvailable,
+          visualEngine: reset.visualEngine,
         };
       }
       return {
@@ -393,6 +394,7 @@ async function handleRequest(
         requestId: request.requestId,
         backend: backendCache,
         gpuAvailable: false,
+        visualEngine: "none",
       };
     }
     default: {

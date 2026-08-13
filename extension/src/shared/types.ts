@@ -131,11 +131,15 @@ export type ResetVisualRequest = {
   warm?: boolean;
 };
 
+/** Which visual runtime the offscreen document warmed. */
+export type VisualEngineId = "zig-ort-wasm" | "onnxruntime-web" | "stub" | "none";
+
 export type ResetVisualResponse = {
   kind: "reset-visual-result";
   requestId: string;
   backend: InferenceBackend;
   gpuAvailable: boolean;
+  visualEngine: VisualEngineId;
 };
 
 export type ExtensionRequest =
@@ -185,6 +189,7 @@ export type OffscreenResetResponse = {
   requestId: string;
   backend: InferenceBackend;
   gpuAvailable: boolean;
+  visualEngine: VisualEngineId;
 };
 
 export type ExtensionOptions = {
