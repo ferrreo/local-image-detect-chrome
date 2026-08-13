@@ -106,6 +106,17 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   ) {
     confidence = asAiConfidence(Math.max(forensics, 0.66));
     detail = "forensics-high-flat-texture";
+  } else if (
+    // StyleGAN / TPDNE: distilled stuck mid-band, CF clearly AI.
+    // Keep tighter than texture gates so smooth reals (d~0.45) stay out.
+    forensics !== undefined &&
+    distilled >= 0.5 &&
+    distilled < 0.65 &&
+    forensics >= 0.75 &&
+    forensics >= distilled + 0.12
+  ) {
+    confidence = asAiConfidence(Math.max(forensics, 0.66));
+    detail = "forensics-ambiguous-distilled";
   } else {
     const fused = 0.78 * distilled + 0.22 * spectral;
     confidence = asAiConfidence(calibrate(asAiConfidence(fused)));

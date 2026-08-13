@@ -34,4 +34,15 @@ describe("needsForensicsCascade", () => {
       }),
     ).toBe(false);
   });
+
+  it("requests forensics when distilled is mid-band even without texture gates", () => {
+    expect(
+      needsForensicsCascade({
+        distilled: 0.58,
+        spectral: 0.5,
+        laplacianVariance: 100,
+        chromaFlatness: 0.1,
+      }),
+    ).toBe(true);
+  });
 });

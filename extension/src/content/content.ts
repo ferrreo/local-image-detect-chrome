@@ -16,6 +16,7 @@ const OVERLAY_ATTR = "data-truepixel-id";
 const BADGE_CLASS = "truepixel-badge";
 const CONCEAL_BLUR = "truepixel-conceal-blur";
 const CONCEAL_BLANK = "truepixel-conceal-blank";
+const CONCEAL_PENDING = "truepixel-conceal-pending";
 
 type TrackedImage = {
   id: string;
@@ -23,7 +24,7 @@ type TrackedImage = {
   src: string;
   inFlight: boolean;
   result?: DetectionResult;
-  /** User clicked the AI badge to temporarily show the image. */
+  /** User clicked the badge to temporarily show a hidden image. */
   revealed: boolean;
 };
 
@@ -49,17 +50,31 @@ function isEligible(img: HTMLImageElement): boolean {
 }
 
 function clearConcealClasses(img: HTMLImageElement): void {
-  img.classList.remove(CONCEAL_BLUR, CONCEAL_BLANK);
+  img.classList.remove(CONCEAL_BLUR, CONCEAL_BLANK, CONCEAL_PENDING);
+}
+
+/** True until we have a decisive AI / Real label (not pending / uncertain). */
+function isUndecided(entry: TrackedImage): boolean {
+  if (entry.inFlight) return true;
+  const kind = entry.result?.label.kind;
+  return kind === undefined || kind === "uncertain" || kind === "error";
 }
 
 function applyConcealment(entry: TrackedImage): void {
   const img = entry.element;
   clearConcealClasses(img);
+  if (entry.revealed) return;
+
+  // Blank placeholder until sure — don't flash AI pixels during refine.
+  if (isUndecided(entry)) {
+    img.classList.add(CONCEAL_PENDING);
+    return;
+  }
+
+  if (entry.result?.label.kind !== "ai") return;
   const mode: AiConcealMode = options.aiConceal;
-  const isAi = entry.result?.label.kind === "ai";
-  if (!isAi || mode === "none" || entry.revealed) return;
   if (mode === "blur") img.classList.add(CONCEAL_BLUR);
-  else img.classList.add(CONCEAL_BLANK);
+  else if (mode === "blank") img.classList.add(CONCEAL_BLANK);
 }
 
 function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
@@ -82,10 +97,22 @@ function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
       event.preventDefault();
       event.stopPropagation();
       const entry = tracked.get(id);
-      if (!entry || entry.result?.label.kind !== "ai") return;
-      if (options.aiConceal === "none") return;
+      if (!entry) return;
+      // Allow peek while pending/uncertain or when AI is concealed.
+      const canToggle =
+        isUndecided(entry) ||
+        (entry.result?.label.kind === "ai" && options.aiConceal !== "none");
+      if (!canToggle) return;
       entry.revealed = !entry.revealed;
-      renderResult(entry.element, entry.result);
+      if (entry.result) renderResult(entry.element, entry.result);
+      else {
+        applyConcealment(entry);
+        badge.classList.toggle("truepixel-clickable", true);
+        badge.textContent = entry.revealed ? "hide" : "…";
+        badge.title = entry.revealed
+          ? "TruePixel: click to hide again"
+          : "TruePixel: analyzing… click to peek";
+      }
     });
     parent.appendChild(badge);
   }
@@ -149,12 +176,16 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
       break;
     case "uncertain":
       badge.classList.add("truepixel-uncertain");
-      badge.textContent = `? ${pct}%`;
-      badge.title = `TruePixel: uncertain (${pct}% AI confidence)${timingHint}`;
+      badge.classList.add("truepixel-clickable");
+      badge.textContent = entry?.revealed ? `? ${pct}% · hide` : `? ${pct}%`;
+      badge.title = entry?.revealed
+        ? `TruePixel: still checking (${pct}% AI). Click to hide.`
+        : `TruePixel: checking (${pct}% AI) — image hidden until sure. Click to peek.`;
       break;
     case "error":
       badge.classList.add("truepixel-error");
-      badge.textContent = "n/a";
+      badge.classList.add("truepixel-clickable");
+      badge.textContent = entry?.revealed ? "n/a · hide" : "n/a";
       badge.title = `TruePixel error: ${result.label.message}`;
       break;
     default: {
@@ -214,11 +245,17 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
   const entry = tracked.get(id);
   if (!entry || entry.inFlight) return;
   entry.inFlight = true;
-  ensureBadge(img, id);
+  entry.revealed = false;
+  const pendingBadge = ensureBadge(img, id);
+  pendingBadge.classList.add("truepixel-pending", "truepixel-clickable");
+  pendingBadge.textContent = "…";
+  pendingBadge.title = "TruePixel: analyzing… image hidden until sure";
+  applyConcealment(entry);
 
   try {
     // Fast badge from distilled+spectral, then CF cascade when ambiguous.
     const quick = await requestAnalyze(img, id, "realtime");
+    entry.inFlight = needsForensicsRefine(quick);
     entry.result = quick;
     renderResult(img, quick);
 
@@ -227,10 +264,15 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
       // Ignore stale refine if the img src changed mid-flight.
       if (tracked.get(id)?.src === entry.src) {
         entry.result = refined;
+        entry.inFlight = false;
         renderResult(img, refined);
       }
+    } else {
+      entry.inFlight = false;
+      applyConcealment(entry);
     }
   } catch (error) {
+    entry.inFlight = false;
     const message = error instanceof Error ? error.message : String(error);
     renderResult(img, {
       imageId: id,
@@ -241,7 +283,8 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
       elapsedMs: 0,
     });
   } finally {
-    entry.inFlight = false;
+    const current = tracked.get(id);
+    if (current) current.inFlight = false;
   }
 }
 
@@ -262,14 +305,16 @@ function discover(): void {
       renderResult(img, existing.result);
       continue;
     }
-    tracked.set(id, {
+    const entry: TrackedImage = {
       id,
       element: img,
       src,
       inFlight: false,
-      revealed: existing?.revealed ?? false,
+      revealed: false,
       ...(existing?.result ? { result: existing.result } : {}),
-    });
+    };
+    tracked.set(id, entry);
+    if (!entry.result) applyConcealment(entry);
     void analyze(img, id);
   }
 }

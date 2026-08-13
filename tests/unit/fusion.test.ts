@@ -85,6 +85,18 @@ describe("fuseDetection", () => {
     });
     expect(out.confidence).toBeLessThan(0.65);
   });
+
+  it("uses strong CF when distilled is stuck mid-band (StyleGAN / TPDNE)", () => {
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.5),
+      visual: tier("visual", 0.58),
+      visualSecondary: tier("visual", 0.77),
+    });
+    expect(out.confidence).toBeGreaterThanOrEqual(0.65);
+    expect(out.label.kind).toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toBe("forensics-ambiguous-distilled");
+  });
 });
 
 describe("labelFor / balancedAccuracy", () => {
