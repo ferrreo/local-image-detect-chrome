@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-13T19:48:17.345Z",
+  "generatedAt": "2026-08-13T20:09:23.582Z",
   "providers": [
     "wasm",
     "webgpu"
@@ -27,15 +27,15 @@
         "fn": 0
       },
       "timing": {
-        "avgTotalMs": 191.27190789492116,
-        "p50TotalMs": 132.71000000089407,
-        "p90TotalMs": 576.6200000010431,
+        "avgTotalMs": 189.23874999999413,
+        "p50TotalMs": 129.9399999976158,
+        "p90TotalMs": 583.6699999980628,
         "count": 76,
         "forensicsCount": 12,
-        "avgDistilledMs": 64.23184210542394,
-        "avgForensicsMsWhenRun": 480.707916667064,
-        "avgDecodeMs": 6.155526315744378,
-        "avgSpectralMs": 9.395657894838797,
+        "avgDistilledMs": 65.99763157914735,
+        "avgForensicsMsWhenRun": 464.03666666646797,
+        "avgDecodeMs": 5.737697368438699,
+        "avgSpectralMs": 9.40927631574634,
         "avgPreprocessMs": 0
       },
       "rows": [
@@ -47,16 +47,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 74.10999999940395,
-          "elapsedMs": 26.75,
+          "totalMs": 50.735000003129244,
+          "elapsedMs": 23.849999997764826,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.12999999895691872,
-            "totalMs": 26.75,
+            "fuseMs": 0.10999999940395355,
+            "totalMs": 23.849999997764826,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -69,8 +69,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 37.48499999940395,
-          "elapsedMs": 13.685000002384186,
+          "totalMs": 38.060000002384186,
+          "elapsedMs": 11.449999999254942,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -78,7 +78,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.019999999552965164,
-            "totalMs": 13.685000002384186,
+            "totalMs": 11.449999999254942,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -91,16 +91,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 72.4700000025332,
-          "elapsedMs": 39.42999999970198,
+          "totalMs": 58.60999999940395,
+          "elapsedMs": 31.344999998807907,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 39.42999999970198,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 31.344999998807907,
             "ranForensics": false
           },
           "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
@@ -113,16 +113,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 87.43999999761581,
-          "elapsedMs": 39.91000000014901,
+          "totalMs": 93.25999999791384,
+          "elapsedMs": 39.20000000298023,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.03500000014901161,
-            "totalMs": 39.91000000014901,
+            "fuseMs": 0.019999999552965164,
+            "totalMs": 39.20000000298023,
             "ranForensics": false
           },
           "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
@@ -135,16 +135,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 118.05000000074506,
-          "elapsedMs": 41.80499999970198,
+          "totalMs": 62.98499999940395,
+          "elapsedMs": 39.28999999910593,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 41.80499999970198,
+            "fuseMs": 0.03999999910593033,
+            "totalMs": 39.28999999910593,
             "ranForensics": false
           },
           "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
@@ -157,19 +157,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 462.429999999702,
-          "elapsedMs": 430.0250000022352,
+          "totalMs": 537.8650000020862,
+          "elapsedMs": 493.5,
           "timing": {
-            "decodeMs": 12.674999997019768,
-            "spectralMs": 32.224999997764826,
+            "decodeMs": 16.03999999910593,
+            "spectralMs": 36.82999999821186,
             "preprocessMs": 0,
-            "distilledMs": 346.74000000208616,
+            "distilledMs": 386.96000000089407,
             "forensicsMs": 0,
-            "fuseMs": 0.020000003278255463,
-            "totalMs": 430.0250000022352,
+            "fuseMs": 0.019999999552965164,
+            "totalMs": 493.5,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.423|visual:0.646[ai-image-detect-distilled=0.646,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=346.7,forensicsMs=0.0,engine=ort-web]|fusion:0.660"
+          "tiers": "provenance:0.500|spectral:0.423|visual:0.646[ai-image-detect-distilled=0.646,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=387.0,forensicsMs=0.0,engine=ort-web]|fusion:0.660"
         },
         {
           "file": "ai/krea__krea-2-medium/street_cafe.png",
@@ -179,19 +179,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 327.17000000178814,
-          "elapsedMs": 290.320000000298,
+          "totalMs": 344.3799999989569,
+          "elapsedMs": 303.23000000044703,
           "timing": {
-            "decodeMs": 13.480000000447035,
-            "spectralMs": 35.5950000025332,
+            "decodeMs": 22.49500000104308,
+            "spectralMs": 42.690000001341105,
             "preprocessMs": 0,
-            "distilledMs": 203.785000000149,
+            "distilledMs": 201.035000000149,
             "forensicsMs": 0,
-            "fuseMs": 0.02500000223517418,
-            "totalMs": 290.320000000298,
+            "fuseMs": 0.02499999850988388,
+            "totalMs": 303.23000000044703,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.361|visual:0.682[ai-image-detect-distilled=0.682,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=203.8,forensicsMs=0.0,engine=ort-web]|fusion:0.682"
+          "tiers": "provenance:0.500|spectral:0.361|visual:0.682[ai-image-detect-distilled=0.682,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=201.0,forensicsMs=0.0,engine=ort-web]|fusion:0.682"
         },
         {
           "file": "ai/krea__krea-2-large/park_dog.png",
@@ -201,19 +201,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 1174.254999998957,
-          "elapsedMs": 1142.394999999553,
+          "totalMs": 1022.5250000022352,
+          "elapsedMs": 983.785000000149,
           "timing": {
-            "decodeMs": 13.570000000298023,
-            "spectralMs": 24.400000002235174,
+            "decodeMs": 14.705000001937151,
+            "spectralMs": 23.83500000089407,
             "preprocessMs": 0,
-            "distilledMs": 174.9050000011921,
-            "forensicsMs": 898.6200000010431,
-            "fuseMs": 0.07499999925494194,
-            "totalMs": 1142.394999999553,
+            "distilledMs": 184.65000000223517,
+            "forensicsMs": 721.2249999977648,
+            "fuseMs": 0.07000000029802322,
+            "totalMs": 983.785000000149,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.308|visual:0.495[ai-image-detect-distilled=0.495,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=174.9,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.782,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=898.6]|visual:0.782[community-forensics]|fusion:0.782"
+          "tiers": "provenance:0.500|spectral:0.308|visual:0.495[ai-image-detect-distilled=0.495,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=184.7,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.782,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=721.2]|visual:0.782[community-forensics]|fusion:0.782"
         },
         {
           "file": "ai/google__gemini-3.1-flash-lite-image/park_dog.jpg",
@@ -223,16 +223,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 58.16999999806285,
-          "elapsedMs": 31.37000000104308,
+          "totalMs": 60.689999997615814,
+          "elapsedMs": 33.599999997764826,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.02500000223517418,
-            "totalMs": 31.37000000104308,
+            "fuseMs": 0.02499999850988388,
+            "totalMs": 33.599999997764826,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -245,16 +245,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 47.67000000178814,
-          "elapsedMs": 29.25,
+          "totalMs": 44.10999999940395,
+          "elapsedMs": 28.50499999895692,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.01499999687075615,
-            "totalMs": 29.25,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 28.50499999895692,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -267,16 +267,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 46.37000000104308,
-          "elapsedMs": 31.554999999701977,
+          "totalMs": 41.82499999925494,
+          "elapsedMs": 28.655000001192093,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 31.554999999701977,
+            "fuseMs": 0.005000002682209015,
+            "totalMs": 28.655000001192093,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -289,16 +289,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 46.03500000014901,
-          "elapsedMs": 30.190000001341105,
+          "totalMs": 47.05000000074506,
+          "elapsedMs": 33.67999999970198,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 30.190000001341105,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 33.67999999970198,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -311,16 +311,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 46.45000000298023,
-          "elapsedMs": 30.450000002980232,
+          "totalMs": 45.11999999731779,
+          "elapsedMs": 32.17500000074506,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 30.450000002980232,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 32.17500000074506,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -333,16 +333,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 44.08499999716878,
-          "elapsedMs": 32.80000000074506,
+          "totalMs": 39.190000001341105,
+          "elapsedMs": 28.759999997913837,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 32.80000000074506,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 28.759999997913837,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -355,19 +355,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 698.554999999702,
-          "elapsedMs": 691.640000000596,
+          "totalMs": 703.964999999851,
+          "elapsedMs": 689.8299999982119,
           "timing": {
-            "decodeMs": 14.974999997764826,
-            "spectralMs": 23.780000001192093,
+            "decodeMs": 11.995000001043081,
+            "spectralMs": 21.66000000014901,
             "preprocessMs": 0,
-            "distilledMs": 124.75500000268221,
-            "forensicsMs": 497.4750000014901,
+            "distilledMs": 120.5,
+            "forensicsMs": 506.4049999974668,
             "fuseMs": 0.030000001192092896,
-            "totalMs": 691.640000000596,
+            "totalMs": 689.8299999982119,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.368|visual:0.444[ai-image-detect-distilled=0.444,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=124.8,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.716,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=497.5]|visual:0.716[community-forensics]|fusion:0.716"
+          "tiers": "provenance:0.500|spectral:0.368|visual:0.444[ai-image-detect-distilled=0.444,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=120.5,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.716,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=506.4]|visual:0.716[community-forensics]|fusion:0.716"
         },
         {
           "file": "ai/microsoft__mai-image-2.5/kitchen_window.png",
@@ -377,16 +377,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 59.49500000104308,
-          "elapsedMs": 35.17499999701977,
+          "totalMs": 60.274999998509884,
+          "elapsedMs": 35.150000002235174,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 35.17499999701977,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 35.150000002235174,
             "ranForensics": false
           },
           "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
@@ -399,16 +399,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 42.91999999806285,
-          "elapsedMs": 21.75,
+          "totalMs": 36.019999999552965,
+          "elapsedMs": 19.12999999895692,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 21.75,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 19.12999999895692,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -421,16 +421,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 31.83000000193715,
-          "elapsedMs": 22.240000002086163,
+          "totalMs": 45.850000001490116,
+          "elapsedMs": 32.139999996870756,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 22.240000002086163,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 32.139999996870756,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -443,8 +443,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 68.73000000044703,
-          "elapsedMs": 34.46000000089407,
+          "totalMs": 55.92500000074506,
+          "elapsedMs": 35.91000000014901,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -452,7 +452,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.010000001639127731,
-            "totalMs": 34.46000000089407,
+            "totalMs": 35.91000000014901,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -465,16 +465,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 48.82499999925494,
-          "elapsedMs": 37.41000000014901,
+          "totalMs": 45.88500000163913,
+          "elapsedMs": 34.315000001341105,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 37.41000000014901,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 34.315000001341105,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -487,16 +487,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 62.935000002384186,
-          "elapsedMs": 34.96000000089407,
+          "totalMs": 63.85999999940395,
+          "elapsedMs": 36.434999998658895,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 34.96000000089407,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 36.434999998658895,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -509,16 +509,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 47.94500000029802,
-          "elapsedMs": 35.51000000163913,
+          "totalMs": 47.07500000298023,
+          "elapsedMs": 34.66500000283122,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 35.51000000163913,
+            "fuseMs": 0.005000002682209015,
+            "totalMs": 34.66500000283122,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -531,8 +531,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 82.38000000268221,
-          "elapsedMs": 36.855000000447035,
+          "totalMs": 63.145000003278255,
+          "elapsedMs": 33.434999998658895,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -540,7 +540,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.004999998956918716,
-            "totalMs": 36.855000000447035,
+            "totalMs": 33.434999998658895,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -553,16 +553,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 46.50500000268221,
-          "elapsedMs": 33.98499999940395,
+          "totalMs": 44.315000001341105,
+          "elapsedMs": 33.96000000089407,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 33.98499999940395,
+            "fuseMs": 0,
+            "totalMs": 33.96000000089407,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -575,16 +575,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 47.14000000059605,
-          "elapsedMs": 34.96999999880791,
+          "totalMs": 40.03999999910593,
+          "elapsedMs": 32.769999999552965,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 34.96999999880791,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 32.769999999552965,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -597,16 +597,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 45.41999999806285,
-          "elapsedMs": 29.844999998807907,
+          "totalMs": 46.42999999970198,
+          "elapsedMs": 27.16499999910593,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 29.844999998807907,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 27.16499999910593,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -619,19 +619,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 621.8450000025332,
-          "elapsedMs": 614.0650000013411,
+          "totalMs": 583.6699999980628,
+          "elapsedMs": 578.9249999970198,
           "timing": {
-            "decodeMs": 11.455000001937151,
-            "spectralMs": 23.449999999254942,
+            "decodeMs": 11.810000002384186,
+            "spectralMs": 23.774999998509884,
             "preprocessMs": 0,
-            "distilledMs": 101.03999999910593,
-            "forensicsMs": 475.04500000178814,
+            "distilledMs": 102.00999999791384,
+            "forensicsMs": 438.25,
             "fuseMs": 0.015000000596046448,
-            "totalMs": 614.0650000013411,
+            "totalMs": 578.9249999970198,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.438|visual:0.629[ai-image-detect-distilled=0.629,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=101.0,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.679,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=475.0]|visual:0.679[community-forensics]|fusion:0.680"
+          "tiers": "provenance:0.500|spectral:0.438|visual:0.629[ai-image-detect-distilled=0.629,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=102.0,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.679,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=438.2]|visual:0.679[community-forensics]|fusion:0.680"
         },
         {
           "file": "ai/black-forest-labs__flux.2-klein-4b/street_cafe.png",
@@ -641,16 +641,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 72.51999999955297,
-          "elapsedMs": 39.91499999910593,
+          "totalMs": 66.33500000089407,
+          "elapsedMs": 37.875,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0,
-            "totalMs": 39.91499999910593,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 37.875,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -663,16 +663,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 54.19500000029802,
-          "elapsedMs": 30.91500000283122,
+          "totalMs": 45.17999999970198,
+          "elapsedMs": 32.184999998658895,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 30.91500000283122,
+            "fuseMs": 0.005000002682209015,
+            "totalMs": 32.184999998658895,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -685,19 +685,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 608.945000000298,
-          "elapsedMs": 601.7049999982119,
+          "totalMs": 603.4250000007451,
+          "elapsedMs": 591.285000000149,
           "timing": {
-            "decodeMs": 12.66499999910593,
-            "spectralMs": 23.175000000745058,
+            "decodeMs": 11.66499999910593,
+            "spectralMs": 24.049999997019768,
             "preprocessMs": 0,
-            "distilledMs": 103.06499999761581,
-            "forensicsMs": 459.67000000178814,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 601.7049999982119,
+            "distilledMs": 107.44999999925494,
+            "forensicsMs": 445.0300000011921,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 591.285000000149,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.304|visual:0.357[ai-image-detect-distilled=0.357,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=103.1,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.793,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=459.6]|visual:0.793[community-forensics]|fusion:0.793"
+          "tiers": "provenance:0.500|spectral:0.304|visual:0.357[ai-image-detect-distilled=0.357,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=107.4,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.793,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=445.0]|visual:0.793[community-forensics]|fusion:0.793"
         },
         {
           "file": "ai/black-forest-labs__flux.2-flex/street_cafe.png",
@@ -707,16 +707,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 66.78499999642372,
-          "elapsedMs": 36.87999999895692,
+          "totalMs": 59.87999999895692,
+          "elapsedMs": 35.32000000029802,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 36.87999999895692,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 35.32000000029802,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -729,16 +729,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 57.57000000029802,
-          "elapsedMs": 32.730000000447035,
+          "totalMs": 58.20500000193715,
+          "elapsedMs": 35.11500000208616,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 32.730000000447035,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 35.11500000208616,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -751,8 +751,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 47.57000000029802,
-          "elapsedMs": 33.7799999974668,
+          "totalMs": 45.434999998658895,
+          "elapsedMs": 33.28000000119209,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -760,7 +760,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.004999998956918716,
-            "totalMs": 33.7799999974668,
+            "totalMs": 33.28000000119209,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -773,8 +773,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 40.48499999940395,
-          "elapsedMs": 30.734999999403954,
+          "totalMs": 41.91999999806285,
+          "elapsedMs": 30.425000000745058,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -782,7 +782,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.004999998956918716,
-            "totalMs": 30.734999999403954,
+            "totalMs": 30.425000000745058,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -795,16 +795,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 44.13000000268221,
-          "elapsedMs": 29.394999999552965,
+          "totalMs": 43.230000000447035,
+          "elapsedMs": 29.309999998658895,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 29.394999999552965,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 29.309999998658895,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -817,16 +817,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 46.03999999910593,
-          "elapsedMs": 36.40500000119209,
+          "totalMs": 52.01000000163913,
+          "elapsedMs": 33.184999998658895,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 36.40500000119209,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 33.184999998658895,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -839,16 +839,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 44.28000000119209,
-          "elapsedMs": 30.265000000596046,
+          "totalMs": 47.39000000059605,
+          "elapsedMs": 29.54500000178814,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.005000002682209015,
-            "totalMs": 30.265000000596046,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 29.54500000178814,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -861,19 +861,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 612,
-          "elapsedMs": 597.015000000596,
+          "totalMs": 607.734999999404,
+          "elapsedMs": 591.6399999968708,
           "timing": {
-            "decodeMs": 13.879999998956919,
-            "spectralMs": 22.08000000193715,
+            "decodeMs": 12.574999999254942,
+            "spectralMs": 21.41499999910593,
             "preprocessMs": 0,
-            "distilledMs": 102.51500000059605,
-            "forensicsMs": 418.32999999821186,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 597.015000000596,
+            "distilledMs": 102.6549999974668,
+            "forensicsMs": 419.94999999925494,
+            "fuseMs": 0.01499999687075615,
+            "totalMs": 591.6399999968708,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.294|visual:0.319[ai-image-detect-distilled=0.319,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=102.5,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.764,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=418.3]|visual:0.764[community-forensics]|fusion:0.764"
+          "tiers": "provenance:0.500|spectral:0.294|visual:0.319[ai-image-detect-distilled=0.319,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=102.7,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.764,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=419.9]|visual:0.764[community-forensics]|fusion:0.764"
         },
         {
           "file": "real/picsum_10.jpg",
@@ -883,19 +883,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 143.9050000011921,
-          "elapsedMs": 130.85500000044703,
+          "totalMs": 160.339999999851,
+          "elapsedMs": 141.13500000163913,
           "timing": {
-            "decodeMs": 8.030000001192093,
-            "spectralMs": 16.134999997913837,
+            "decodeMs": 11.109999999403954,
+            "spectralMs": 15.655000001192093,
             "preprocessMs": 0,
-            "distilledMs": 104.10999999940395,
+            "distilledMs": 111.17000000178814,
             "forensicsMs": 0,
-            "fuseMs": 0.07999999821186066,
-            "totalMs": 130.85500000044703,
+            "fuseMs": 0.10000000149011612,
+            "totalMs": 141.13500000163913,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.326|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=104.1,forensicsMs=0.0,engine=ort-web]|fusion:0.311"
+          "tiers": "provenance:0.500|spectral:0.326|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=111.2,forensicsMs=0.0,engine=ort-web]|fusion:0.311"
         },
         {
           "file": "real/picsum_15.jpg",
@@ -905,19 +905,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 559,
-          "elapsedMs": 539.945000000298,
+          "totalMs": 571.484999999404,
+          "elapsedMs": 543.8899999968708,
           "timing": {
-            "decodeMs": 11.964999999850988,
-            "spectralMs": 12.254999998956919,
+            "decodeMs": 8.775000002235174,
+            "spectralMs": 12.259999997913837,
             "preprocessMs": 0,
-            "distilledMs": 98.55499999970198,
-            "forensicsMs": 411.5049999989569,
+            "distilledMs": 98.29000000283122,
+            "forensicsMs": 417.910000000149,
             "fuseMs": 0.015000000596046448,
-            "totalMs": 539.945000000298,
+            "totalMs": 543.8899999968708,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.374|visual:0.555[ai-image-detect-distilled=0.555,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=98.6,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.543,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=411.5]|visual:0.543[community-forensics]|fusion:0.516"
+          "tiers": "provenance:0.500|spectral:0.374|visual:0.555[ai-image-detect-distilled=0.555,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=98.3,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.543,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=417.9]|visual:0.543[community-forensics]|fusion:0.516"
         },
         {
           "file": "real/picsum_28.jpg",
@@ -927,19 +927,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 133.4050000011921,
-          "elapsedMs": 127.1549999974668,
+          "totalMs": 157.10499999672174,
+          "elapsedMs": 140.07000000029802,
           "timing": {
-            "decodeMs": 8.864999998360872,
-            "spectralMs": 16.845000002533197,
+            "decodeMs": 10.695000000298023,
+            "spectralMs": 14.439999997615814,
             "preprocessMs": 0,
-            "distilledMs": 97.36500000208616,
+            "distilledMs": 107.3150000013411,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 127.1549999974668,
+            "fuseMs": 0.04000000283122063,
+            "totalMs": 140.07000000029802,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.268|visual:0.299[ai-image-detect-distilled=0.299,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.4,forensicsMs=0.0,engine=ort-web]|fusion:0.294"
+          "tiers": "provenance:0.500|spectral:0.268|visual:0.299[ai-image-detect-distilled=0.299,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=107.3,forensicsMs=0.0,engine=ort-web]|fusion:0.294"
         },
         {
           "file": "real/picsum_48.jpg",
@@ -949,19 +949,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 131.98000000044703,
-          "elapsedMs": 117.1849999986589,
+          "totalMs": 143.69999999925494,
+          "elapsedMs": 116.88499999791384,
           "timing": {
-            "decodeMs": 6.225000001490116,
-            "spectralMs": 12.785000000149012,
+            "decodeMs": 6.795000001788139,
+            "spectralMs": 12.274999998509884,
             "preprocessMs": 0,
-            "distilledMs": 97.55000000074506,
+            "distilledMs": 97.10500000044703,
             "forensicsMs": 0,
             "fuseMs": 0.019999999552965164,
-            "totalMs": 117.1849999986589,
+            "totalMs": 116.88499999791384,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.478|visual:0.328[ai-image-detect-distilled=0.328,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.6,forensicsMs=0.0,engine=ort-web]|fusion:0.358"
+          "tiers": "provenance:0.500|spectral:0.478|visual:0.328[ai-image-detect-distilled=0.328,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.1,forensicsMs=0.0,engine=ort-web]|fusion:0.358"
         },
         {
           "file": "real/picsum_64.jpg",
@@ -971,19 +971,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 132.25,
-          "elapsedMs": 123.3450000025332,
+          "totalMs": 136.41500000283122,
+          "elapsedMs": 123.4349999986589,
           "timing": {
-            "decodeMs": 12.375,
-            "spectralMs": 12.679999999701977,
+            "decodeMs": 9.655000001192093,
+            "spectralMs": 11.58500000089407,
             "preprocessMs": 0,
-            "distilledMs": 95.24500000104308,
+            "distilledMs": 99.5,
             "forensicsMs": 0,
-            "fuseMs": 0.005000002682209015,
-            "totalMs": 123.3450000025332,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 123.4349999986589,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.416|visual:0.378[ai-image-detect-distilled=0.378,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.2,forensicsMs=0.0,engine=ort-web]|fusion:0.383"
+          "tiers": "provenance:0.500|spectral:0.416|visual:0.378[ai-image-detect-distilled=0.378,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=99.5,forensicsMs=0.0,engine=ort-web]|fusion:0.383"
         },
         {
           "file": "real/picsum_83.jpg",
@@ -993,19 +993,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 131.32999999821186,
-          "elapsedMs": 119.4349999986589,
+          "totalMs": 136.23999999836087,
+          "elapsedMs": 121.60500000044703,
           "timing": {
-            "decodeMs": 7,
-            "spectralMs": 14.344999998807907,
+            "decodeMs": 6.489999998360872,
+            "spectralMs": 15.125,
             "preprocessMs": 0,
-            "distilledMs": 95.70500000193715,
+            "distilledMs": 97.63500000163913,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 119.4349999986589,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 121.60500000044703,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.234|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.7,forensicsMs=0.0,engine=ort-web]|fusion:0.293"
+          "tiers": "provenance:0.500|spectral:0.234|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.6,forensicsMs=0.0,engine=ort-web]|fusion:0.293"
         },
         {
           "file": "real/picsum_96.jpg",
@@ -1015,19 +1015,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 134.29000000283122,
-          "elapsedMs": 117.23000000044703,
+          "totalMs": 141.160000000149,
+          "elapsedMs": 120.21000000089407,
           "timing": {
-            "decodeMs": 9.074999999254942,
-            "spectralMs": 11.964999999850988,
+            "decodeMs": 7.144999999552965,
+            "spectralMs": 12.435000002384186,
             "preprocessMs": 0,
-            "distilledMs": 94.92000000178814,
+            "distilledMs": 99.93500000238419,
             "forensicsMs": 0,
             "fuseMs": 0.009999997913837433,
-            "totalMs": 117.23000000044703,
+            "totalMs": 120.21000000089407,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.461|visual:0.355[ai-image-detect-distilled=0.355,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=94.9,forensicsMs=0.0,engine=ort-web]|fusion:0.375"
+          "tiers": "provenance:0.500|spectral:0.461|visual:0.355[ai-image-detect-distilled=0.355,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=99.9,forensicsMs=0.0,engine=ort-web]|fusion:0.375"
         },
         {
           "file": "real/picsum_119.jpg",
@@ -1037,19 +1037,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 143.625,
-          "elapsedMs": 125.24000000208616,
+          "totalMs": 127.42999999970198,
+          "elapsedMs": 117.37000000104308,
           "timing": {
-            "decodeMs": 5.125,
-            "spectralMs": 11.779999997466803,
+            "decodeMs": 5.049999997019768,
+            "spectralMs": 13.384999997913837,
             "preprocessMs": 0,
-            "distilledMs": 107.30500000342727,
+            "distilledMs": 98.3450000025332,
             "forensicsMs": 0,
-            "fuseMs": 0.030000001192092896,
-            "totalMs": 125.24000000208616,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 117.37000000104308,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.423|visual:0.271[ai-image-detect-distilled=0.271,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=107.3,forensicsMs=0.0,engine=ort-web]|fusion:0.306"
+          "tiers": "provenance:0.500|spectral:0.423|visual:0.271[ai-image-detect-distilled=0.271,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=98.3,forensicsMs=0.0,engine=ort-web]|fusion:0.306"
         },
         {
           "file": "real/picsum_129.jpg",
@@ -1059,19 +1059,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 134.03999999910593,
-          "elapsedMs": 118.38499999791384,
+          "totalMs": 127.85000000149012,
+          "elapsedMs": 119.8099999986589,
           "timing": {
-            "decodeMs": 6.429999999701977,
-            "spectralMs": 14.129999998956919,
+            "decodeMs": 6.155000001192093,
+            "spectralMs": 13.934999998658895,
             "preprocessMs": 0,
-            "distilledMs": 96.25500000268221,
+            "distilledMs": 95.74500000104308,
             "forensicsMs": 0,
-            "fuseMs": 0.03500000014901161,
-            "totalMs": 118.38499999791384,
+            "fuseMs": 0.030000001192092896,
+            "totalMs": 119.8099999986589,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.389|visual:0.268[ai-image-detect-distilled=0.268,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.3,forensicsMs=0.0,engine=ort-web]|fusion:0.297"
+          "tiers": "provenance:0.500|spectral:0.389|visual:0.268[ai-image-detect-distilled=0.268,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.7,forensicsMs=0.0,engine=ort-web]|fusion:0.297"
         },
         {
           "file": "real/picsum_137.jpg",
@@ -1081,19 +1081,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 145.17999999970198,
-          "elapsedMs": 130.02499999850988,
+          "totalMs": 147.54500000178814,
+          "elapsedMs": 132.3449999988079,
           "timing": {
-            "decodeMs": 6.120000001043081,
-            "spectralMs": 12.489999998360872,
+            "decodeMs": 5.504999998956919,
+            "spectralMs": 11.125,
             "preprocessMs": 0,
-            "distilledMs": 110.57000000029802,
+            "distilledMs": 114.89999999850988,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 130.02499999850988,
+            "fuseMs": 0.02499999850988388,
+            "totalMs": 132.3449999988079,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.351|visual:0.216[ai-image-detect-distilled=0.216,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=110.6,forensicsMs=0.0,engine=ort-web]|fusion:0.256"
+          "tiers": "provenance:0.500|spectral:0.351|visual:0.216[ai-image-detect-distilled=0.216,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=114.9,forensicsMs=0.0,engine=ort-web]|fusion:0.256"
         },
         {
           "file": "real/picsum_152.jpg",
@@ -1103,19 +1103,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 132.71000000089407,
-          "elapsedMs": 122.58499999716878,
+          "totalMs": 148.839999999851,
+          "elapsedMs": 131.80000000074506,
           "timing": {
-            "decodeMs": 7.079999998211861,
-            "spectralMs": 12.740000002086163,
+            "decodeMs": 9.785000000149012,
+            "spectralMs": 13.404999997466803,
             "preprocessMs": 0,
-            "distilledMs": 97.94500000029802,
+            "distilledMs": 105.26500000059605,
             "forensicsMs": 0,
-            "fuseMs": 0.02499999850988388,
-            "totalMs": 122.58499999716878,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 131.80000000074506,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.457|visual:0.391[ai-image-detect-distilled=0.391,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.9,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
+          "tiers": "provenance:0.500|spectral:0.457|visual:0.391[ai-image-detect-distilled=0.391,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=105.3,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
         },
         {
           "file": "real/picsum_163.jpg",
@@ -1125,19 +1125,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 583.3150000013411,
-          "elapsedMs": 567.5450000017881,
+          "totalMs": 574.410000000149,
+          "elapsedMs": 561.265000000596,
           "timing": {
-            "decodeMs": 11.985000003129244,
-            "spectralMs": 13.849999997764826,
+            "decodeMs": 10.480000000447035,
+            "spectralMs": 16.324999999254942,
             "preprocessMs": 0,
-            "distilledMs": 97.67000000178814,
-            "forensicsMs": 441.51999999955297,
-            "fuseMs": 0.02500000223517418,
-            "totalMs": 567.5450000017881,
+            "distilledMs": 97.77499999850988,
+            "forensicsMs": 432.23499999940395,
+            "fuseMs": 0.030000001192092896,
+            "totalMs": 561.265000000596,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.356|visual:0.556[ai-image-detect-distilled=0.556,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.7,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.619,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=441.4]|visual:0.619[community-forensics]|fusion:0.512"
+          "tiers": "provenance:0.500|spectral:0.356|visual:0.556[ai-image-detect-distilled=0.556,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.8,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.619,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=432.1]|visual:0.619[community-forensics]|fusion:0.512"
         },
         {
           "file": "real/picsum_176.jpg",
@@ -1147,19 +1147,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 576.6200000010431,
-          "elapsedMs": 562.6850000023842,
+          "totalMs": 590.2099999971688,
+          "elapsedMs": 567.535000000149,
           "timing": {
-            "decodeMs": 12.509999997913837,
-            "spectralMs": 12.940000001341105,
+            "decodeMs": 8.739999998360872,
+            "spectralMs": 12.589999999850988,
             "preprocessMs": 0,
-            "distilledMs": 97.60999999940395,
-            "forensicsMs": 436.6300000026822,
+            "distilledMs": 110.61500000208616,
+            "forensicsMs": 431.32500000298023,
             "fuseMs": 0.015000000596046448,
-            "totalMs": 562.6850000023842,
+            "totalMs": 567.535000000149,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.290|visual:0.350[ai-image-detect-distilled=0.350,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.6,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.593,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=436.6]|visual:0.593[community-forensics]|fusion:0.335"
+          "tiers": "provenance:0.500|spectral:0.290|visual:0.350[ai-image-detect-distilled=0.350,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=110.6,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.593,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=431.3]|visual:0.593[community-forensics]|fusion:0.335"
         },
         {
           "file": "real/picsum_193.jpg",
@@ -1169,19 +1169,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 145.8099999986589,
-          "elapsedMs": 127.93500000238419,
+          "totalMs": 142.16999999806285,
+          "elapsedMs": 129.02499999850988,
           "timing": {
-            "decodeMs": 8.970000002533197,
-            "spectralMs": 12.934999998658895,
+            "decodeMs": 10,
+            "spectralMs": 13.764999996870756,
             "preprocessMs": 0,
-            "distilledMs": 102.07499999925494,
+            "distilledMs": 100.08000000193715,
             "forensicsMs": 0,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 127.93500000238419,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 129.02499999850988,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.347|visual:0.512[ai-image-detect-distilled=0.512,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=102.1,forensicsMs=0.0,engine=ort-web]|fusion:0.474"
+          "tiers": "provenance:0.500|spectral:0.347|visual:0.512[ai-image-detect-distilled=0.512,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=100.1,forensicsMs=0.0,engine=ort-web]|fusion:0.474"
         },
         {
           "file": "real/picsum_201.jpg",
@@ -1191,19 +1191,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 145.11500000208616,
-          "elapsedMs": 124.89499999955297,
+          "totalMs": 142.37999999895692,
+          "elapsedMs": 131.91499999910593,
           "timing": {
-            "decodeMs": 12.794999998062849,
-            "spectralMs": 14.629999998956919,
+            "decodeMs": 13.580000001937151,
+            "spectralMs": 14.199999999254942,
             "preprocessMs": 0,
-            "distilledMs": 96.41499999910593,
+            "distilledMs": 103.14499999955297,
             "forensicsMs": 0,
-            "fuseMs": 0.005000002682209015,
-            "totalMs": 124.89499999955297,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 131.91499999910593,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.394|visual:0.273[ai-image-detect-distilled=0.273,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.4,forensicsMs=0.0,engine=ort-web]|fusion:0.301"
+          "tiers": "provenance:0.500|spectral:0.394|visual:0.273[ai-image-detect-distilled=0.273,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=103.1,forensicsMs=0.0,engine=ort-web]|fusion:0.301"
         },
         {
           "file": "real/picsum_225.jpg",
@@ -1213,19 +1213,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 143.82000000029802,
-          "elapsedMs": 122.0650000013411,
+          "totalMs": 136.4050000011921,
+          "elapsedMs": 119.01500000059605,
           "timing": {
-            "decodeMs": 11.614999998360872,
-            "spectralMs": 13.355000000447035,
+            "decodeMs": 9.174999997019768,
+            "spectralMs": 12.345000002533197,
             "preprocessMs": 0,
-            "distilledMs": 95.96499999985099,
+            "distilledMs": 96.49000000208616,
             "forensicsMs": 0,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 122.0650000013411,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 119.01500000059605,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.468|visual:0.670[ai-image-detect-distilled=0.670,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.0,forensicsMs=0.0,engine=ort-web]|fusion:0.629"
+          "tiers": "provenance:0.500|spectral:0.468|visual:0.670[ai-image-detect-distilled=0.670,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.5,forensicsMs=0.0,engine=ort-web]|fusion:0.629"
         },
         {
           "file": "real/picsum_237.jpg",
@@ -1235,19 +1235,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 160.51500000059605,
-          "elapsedMs": 149.14499999955297,
+          "totalMs": 131.01000000163913,
+          "elapsedMs": 122.27499999850988,
           "timing": {
-            "decodeMs": 22.524999998509884,
-            "spectralMs": 23.150000002235174,
+            "decodeMs": 10.939999997615814,
+            "spectralMs": 12.265000000596046,
             "preprocessMs": 0,
-            "distilledMs": 96.42999999970198,
+            "distilledMs": 95.91999999806285,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 149.14499999955297,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 122.27499999850988,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.429|visual:0.525[ai-image-detect-distilled=0.525,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.4,forensicsMs=0.0,engine=ort-web]|fusion:0.504"
+          "tiers": "provenance:0.500|spectral:0.429|visual:0.525[ai-image-detect-distilled=0.525,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.9,forensicsMs=0.0,engine=ort-web]|fusion:0.504"
         },
         {
           "file": "real/picsum_250.jpg",
@@ -1257,19 +1257,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 136.9399999976158,
-          "elapsedMs": 128.26999999955297,
+          "totalMs": 126.11500000208616,
+          "elapsedMs": 119.96000000089407,
           "timing": {
-            "decodeMs": 9.20499999821186,
-            "spectralMs": 16.769999999552965,
+            "decodeMs": 6.03999999910593,
+            "spectralMs": 15.810000002384186,
             "preprocessMs": 0,
-            "distilledMs": 101.16000000014901,
+            "distilledMs": 96.0650000013411,
             "forensicsMs": 0,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 128.26999999955297,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 119.96000000089407,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.449|visual:0.609[ai-image-detect-distilled=0.609,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=101.2,forensicsMs=0.0,engine=ort-web]|fusion:0.577"
+          "tiers": "provenance:0.500|spectral:0.449|visual:0.609[ai-image-detect-distilled=0.609,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.1,forensicsMs=0.0,engine=ort-web]|fusion:0.577"
         },
         {
           "file": "real/picsum_274.jpg",
@@ -1279,19 +1279,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 142.25999999791384,
-          "elapsedMs": 121.74000000208616,
+          "totalMs": 131.83500000089407,
+          "elapsedMs": 123.5300000011921,
           "timing": {
-            "decodeMs": 6.83500000089407,
-            "spectralMs": 12.955000001937151,
+            "decodeMs": 12.54500000178814,
+            "spectralMs": 12.155000001192093,
             "preprocessMs": 0,
-            "distilledMs": 98.96000000089407,
+            "distilledMs": 96.18999999761581,
             "forensicsMs": 0,
-            "fuseMs": 0.005000002682209015,
-            "totalMs": 121.74000000208616,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 123.5300000011921,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.405|visual:0.401[ai-image-detect-distilled=0.401,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=99.0,forensicsMs=0.0,engine=ort-web]|fusion:0.398"
+          "tiers": "provenance:0.500|spectral:0.405|visual:0.401[ai-image-detect-distilled=0.401,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.2,forensicsMs=0.0,engine=ort-web]|fusion:0.398"
         },
         {
           "file": "real/picsum_292.jpg",
@@ -1301,19 +1301,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 139.01499999687076,
-          "elapsedMs": 123.07999999821186,
+          "totalMs": 139.1199999973178,
+          "elapsedMs": 122.99499999731779,
           "timing": {
-            "decodeMs": 9.439999997615814,
-            "spectralMs": 13.994999997317791,
+            "decodeMs": 11.33500000089407,
+            "spectralMs": 14.195000000298023,
             "preprocessMs": 0,
-            "distilledMs": 98.13500000163913,
+            "distilledMs": 94.5300000011921,
             "forensicsMs": 0,
-            "fuseMs": 0.01499999687075615,
-            "totalMs": 123.07999999821186,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 122.99499999731779,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.351|visual:0.612[ai-image-detect-distilled=0.612,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=98.1,forensicsMs=0.0,engine=ort-web]|fusion:0.557"
+          "tiers": "provenance:0.500|spectral:0.351|visual:0.612[ai-image-detect-distilled=0.612,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=94.5,forensicsMs=0.0,engine=ort-web]|fusion:0.557"
         },
         {
           "file": "real/picsum_314.jpg",
@@ -1323,19 +1323,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 146.2800000011921,
-          "elapsedMs": 124.4050000011921,
+          "totalMs": 129.9399999976158,
+          "elapsedMs": 121.76000000163913,
           "timing": {
-            "decodeMs": 8.189999997615814,
-            "spectralMs": 14.75,
+            "decodeMs": 9.935000002384186,
+            "spectralMs": 14.394999999552965,
             "preprocessMs": 0,
-            "distilledMs": 98.17499999701977,
+            "distilledMs": 95.46499999985099,
             "forensicsMs": 0,
-            "fuseMs": 0.02500000223517418,
-            "totalMs": 124.4050000011921,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 121.76000000163913,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.457|visual:0.445[ai-image-detect-distilled=0.445,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=98.2,forensicsMs=0.0,engine=ort-web]|fusion:0.445"
+          "tiers": "provenance:0.500|spectral:0.457|visual:0.445[ai-image-detect-distilled=0.445,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.5,forensicsMs=0.0,engine=ort-web]|fusion:0.445"
         },
         {
           "file": "real/picsum_338.jpg",
@@ -1345,19 +1345,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 143.17500000074506,
-          "elapsedMs": 130.76500000059605,
+          "totalMs": 161.62999999895692,
+          "elapsedMs": 128.87000000104308,
           "timing": {
-            "decodeMs": 19.58999999985099,
-            "spectralMs": 11.429999999701977,
+            "decodeMs": 12.594999998807907,
+            "spectralMs": 16.41000000014901,
             "preprocessMs": 0,
-            "distilledMs": 98.26500000059605,
+            "distilledMs": 97.3150000013411,
             "forensicsMs": 0,
-            "fuseMs": 0.005000002682209015,
-            "totalMs": 130.76500000059605,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 128.87000000104308,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.442|visual:0.315[ai-image-detect-distilled=0.315,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=98.3,forensicsMs=0.0,engine=ort-web]|fusion:0.340"
+          "tiers": "provenance:0.500|spectral:0.442|visual:0.315[ai-image-detect-distilled=0.315,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.3,forensicsMs=0.0,engine=ort-web]|fusion:0.340"
         },
         {
           "file": "real/picsum_349.jpg",
@@ -1367,19 +1367,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 134.05000000074506,
-          "elapsedMs": 123.41499999910593,
+          "totalMs": 129.45499999821186,
+          "elapsedMs": 120.85000000149012,
           "timing": {
-            "decodeMs": 7.779999997466803,
-            "spectralMs": 19.29000000283122,
+            "decodeMs": 10.340000003576279,
+            "spectralMs": 12.70499999821186,
             "preprocessMs": 0,
-            "distilledMs": 95.10000000149012,
+            "distilledMs": 97.19500000029802,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 123.41499999910593,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 120.85000000149012,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.441|visual:0.311[ai-image-detect-distilled=0.311,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.1,forensicsMs=0.0,engine=ort-web]|fusion:0.338"
+          "tiers": "provenance:0.500|spectral:0.441|visual:0.311[ai-image-detect-distilled=0.311,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.2,forensicsMs=0.0,engine=ort-web]|fusion:0.338"
         },
         {
           "file": "real/picsum_366.jpg",
@@ -1389,19 +1389,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 133.32000000029802,
-          "elapsedMs": 122.91999999806285,
+          "totalMs": 135.27499999850988,
+          "elapsedMs": 119.82999999821186,
           "timing": {
-            "decodeMs": 8.405000001192093,
-            "spectralMs": 12.655000001192093,
+            "decodeMs": 6.775000002235174,
+            "spectralMs": 13.654999997466803,
             "preprocessMs": 0,
-            "distilledMs": 100.21000000089407,
+            "distilledMs": 97.35500000044703,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 122.91999999806285,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 119.82999999821186,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.499|visual:0.439[ai-image-detect-distilled=0.439,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=100.2,forensicsMs=0.0,engine=ort-web]|fusion:0.450"
+          "tiers": "provenance:0.500|spectral:0.499|visual:0.439[ai-image-detect-distilled=0.439,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.4,forensicsMs=0.0,engine=ort-web]|fusion:0.450"
         },
         {
           "file": "real/picsum_399.jpg",
@@ -1411,19 +1411,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 138.375,
-          "elapsedMs": 124.41000000014901,
+          "totalMs": 135.39499999955297,
+          "elapsedMs": 116.16000000014901,
           "timing": {
-            "decodeMs": 5.545000001788139,
-            "spectralMs": 17.469999998807907,
+            "decodeMs": 5.8599999994039536,
+            "spectralMs": 12.519999999552965,
             "preprocessMs": 0,
-            "distilledMs": 99.95999999716878,
+            "distilledMs": 97.17500000074506,
             "forensicsMs": 0,
             "fuseMs": 0.015000000596046448,
-            "totalMs": 124.41000000014901,
+            "totalMs": 116.16000000014901,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.469|visual:0.174[ai-image-detect-distilled=0.174,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=100.0,forensicsMs=0.0,engine=ort-web]|fusion:0.250"
+          "tiers": "provenance:0.500|spectral:0.469|visual:0.174[ai-image-detect-distilled=0.174,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.2,forensicsMs=0.0,engine=ort-web]|fusion:0.250"
         },
         {
           "file": "real/picsum_433.jpg",
@@ -1433,19 +1433,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 567.375,
-          "elapsedMs": 554.3549999967217,
+          "totalMs": 544.339999999851,
+          "elapsedMs": 535.8249999992549,
           "timing": {
-            "decodeMs": 12.66499999910593,
-            "spectralMs": 11.595000002533197,
+            "decodeMs": 8.03999999910593,
+            "spectralMs": 11.839999999850988,
             "preprocessMs": 0,
-            "distilledMs": 97.41000000014901,
-            "forensicsMs": 429.29499999806285,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 554.3549999967217,
+            "distilledMs": 95.55000000074506,
+            "forensicsMs": 415.51999999955297,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 535.8249999992549,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.421|visual:0.624[ai-image-detect-distilled=0.624,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.4,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.661,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=429.3]|visual:0.661[community-forensics]|fusion:0.583"
+          "tiers": "provenance:0.500|spectral:0.421|visual:0.624[ai-image-detect-distilled=0.624,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.6,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.661,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=415.5]|visual:0.661[community-forensics]|fusion:0.583"
         },
         {
           "file": "real/picsum_453.jpg",
@@ -1455,19 +1455,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 135.37000000104308,
-          "elapsedMs": 122.37999999895692,
+          "totalMs": 130.35999999940395,
+          "elapsedMs": 119.33500000089407,
           "timing": {
-            "decodeMs": 7.429999999701977,
-            "spectralMs": 11.75,
+            "decodeMs": 6.355000000447035,
+            "spectralMs": 15.339999999850988,
             "preprocessMs": 0,
-            "distilledMs": 96.64499999955297,
+            "distilledMs": 96.39499999955297,
             "forensicsMs": 0,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 122.37999999895692,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 119.33500000089407,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.431|visual:0.405[ai-image-detect-distilled=0.405,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.6,forensicsMs=0.0,engine=ort-web]|fusion:0.407"
+          "tiers": "provenance:0.500|spectral:0.431|visual:0.405[ai-image-detect-distilled=0.405,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.4,forensicsMs=0.0,engine=ort-web]|fusion:0.407"
         },
         {
           "file": "real/picsum_488.jpg",
@@ -1477,19 +1477,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 559.9200000017881,
-          "elapsedMs": 547.6200000010431,
+          "totalMs": 560.714999999851,
+          "elapsedMs": 537.8649999983609,
           "timing": {
-            "decodeMs": 7.280000001192093,
-            "spectralMs": 17.054999999701977,
+            "decodeMs": 7.03999999910593,
+            "spectralMs": 12.610000003129244,
             "preprocessMs": 0,
-            "distilledMs": 96.0650000013411,
-            "forensicsMs": 424.625,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 547.6200000010431,
+            "distilledMs": 95.89999999850988,
+            "forensicsMs": 419.39499999955297,
+            "fuseMs": 0.030000001192092896,
+            "totalMs": 537.8649999983609,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.412|visual:0.305[ai-image-detect-distilled=0.305,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.1,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.608,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=424.6]|visual:0.608[community-forensics]|fusion:0.327"
+          "tiers": "provenance:0.500|spectral:0.412|visual:0.305[ai-image-detect-distilled=0.305,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.9,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.608,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=419.4]|visual:0.608[community-forensics]|fusion:0.327"
         },
         {
           "file": "real/picsum_525.jpg",
@@ -1499,19 +1499,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 142.9399999976158,
-          "elapsedMs": 124.64499999955297,
+          "totalMs": 126.86500000208616,
+          "elapsedMs": 114.23499999940395,
           "timing": {
-            "decodeMs": 14.765000000596046,
-            "spectralMs": 13.004999998956919,
+            "decodeMs": 5.425000000745058,
+            "spectralMs": 12.964999999850988,
             "preprocessMs": 0,
-            "distilledMs": 96.29999999701977,
+            "distilledMs": 95.3099999986589,
             "forensicsMs": 0,
-            "fuseMs": 0.030000001192092896,
-            "totalMs": 124.64499999955297,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 114.23499999940395,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.407|visual:0.184[ai-image-detect-distilled=0.184,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.3,forensicsMs=0.0,engine=ort-web]|fusion:0.245"
+          "tiers": "provenance:0.500|spectral:0.407|visual:0.184[ai-image-detect-distilled=0.184,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.3,forensicsMs=0.0,engine=ort-web]|fusion:0.245"
         },
         {
           "file": "real/picsum_553.jpg",
@@ -1521,19 +1521,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 138.4700000025332,
-          "elapsedMs": 124.07499999925494,
+          "totalMs": 151.41499999910593,
+          "elapsedMs": 125.61499999836087,
           "timing": {
-            "decodeMs": 8.385000001639128,
-            "spectralMs": 13.054999999701977,
+            "decodeMs": 8.469999998807907,
+            "spectralMs": 12.310000002384186,
             "preprocessMs": 0,
-            "distilledMs": 96.85999999940395,
+            "distilledMs": 99.4349999986589,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 124.07499999925494,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 125.61499999836087,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.284|visual:0.289[ai-image-detect-distilled=0.289,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.9,forensicsMs=0.0,engine=ort-web]|fusion:0.291"
+          "tiers": "provenance:0.500|spectral:0.284|visual:0.289[ai-image-detect-distilled=0.289,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=99.4,forensicsMs=0.0,engine=ort-web]|fusion:0.291"
         },
         {
           "file": "real/picsum_582.jpg",
@@ -1543,19 +1543,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 130.6849999986589,
-          "elapsedMs": 122.66500000283122,
+          "totalMs": 126.42500000074506,
+          "elapsedMs": 118.64000000059605,
           "timing": {
-            "decodeMs": 8.214999999850988,
-            "spectralMs": 14.115000002086163,
+            "decodeMs": 9.774999998509884,
+            "spectralMs": 11.245000001043081,
             "preprocessMs": 0,
-            "distilledMs": 97.2800000011921,
+            "distilledMs": 96.03500000014901,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 122.66500000283122,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 118.64000000059605,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.390|visual:0.448[ai-image-detect-distilled=0.448,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.3,forensicsMs=0.0,engine=ort-web]|fusion:0.432"
+          "tiers": "provenance:0.500|spectral:0.390|visual:0.448[ai-image-detect-distilled=0.448,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.0,forensicsMs=0.0,engine=ort-web]|fusion:0.432"
         },
         {
           "file": "real/picsum_593.jpg",
@@ -1565,19 +1565,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 587.839999999851,
-          "elapsedMs": 568.9549999982119,
+          "totalMs": 605.035000000149,
+          "elapsedMs": 593.7599999979138,
           "timing": {
-            "decodeMs": 13.385000001639128,
-            "spectralMs": 11.885000001639128,
+            "decodeMs": 7.8599999994039536,
+            "spectralMs": 17.63000000268221,
             "preprocessMs": 0,
-            "distilledMs": 99.79499999806285,
-            "forensicsMs": 440.6000000014901,
+            "distilledMs": 103.36500000208616,
+            "forensicsMs": 461.7750000022352,
             "fuseMs": 0.019999999552965164,
-            "totalMs": 568.9549999982119,
+            "totalMs": 593.7599999979138,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.337|visual:0.391[ai-image-detect-distilled=0.391,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=99.8,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.656,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=440.6]|visual:0.656[community-forensics]|fusion:0.375"
+          "tiers": "provenance:0.500|spectral:0.337|visual:0.391[ai-image-detect-distilled=0.391,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=103.4,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.656,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=461.7]|visual:0.656[community-forensics]|fusion:0.375"
         },
         {
           "file": "real/picsum_628.jpg",
@@ -1587,19 +1587,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 127.30499999970198,
-          "elapsedMs": 118.23000000044703,
+          "totalMs": 139.38499999791384,
+          "elapsedMs": 123.92000000178814,
           "timing": {
-            "decodeMs": 7.785000000149012,
-            "spectralMs": 12.440000001341105,
+            "decodeMs": 8.92000000178814,
+            "spectralMs": 12.404999997466803,
             "preprocessMs": 0,
-            "distilledMs": 95.05499999970198,
+            "distilledMs": 99.61499999836087,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 118.23000000044703,
+            "fuseMs": 0.019999999552965164,
+            "totalMs": 123.92000000178814,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.397|visual:0.615[ai-image-detect-distilled=0.615,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.1,forensicsMs=0.0,engine=ort-web]|fusion:0.570"
+          "tiers": "provenance:0.500|spectral:0.397|visual:0.615[ai-image-detect-distilled=0.615,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=99.6,forensicsMs=0.0,engine=ort-web]|fusion:0.570"
         },
         {
           "file": "real/picsum_660.jpg",
@@ -1609,19 +1609,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 132.58500000089407,
-          "elapsedMs": 117.84999999776483,
+          "totalMs": 137.95499999821186,
+          "elapsedMs": 121.12000000104308,
           "timing": {
-            "decodeMs": 7.5150000005960464,
-            "spectralMs": 14.425000000745058,
+            "decodeMs": 6.419999998062849,
+            "spectralMs": 17.08999999985099,
             "preprocessMs": 0,
-            "distilledMs": 95.01999999955297,
+            "distilledMs": 96.67499999701977,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 117.84999999776483,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 121.12000000104308,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.465|visual:0.291[ai-image-detect-distilled=0.291,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.0,forensicsMs=0.0,engine=ort-web]|fusion:0.328"
+          "tiers": "provenance:0.500|spectral:0.465|visual:0.291[ai-image-detect-distilled=0.291,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=96.7,forensicsMs=0.0,engine=ort-web]|fusion:0.328"
         },
         {
           "file": "real/picsum_718.jpg",
@@ -1631,19 +1631,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 137.05499999970198,
-          "elapsedMs": 127.30000000074506,
+          "totalMs": 179.7800000011921,
+          "elapsedMs": 170.8449999988079,
           "timing": {
-            "decodeMs": 13.440000001341105,
-            "spectralMs": 12.364999998360872,
+            "decodeMs": 10.634999997913837,
+            "spectralMs": 16.725000001490116,
             "preprocessMs": 0,
-            "distilledMs": 97.59999999776483,
+            "distilledMs": 140.3450000025332,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 127.30000000074506,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 170.8449999988079,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.434|visual:0.433[ai-image-detect-distilled=0.433,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.6,forensicsMs=0.0,engine=ort-web]|fusion:0.430"
+          "tiers": "provenance:0.500|spectral:0.434|visual:0.433[ai-image-detect-distilled=0.433,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=140.3,forensicsMs=0.0,engine=ort-web]|fusion:0.430"
         },
         {
           "file": "real/picsum_741.jpg",
@@ -1653,19 +1653,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 134.464999999851,
-          "elapsedMs": 118.87999999895692,
+          "totalMs": 136.67000000178814,
+          "elapsedMs": 120.44999999925494,
           "timing": {
-            "decodeMs": 6.21000000089407,
-            "spectralMs": 13.609999999403954,
+            "decodeMs": 9.344999998807907,
+            "spectralMs": 12.270000003278255,
             "preprocessMs": 0,
-            "distilledMs": 97.50500000268221,
+            "distilledMs": 98.05499999970198,
             "forensicsMs": 0,
             "fuseMs": 0.009999997913837433,
-            "totalMs": 118.87999999895692,
+            "totalMs": 120.44999999925494,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.366|visual:0.352[ai-image-detect-distilled=0.352,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.5,forensicsMs=0.0,engine=ort-web]|fusion:0.352"
+          "tiers": "provenance:0.500|spectral:0.366|visual:0.352[ai-image-detect-distilled=0.352,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=98.1,forensicsMs=0.0,engine=ort-web]|fusion:0.352"
         },
         {
           "file": "real/picsum_783.jpg",
@@ -1675,19 +1675,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 136.82000000029802,
-          "elapsedMs": 123.99499999731779,
+          "totalMs": 138.62999999895692,
+          "elapsedMs": 123.35999999940395,
           "timing": {
-            "decodeMs": 13.275000002235174,
-            "spectralMs": 13.574999999254942,
+            "decodeMs": 8.475000001490116,
+            "spectralMs": 12.234999999403954,
             "preprocessMs": 0,
-            "distilledMs": 93.29499999806285,
+            "distilledMs": 95.44500000029802,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 123.99499999731779,
+            "fuseMs": 0.030000001192092896,
+            "totalMs": 123.35999999940395,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.369|visual:0.416[ai-image-detect-distilled=0.416,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=93.3,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
+          "tiers": "provenance:0.500|spectral:0.369|visual:0.416[ai-image-detect-distilled=0.416,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=95.4,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
         },
         {
           "file": "real/picsum_823.jpg",
@@ -1697,19 +1697,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 574.2749999985099,
-          "elapsedMs": 556.1550000011921,
+          "totalMs": 607.5050000026822,
+          "elapsedMs": 589.089999999851,
           "timing": {
-            "decodeMs": 11.089999999850988,
-            "spectralMs": 12.16500000283122,
+            "decodeMs": 12.519999999552965,
+            "spectralMs": 17.225000001490116,
             "preprocessMs": 0,
-            "distilledMs": 94.33000000193715,
-            "forensicsMs": 435.179999999702,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 556.1550000011921,
+            "distilledMs": 97.91500000283122,
+            "forensicsMs": 459.41999999806285,
+            "fuseMs": 0.02499999850988388,
+            "totalMs": 589.089999999851,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.334|visual:0.403[ai-image-detect-distilled=0.403,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=94.3,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.535,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=435.2]|visual:0.535[community-forensics]|fusion:0.384"
+          "tiers": "provenance:0.500|spectral:0.334|visual:0.403[ai-image-detect-distilled=0.403,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=97.9,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.535,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,distilledMs=0.0,forensicsMs=459.4]|visual:0.535[community-forensics]|fusion:0.384"
         }
       ]
     },
@@ -1733,15 +1733,15 @@
         "fn": 0
       },
       "timing": {
-        "avgTotalMs": 173.26296052635698,
-        "p50TotalMs": 130.26500000059605,
-        "p90TotalMs": 567.5399999991059,
+        "avgTotalMs": 177.1199342104067,
+        "p50TotalMs": 136.74500000104308,
+        "p90TotalMs": 590.945000000298,
         "count": 76,
         "forensicsCount": 12,
-        "avgDistilledMs": 59.215460526217754,
-        "avgForensicsMsWhenRun": 429.16791666671634,
-        "avgDecodeMs": 6.670592105359231,
-        "avgSpectralMs": 9.368486841944488,
+        "avgDistilledMs": 60.14782894745861,
+        "avgForensicsMsWhenRun": 434.15500000026077,
+        "avgDecodeMs": 7.390197368583789,
+        "avgSpectralMs": 9.74361842096244,
         "avgPreprocessMs": 0
       },
       "rows": [
@@ -1753,16 +1753,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 25.049999997019768,
-          "elapsedMs": 18.570000000298023,
+          "totalMs": 20.650000002235174,
+          "elapsedMs": 14.370000001043081,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 18.570000000298023,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 14.370000001043081,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -1775,16 +1775,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 25.100000001490116,
-          "elapsedMs": 11.300000000745058,
+          "totalMs": 13.144999999552965,
+          "elapsedMs": 5.5,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 11.300000000745058,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 5.5,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -1797,16 +1797,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 39.29500000178814,
-          "elapsedMs": 28.70999999716878,
+          "totalMs": 51.684999998658895,
+          "elapsedMs": 39.58500000089407,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 28.70999999716878,
+            "fuseMs": 0.005000002682209015,
+            "totalMs": 39.58500000089407,
             "ranForensics": false
           },
           "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
@@ -1819,8 +1819,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 50.394999999552965,
-          "elapsedMs": 37.32999999821186,
+          "totalMs": 47.92000000178814,
+          "elapsedMs": 38.024999998509884,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -1828,7 +1828,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.004999998956918716,
-            "totalMs": 37.32999999821186,
+            "totalMs": 38.024999998509884,
             "ranForensics": false
           },
           "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
@@ -1841,16 +1841,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 49.100000001490116,
-          "elapsedMs": 38.88000000268221,
+          "totalMs": 47.75,
+          "elapsedMs": 37.50999999791384,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.005000002682209015,
-            "totalMs": 38.88000000268221,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 37.50999999791384,
             "ranForensics": false
           },
           "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
@@ -1863,19 +1863,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 194.75999999791384,
-          "elapsedMs": 182.8449999988079,
+          "totalMs": 191.89499999955297,
+          "elapsedMs": 185.69500000029802,
           "timing": {
-            "decodeMs": 13.080000001937151,
-            "spectralMs": 32.04500000178814,
+            "decodeMs": 13.600000001490116,
+            "spectralMs": 31.765000000596046,
             "preprocessMs": 0,
-            "distilledMs": 100.08500000089407,
+            "distilledMs": 99.76500000059605,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 182.8449999988079,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 185.69500000029802,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.423|visual:0.646[ai-image-detect-distilled=0.646,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=100.1,forensicsMs=0.0,engine=ort-web]|fusion:0.660"
+          "tiers": "provenance:0.500|spectral:0.423|visual:0.646[ai-image-detect-distilled=0.646,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.8,forensicsMs=0.0,engine=ort-web]|fusion:0.660"
         },
         {
           "file": "ai/krea__krea-2-medium/street_cafe.png",
@@ -1885,19 +1885,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 198.35500000044703,
-          "elapsedMs": 185.48500000312924,
+          "totalMs": 206.58000000193715,
+          "elapsedMs": 184.05500000342727,
           "timing": {
-            "decodeMs": 15.095000002533197,
-            "spectralMs": 24.064999997615814,
+            "decodeMs": 19.234999999403954,
+            "spectralMs": 23.78500000014901,
             "preprocessMs": 0,
-            "distilledMs": 101.16499999910593,
+            "distilledMs": 102.4050000011921,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 185.48500000312924,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 184.05500000342727,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.361|visual:0.682[ai-image-detect-distilled=0.682,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=101.2,forensicsMs=0.0,engine=ort-web]|fusion:0.682"
+          "tiers": "provenance:0.500|spectral:0.361|visual:0.682[ai-image-detect-distilled=0.682,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=102.4,forensicsMs=0.0,engine=ort-web]|fusion:0.682"
         },
         {
           "file": "ai/krea__krea-2-large/park_dog.png",
@@ -1907,19 +1907,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 632.9049999974668,
-          "elapsedMs": 610,
+          "totalMs": 622.4899999983609,
+          "elapsedMs": 609.8000000007451,
           "timing": {
-            "decodeMs": 14.879999998956919,
-            "spectralMs": 22.550000000745058,
+            "decodeMs": 13.865000002086163,
+            "spectralMs": 22.695000000298023,
             "preprocessMs": 0,
-            "distilledMs": 101.68500000238419,
-            "forensicsMs": 429.9949999973178,
+            "distilledMs": 101.33500000089407,
+            "forensicsMs": 431.054999999702,
             "fuseMs": 0.015000000596046448,
-            "totalMs": 610,
+            "totalMs": 609.8000000007451,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.308|visual:0.495[ai-image-detect-distilled=0.495,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=101.7,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.782,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=429.9]|visual:0.782[community-forensics]|fusion:0.782"
+          "tiers": "provenance:0.500|spectral:0.308|visual:0.495[ai-image-detect-distilled=0.495,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=101.3,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.782,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=431.0]|visual:0.782[community-forensics]|fusion:0.782"
         },
         {
           "file": "ai/google__gemini-3.1-flash-lite-image/park_dog.jpg",
@@ -1929,16 +1929,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 57.08000000193715,
-          "elapsedMs": 29.720000002533197,
+          "totalMs": 42.92499999701977,
+          "elapsedMs": 23.405000001192093,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 29.720000002533197,
+            "fuseMs": 0,
+            "totalMs": 23.405000001192093,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -1951,16 +1951,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 54.34499999880791,
-          "elapsedMs": 32.144999999552965,
+          "totalMs": 50.144999999552965,
+          "elapsedMs": 34.899999998509884,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 32.144999999552965,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 34.899999998509884,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -1973,16 +1973,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 41.23999999836087,
-          "elapsedMs": 29.375,
+          "totalMs": 45.33000000193715,
+          "elapsedMs": 30.37000000104308,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0,
-            "totalMs": 29.375,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 30.37000000104308,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -1995,16 +1995,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 38.69999999925494,
-          "elapsedMs": 33.60999999940395,
+          "totalMs": 42.355000000447035,
+          "elapsedMs": 33.46000000089407,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 33.60999999940395,
+            "fuseMs": 0.005000002682209015,
+            "totalMs": 33.46000000089407,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2017,8 +2017,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 40.889999996870756,
-          "elapsedMs": 27.690000001341105,
+          "totalMs": 45.71000000089407,
+          "elapsedMs": 36.38000000268221,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -2026,7 +2026,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.005000002682209015,
-            "totalMs": 27.690000001341105,
+            "totalMs": 36.38000000268221,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2039,16 +2039,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 34.730000000447035,
-          "elapsedMs": 27.650000002235174,
+          "totalMs": 39.07499999925494,
+          "elapsedMs": 28.934999998658895,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 27.650000002235174,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 28.934999998658895,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2061,19 +2061,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 591.1299999989569,
-          "elapsedMs": 586.1200000010431,
+          "totalMs": 602.2600000016391,
+          "elapsedMs": 596.6499999985099,
           "timing": {
-            "decodeMs": 11.5,
-            "spectralMs": 22.349999997764826,
+            "decodeMs": 13.810000002384186,
+            "spectralMs": 22.144999999552965,
             "preprocessMs": 0,
-            "distilledMs": 99.25999999791384,
-            "forensicsMs": 425.2799999974668,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 586.1200000010431,
+            "distilledMs": 99.92500000074506,
+            "forensicsMs": 432.33500000089407,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 596.6499999985099,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.368|visual:0.444[ai-image-detect-distilled=0.444,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.3,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.716,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=425.3]|visual:0.716[community-forensics]|fusion:0.716"
+          "tiers": "provenance:0.500|spectral:0.368|visual:0.444[ai-image-detect-distilled=0.444,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.9,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.716,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=432.3]|visual:0.716[community-forensics]|fusion:0.716"
         },
         {
           "file": "ai/microsoft__mai-image-2.5/kitchen_window.png",
@@ -2083,16 +2083,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 77.64499999955297,
-          "elapsedMs": 43.96000000089407,
+          "totalMs": 58.00499999895692,
+          "elapsedMs": 38.63000000268221,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0,
-            "totalMs": 43.96000000089407,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 38.63000000268221,
             "ranForensics": false
           },
           "tiers": "provenance:0.930|spectral:0.500|visual:0.500[skipped]|fusion:0.930"
@@ -2105,8 +2105,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 35.01500000059605,
-          "elapsedMs": 19.62999999895692,
+          "totalMs": 34.78000000119209,
+          "elapsedMs": 18.49500000104308,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -2114,7 +2114,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.004999998956918716,
-            "totalMs": 19.62999999895692,
+            "totalMs": 18.49500000104308,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2127,16 +2127,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 49.21999999880791,
-          "elapsedMs": 35.66499999910593,
+          "totalMs": 42.6549999974668,
+          "elapsedMs": 30.46499999985099,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 35.66499999910593,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 30.46499999985099,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2149,16 +2149,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 48.21499999985099,
-          "elapsedMs": 32.100000001490116,
+          "totalMs": 49.85999999940395,
+          "elapsedMs": 33.975000001490116,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.005000002682209015,
-            "totalMs": 32.100000001490116,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 33.975000001490116,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2171,16 +2171,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 45.16499999910593,
-          "elapsedMs": 34.60999999940395,
+          "totalMs": 44.83499999716878,
+          "elapsedMs": 37.10999999940395,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 34.60999999940395,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 37.10999999940395,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2193,16 +2193,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 48.92500000074506,
-          "elapsedMs": 33.270000003278255,
+          "totalMs": 62.76500000059605,
+          "elapsedMs": 35.07499999925494,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 33.270000003278255,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 35.07499999925494,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2215,16 +2215,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 43.45500000193715,
-          "elapsedMs": 34.24500000104308,
+          "totalMs": 43.23999999836087,
+          "elapsedMs": 33.2200000025332,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 34.24500000104308,
+            "fuseMs": 0.005000002682209015,
+            "totalMs": 33.2200000025332,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2237,16 +2237,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 55.940000001341105,
-          "elapsedMs": 35.35999999940395,
+          "totalMs": 47.144999999552965,
+          "elapsedMs": 32.85999999940395,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 35.35999999940395,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 32.85999999940395,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2259,8 +2259,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 39.03500000014901,
-          "elapsedMs": 32.730000000447035,
+          "totalMs": 40.899999998509884,
+          "elapsedMs": 33.07499999925494,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -2268,7 +2268,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.004999998956918716,
-            "totalMs": 32.730000000447035,
+            "totalMs": 33.07499999925494,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2281,16 +2281,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 45.16500000283122,
-          "elapsedMs": 31.899999998509884,
+          "totalMs": 62.96999999880791,
+          "elapsedMs": 50.96999999880791,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 31.899999998509884,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 50.96999999880791,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2303,8 +2303,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 40.96499999985099,
-          "elapsedMs": 29.904999997466803,
+          "totalMs": 41.189999997615814,
+          "elapsedMs": 29.924999997019768,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -2312,7 +2312,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.004999998956918716,
-            "totalMs": 29.904999997466803,
+            "totalMs": 29.924999997019768,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2325,19 +2325,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 599.6550000011921,
-          "elapsedMs": 591.4899999983609,
+          "totalMs": 604.839999999851,
+          "elapsedMs": 597.0399999991059,
           "timing": {
-            "decodeMs": 10.82999999821186,
-            "spectralMs": 23.384999997913837,
+            "decodeMs": 10.745000001043081,
+            "spectralMs": 23.905000001192093,
             "preprocessMs": 0,
-            "distilledMs": 100.7800000011921,
-            "forensicsMs": 453.54500000178814,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 591.4899999983609,
+            "distilledMs": 129.38499999791384,
+            "forensicsMs": 429.98000000044703,
+            "fuseMs": 0.01499999687075615,
+            "totalMs": 597.0399999991059,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.438|visual:0.629[ai-image-detect-distilled=0.629,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=100.8,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.679,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=453.5]|visual:0.679[community-forensics]|fusion:0.680"
+          "tiers": "provenance:0.500|spectral:0.438|visual:0.629[ai-image-detect-distilled=0.629,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=129.4,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.679,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=430.0]|visual:0.679[community-forensics]|fusion:0.680"
         },
         {
           "file": "ai/black-forest-labs__flux.2-klein-4b/street_cafe.png",
@@ -2347,16 +2347,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 51.16499999910593,
-          "elapsedMs": 33.32999999821186,
+          "totalMs": 56.274999998509884,
+          "elapsedMs": 37.57499999925494,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 33.32999999821186,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 37.57499999925494,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2369,16 +2369,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 47.275000002235174,
-          "elapsedMs": 31.140000000596046,
+          "totalMs": 49.25,
+          "elapsedMs": 31.885000001639128,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 31.140000000596046,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 31.885000001639128,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2391,19 +2391,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 576.714999999851,
-          "elapsedMs": 572,
+          "totalMs": 590.945000000298,
+          "elapsedMs": 582.230000000447,
           "timing": {
-            "decodeMs": 11.324999999254942,
-            "spectralMs": 23.28999999910593,
+            "decodeMs": 11.080000001937151,
+            "spectralMs": 24.61999999731779,
             "preprocessMs": 0,
-            "distilledMs": 100.49500000104308,
-            "forensicsMs": 434.089999999851,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 572,
+            "distilledMs": 105.30499999970198,
+            "forensicsMs": 438.5999999977648,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 582.230000000447,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.304|visual:0.357[ai-image-detect-distilled=0.357,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=100.5,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.793,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=434.1]|visual:0.793[community-forensics]|fusion:0.793"
+          "tiers": "provenance:0.500|spectral:0.304|visual:0.357[ai-image-detect-distilled=0.357,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=105.3,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.793,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=438.6]|visual:0.793[community-forensics]|fusion:0.793"
         },
         {
           "file": "ai/black-forest-labs__flux.2-flex/street_cafe.png",
@@ -2413,8 +2413,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 59.48499999940395,
-          "elapsedMs": 38.07000000029802,
+          "totalMs": 58.860000003129244,
+          "elapsedMs": 38.04500000178814,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -2422,7 +2422,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.010000001639127731,
-            "totalMs": 38.07000000029802,
+            "totalMs": 38.04500000178814,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2435,8 +2435,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 57.62000000104308,
-          "elapsedMs": 37.28999999910593,
+          "totalMs": 56.67000000178814,
+          "elapsedMs": 39.09499999880791,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -2444,7 +2444,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.004999998956918716,
-            "totalMs": 37.28999999910593,
+            "totalMs": 39.09499999880791,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2457,16 +2457,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 45.190000001341105,
-          "elapsedMs": 33.769999999552965,
+          "totalMs": 46.559999998658895,
+          "elapsedMs": 36.019999999552965,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 33.769999999552965,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 36.019999999552965,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2479,16 +2479,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 41.014999996870756,
-          "elapsedMs": 30.03999999910593,
+          "totalMs": 40.29500000178814,
+          "elapsedMs": 31.75499999895692,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.01499999687075615,
-            "totalMs": 30.03999999910593,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 31.75499999895692,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2501,16 +2501,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 43.185000002384186,
-          "elapsedMs": 32.14000000059605,
+          "totalMs": 36.87999999895692,
+          "elapsedMs": 29.554999999701977,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.005000002682209015,
-            "totalMs": 32.14000000059605,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 29.554999999701977,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2523,8 +2523,8 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 44.83999999985099,
-          "elapsedMs": 37.684999998658895,
+          "totalMs": 56.9700000025332,
+          "elapsedMs": 35.20999999716878,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
@@ -2532,7 +2532,7 @@
             "distilledMs": 0,
             "forensicsMs": 0,
             "fuseMs": 0.004999998956918716,
-            "totalMs": 37.684999998658895,
+            "totalMs": 35.20999999716878,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2545,16 +2545,16 @@
           "predicted": "ai",
           "correct": true,
           "backend": "none",
-          "totalMs": 50.28999999910593,
-          "elapsedMs": 33.684999998658895,
+          "totalMs": 39.36500000208616,
+          "elapsedMs": 28.615000002086163,
           "timing": {
             "decodeMs": 0,
             "spectralMs": 0,
             "preprocessMs": 0,
             "distilledMs": 0,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 33.684999998658895,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 28.615000002086163,
             "ranForensics": false
           },
           "tiers": "provenance:0.980|spectral:0.500|visual:0.500[skipped]|fusion:0.980"
@@ -2567,19 +2567,19 @@
           "predicted": "ai",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 631.4249999970198,
-          "elapsedMs": 621.3449999988079,
+          "totalMs": 625.9349999986589,
+          "elapsedMs": 614.3350000008941,
           "timing": {
-            "decodeMs": 17.024999998509884,
-            "spectralMs": 22.984999999403954,
+            "decodeMs": 13.79500000178814,
+            "spectralMs": 22.190000001341105,
             "preprocessMs": 0,
-            "distilledMs": 109.01500000059605,
-            "forensicsMs": 434.8700000010431,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 621.3449999988079,
+            "distilledMs": 104.48999999836087,
+            "forensicsMs": 436.3700000010431,
+            "fuseMs": 0.02500000223517418,
+            "totalMs": 614.3350000008941,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.294|visual:0.319[ai-image-detect-distilled=0.319,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=109.0,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.764,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=434.8]|visual:0.764[community-forensics]|fusion:0.764"
+          "tiers": "provenance:0.500|spectral:0.294|visual:0.319[ai-image-detect-distilled=0.319,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=104.5,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.764,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=436.3]|visual:0.764[community-forensics]|fusion:0.764"
         },
         {
           "file": "real/picsum_10.jpg",
@@ -2589,19 +2589,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 147.60500000044703,
-          "elapsedMs": 132.77499999850988,
+          "totalMs": 139.92500000074506,
+          "elapsedMs": 126.19500000029802,
           "timing": {
-            "decodeMs": 17.175000000745058,
-            "spectralMs": 13.850000001490116,
+            "decodeMs": 8.390000000596046,
+            "spectralMs": 17.440000001341105,
             "preprocessMs": 0,
-            "distilledMs": 99.03500000014901,
+            "distilledMs": 98.01500000059605,
             "forensicsMs": 0,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 132.77499999850988,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 126.19500000029802,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.326|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.0,forensicsMs=0.0,engine=ort-web]|fusion:0.311"
+          "tiers": "provenance:0.500|spectral:0.326|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=98.0,forensicsMs=0.0,engine=ort-web]|fusion:0.311"
         },
         {
           "file": "real/picsum_15.jpg",
@@ -2611,19 +2611,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 576.8149999976158,
-          "elapsedMs": 560.7399999983609,
+          "totalMs": 588.9199999980628,
+          "elapsedMs": 576.9499999992549,
           "timing": {
-            "decodeMs": 10.225000001490116,
-            "spectralMs": 13.109999999403954,
+            "decodeMs": 9.275000002235174,
+            "spectralMs": 15.809999998658895,
             "preprocessMs": 0,
-            "distilledMs": 99.28500000014901,
-            "forensicsMs": 430.9350000023842,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 560.7399999983609,
+            "distilledMs": 106.63500000163913,
+            "forensicsMs": 439.964999999851,
+            "fuseMs": 0.02499999850988388,
+            "totalMs": 576.9499999992549,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.374|visual:0.555[ai-image-detect-distilled=0.555,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.3,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.543,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=430.9]|visual:0.543[community-forensics]|fusion:0.516"
+          "tiers": "provenance:0.500|spectral:0.374|visual:0.555[ai-image-detect-distilled=0.555,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=106.6,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.543,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=439.9]|visual:0.543[community-forensics]|fusion:0.516"
         },
         {
           "file": "real/picsum_28.jpg",
@@ -2633,19 +2633,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 196.39999999850988,
-          "elapsedMs": 171.12000000104308,
+          "totalMs": 155.35500000044703,
+          "elapsedMs": 140.5600000023842,
           "timing": {
-            "decodeMs": 39.610000003129244,
-            "spectralMs": 13.625,
+            "decodeMs": 19.82999999821186,
+            "spectralMs": 14.294999998062849,
             "preprocessMs": 0,
-            "distilledMs": 99.03999999910593,
+            "distilledMs": 101.44999999925494,
             "forensicsMs": 0,
             "fuseMs": 0.019999999552965164,
-            "totalMs": 171.12000000104308,
+            "totalMs": 140.5600000023842,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.268|visual:0.299[ai-image-detect-distilled=0.299,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.0,forensicsMs=0.0,engine=ort-web]|fusion:0.294"
+          "tiers": "provenance:0.500|spectral:0.268|visual:0.299[ai-image-detect-distilled=0.299,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=101.4,forensicsMs=0.0,engine=ort-web]|fusion:0.294"
         },
         {
           "file": "real/picsum_48.jpg",
@@ -2655,19 +2655,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 143.6849999986589,
-          "elapsedMs": 133.39000000059605,
+          "totalMs": 135.48499999940395,
+          "elapsedMs": 123.375,
           "timing": {
-            "decodeMs": 13.070000000298023,
-            "spectralMs": 14.809999998658895,
+            "decodeMs": 7.620000001043081,
+            "spectralMs": 13.489999998360872,
             "preprocessMs": 0,
-            "distilledMs": 104.48499999940395,
+            "distilledMs": 101.4699999988079,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 133.39000000059605,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 123.375,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.478|visual:0.328[ai-image-detect-distilled=0.328,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=104.5,forensicsMs=0.0,engine=ort-web]|fusion:0.358"
+          "tiers": "provenance:0.500|spectral:0.478|visual:0.328[ai-image-detect-distilled=0.328,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=101.5,forensicsMs=0.0,engine=ort-web]|fusion:0.358"
         },
         {
           "file": "real/picsum_64.jpg",
@@ -2677,19 +2677,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 131.12000000104308,
-          "elapsedMs": 120.29499999806285,
+          "totalMs": 153.12999999895692,
+          "elapsedMs": 138.51500000059605,
           "timing": {
-            "decodeMs": 9.675000000745058,
-            "spectralMs": 13.830000001937151,
+            "decodeMs": 14.429999999701977,
+            "spectralMs": 20.309999998658895,
             "preprocessMs": 0,
-            "distilledMs": 94.50499999895692,
+            "distilledMs": 101.39499999955297,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 120.29499999806285,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 138.51500000059605,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.416|visual:0.378[ai-image-detect-distilled=0.378,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=94.5,forensicsMs=0.0,engine=ort-web]|fusion:0.383"
+          "tiers": "provenance:0.500|spectral:0.416|visual:0.378[ai-image-detect-distilled=0.378,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=101.4,forensicsMs=0.0,engine=ort-web]|fusion:0.383"
         },
         {
           "file": "real/picsum_83.jpg",
@@ -2699,19 +2699,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 129.22500000149012,
-          "elapsedMs": 123.19500000029802,
+          "totalMs": 143.50499999895692,
+          "elapsedMs": 126.79500000178814,
           "timing": {
-            "decodeMs": 12.480000000447035,
-            "spectralMs": 14.504999998956919,
+            "decodeMs": 11.470000002533197,
+            "spectralMs": 17.684999998658895,
             "preprocessMs": 0,
-            "distilledMs": 94.85500000044703,
+            "distilledMs": 96.12000000104308,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 123.19500000029802,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 126.79500000178814,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.234|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=94.9,forensicsMs=0.0,engine=ort-web]|fusion:0.293"
+          "tiers": "provenance:0.500|spectral:0.234|visual:0.306[ai-image-detect-distilled=0.306,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.1,forensicsMs=0.0,engine=ort-web]|fusion:0.293"
         },
         {
           "file": "real/picsum_96.jpg",
@@ -2721,19 +2721,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 165.44500000029802,
-          "elapsedMs": 154.42500000074506,
+          "totalMs": 145.2199999988079,
+          "elapsedMs": 133.625,
           "timing": {
-            "decodeMs": 13.869999997317791,
-            "spectralMs": 16.349999997764826,
+            "decodeMs": 15.300000000745058,
+            "spectralMs": 18.28999999910593,
             "preprocessMs": 0,
-            "distilledMs": 123.54999999701977,
+            "distilledMs": 99.33999999985099,
             "forensicsMs": 0,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 154.42500000074506,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 133.625,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.461|visual:0.355[ai-image-detect-distilled=0.355,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=123.5,forensicsMs=0.0,engine=ort-web]|fusion:0.375"
+          "tiers": "provenance:0.500|spectral:0.461|visual:0.355[ai-image-detect-distilled=0.355,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.3,forensicsMs=0.0,engine=ort-web]|fusion:0.375"
         },
         {
           "file": "real/picsum_119.jpg",
@@ -2743,19 +2743,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 129.48499999940395,
-          "elapsedMs": 112.1900000013411,
+          "totalMs": 164.77500000223517,
+          "elapsedMs": 141.75,
           "timing": {
-            "decodeMs": 5.280000001192093,
-            "spectralMs": 12.050000000745058,
+            "decodeMs": 18.269999999552965,
+            "spectralMs": 12.620000001043081,
             "preprocessMs": 0,
-            "distilledMs": 94.24500000104308,
+            "distilledMs": 109.24500000104308,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 112.1900000013411,
+            "fuseMs": 0.030000001192092896,
+            "totalMs": 141.75,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.423|visual:0.271[ai-image-detect-distilled=0.271,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=94.2,forensicsMs=0.0,engine=ort-web]|fusion:0.306"
+          "tiers": "provenance:0.500|spectral:0.423|visual:0.271[ai-image-detect-distilled=0.271,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=109.2,forensicsMs=0.0,engine=ort-web]|fusion:0.306"
         },
         {
           "file": "real/picsum_129.jpg",
@@ -2765,19 +2765,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 130.0600000023842,
-          "elapsedMs": 119.73499999940395,
+          "totalMs": 144.08500000089407,
+          "elapsedMs": 129.0949999988079,
           "timing": {
-            "decodeMs": 7.96000000089407,
-            "spectralMs": 12.474999997764826,
+            "decodeMs": 8.140000000596046,
+            "spectralMs": 17.75,
             "preprocessMs": 0,
-            "distilledMs": 95.00499999895692,
+            "distilledMs": 99.35999999940395,
             "forensicsMs": 0,
             "fuseMs": 0.010000001639127731,
-            "totalMs": 119.73499999940395,
+            "totalMs": 129.0949999988079,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.389|visual:0.268[ai-image-detect-distilled=0.268,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=95.0,forensicsMs=0.0,engine=ort-web]|fusion:0.297"
+          "tiers": "provenance:0.500|spectral:0.389|visual:0.268[ai-image-detect-distilled=0.268,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.4,forensicsMs=0.0,engine=ort-web]|fusion:0.297"
         },
         {
           "file": "real/picsum_137.jpg",
@@ -2787,19 +2787,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 130.26500000059605,
-          "elapsedMs": 115.60999999940395,
+          "totalMs": 135.8699999973178,
+          "elapsedMs": 123.20499999821186,
           "timing": {
-            "decodeMs": 8.005000002682209,
-            "spectralMs": 12.269999999552965,
+            "decodeMs": 6.189999997615814,
+            "spectralMs": 14.990000002086163,
             "preprocessMs": 0,
-            "distilledMs": 94.53500000014901,
+            "distilledMs": 97.625,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 115.60999999940395,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 123.20499999821186,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.351|visual:0.216[ai-image-detect-distilled=0.216,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=94.5,forensicsMs=0.0,engine=ort-web]|fusion:0.256"
+          "tiers": "provenance:0.500|spectral:0.351|visual:0.216[ai-image-detect-distilled=0.216,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.6,forensicsMs=0.0,engine=ort-web]|fusion:0.256"
         },
         {
           "file": "real/picsum_152.jpg",
@@ -2809,19 +2809,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 132.285000000149,
-          "elapsedMs": 126.67999999970198,
+          "totalMs": 148.73000000044703,
+          "elapsedMs": 137.29000000283122,
           "timing": {
-            "decodeMs": 11.449999999254942,
-            "spectralMs": 14.190000001341105,
+            "decodeMs": 12.559999998658895,
+            "spectralMs": 14.730000000447035,
             "preprocessMs": 0,
-            "distilledMs": 100.02500000223517,
+            "distilledMs": 109.03500000014901,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 126.67999999970198,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 137.29000000283122,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.457|visual:0.391[ai-image-detect-distilled=0.391,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=100.0,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
+          "tiers": "provenance:0.500|spectral:0.457|visual:0.391[ai-image-detect-distilled=0.391,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=109.0,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
         },
         {
           "file": "real/picsum_163.jpg",
@@ -2831,19 +2831,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 555.8799999989569,
-          "elapsedMs": 549.214999999851,
+          "totalMs": 601.1649999991059,
+          "elapsedMs": 578.8249999992549,
           "timing": {
-            "decodeMs": 8.899999998509884,
-            "spectralMs": 17.894999999552965,
+            "decodeMs": 10.625,
+            "spectralMs": 18.649999998509884,
             "preprocessMs": 0,
-            "distilledMs": 94.96499999985099,
-            "forensicsMs": 425.8850000016391,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 549.214999999851,
+            "distilledMs": 107.77499999850988,
+            "forensicsMs": 439.9700000025332,
+            "fuseMs": 0.019999999552965164,
+            "totalMs": 578.8249999992549,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.356|visual:0.556[ai-image-detect-distilled=0.556,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=95.0,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.619,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=425.8]|visual:0.619[community-forensics]|fusion:0.512"
+          "tiers": "provenance:0.500|spectral:0.356|visual:0.556[ai-image-detect-distilled=0.556,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=107.8,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.619,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=439.9]|visual:0.619[community-forensics]|fusion:0.512"
         },
         {
           "file": "real/picsum_176.jpg",
@@ -2853,19 +2853,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 565.644999999553,
-          "elapsedMs": 553.7100000008941,
+          "totalMs": 593.0950000025332,
+          "elapsedMs": 574.2450000010431,
           "timing": {
-            "decodeMs": 13.429999999701977,
-            "spectralMs": 12.195000000298023,
+            "decodeMs": 18.29500000178814,
+            "spectralMs": 12.955000001937151,
             "preprocessMs": 0,
-            "distilledMs": 97.39499999955297,
-            "forensicsMs": 427.9400000013411,
-            "fuseMs": 0.02500000223517418,
-            "totalMs": 553.7100000008941,
+            "distilledMs": 108.99500000104308,
+            "forensicsMs": 430.86000000312924,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 574.2450000010431,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.290|visual:0.350[ai-image-detect-distilled=0.350,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.4,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.593,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=427.9]|visual:0.593[community-forensics]|fusion:0.335"
+          "tiers": "provenance:0.500|spectral:0.290|visual:0.350[ai-image-detect-distilled=0.350,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=109.0,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.593,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=430.8]|visual:0.593[community-forensics]|fusion:0.335"
         },
         {
           "file": "real/picsum_193.jpg",
@@ -2875,19 +2875,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 132.49500000104308,
-          "elapsedMs": 125.60000000149012,
+          "totalMs": 152.80000000074506,
+          "elapsedMs": 139.45500000193715,
           "timing": {
-            "decodeMs": 7.264999996870756,
-            "spectralMs": 14.770000003278255,
+            "decodeMs": 15.425000000745058,
+            "spectralMs": 15.035000000149012,
             "preprocessMs": 0,
-            "distilledMs": 98.29499999806285,
+            "distilledMs": 105.70500000193715,
             "forensicsMs": 0,
             "fuseMs": 0.010000001639127731,
-            "totalMs": 125.60000000149012,
+            "totalMs": 139.45500000193715,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.347|visual:0.512[ai-image-detect-distilled=0.512,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=98.3,forensicsMs=0.0,engine=ort-web]|fusion:0.474"
+          "tiers": "provenance:0.500|spectral:0.347|visual:0.512[ai-image-detect-distilled=0.512,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=105.7,forensicsMs=0.0,engine=ort-web]|fusion:0.474"
         },
         {
           "file": "real/picsum_201.jpg",
@@ -2897,19 +2897,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 155.92999999970198,
-          "elapsedMs": 147.60000000149012,
+          "totalMs": 142.10500000044703,
+          "elapsedMs": 128.87000000104308,
           "timing": {
-            "decodeMs": 10.984999999403954,
-            "spectralMs": 12.75,
+            "decodeMs": 17.355000000447035,
+            "spectralMs": 15.379999998956919,
             "preprocessMs": 0,
-            "distilledMs": 122.76999999955297,
+            "distilledMs": 95.20000000298023,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 147.60000000149012,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 128.87000000104308,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.394|visual:0.273[ai-image-detect-distilled=0.273,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=122.8,forensicsMs=0.0,engine=ort-web]|fusion:0.301"
+          "tiers": "provenance:0.500|spectral:0.394|visual:0.273[ai-image-detect-distilled=0.273,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=95.2,forensicsMs=0.0,engine=ort-web]|fusion:0.301"
         },
         {
           "file": "real/picsum_225.jpg",
@@ -2919,19 +2919,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 140.83500000089407,
-          "elapsedMs": 132.89999999850988,
+          "totalMs": 140.14499999955297,
+          "elapsedMs": 130.3699999973178,
           "timing": {
-            "decodeMs": 9.859999999403954,
-            "spectralMs": 15.319999996572733,
+            "decodeMs": 14.955000001937151,
+            "spectralMs": 15.434999998658895,
             "preprocessMs": 0,
-            "distilledMs": 106.05499999970198,
+            "distilledMs": 97.92500000074506,
             "forensicsMs": 0,
             "fuseMs": 0.009999997913837433,
-            "totalMs": 132.89999999850988,
+            "totalMs": 130.3699999973178,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.468|visual:0.670[ai-image-detect-distilled=0.670,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=106.1,forensicsMs=0.0,engine=ort-web]|fusion:0.629"
+          "tiers": "provenance:0.500|spectral:0.468|visual:0.670[ai-image-detect-distilled=0.670,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.9,forensicsMs=0.0,engine=ort-web]|fusion:0.629"
         },
         {
           "file": "real/picsum_237.jpg",
@@ -2941,19 +2941,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 131.82000000029802,
-          "elapsedMs": 120.67500000074506,
+          "totalMs": 147.79999999701977,
+          "elapsedMs": 135.76999999955297,
           "timing": {
-            "decodeMs": 7.379999998956919,
-            "spectralMs": 14.75,
+            "decodeMs": 15.494999997317791,
+            "spectralMs": 17.735000003129244,
             "preprocessMs": 0,
-            "distilledMs": 97.17499999701977,
+            "distilledMs": 100.6849999986589,
             "forensicsMs": 0,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 120.67500000074506,
+            "fuseMs": 0.005000002682209015,
+            "totalMs": 135.76999999955297,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.429|visual:0.525[ai-image-detect-distilled=0.525,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.2,forensicsMs=0.0,engine=ort-web]|fusion:0.504"
+          "tiers": "provenance:0.500|spectral:0.429|visual:0.525[ai-image-detect-distilled=0.525,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=100.7,forensicsMs=0.0,engine=ort-web]|fusion:0.504"
         },
         {
           "file": "real/picsum_250.jpg",
@@ -2963,19 +2963,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 146.589999999851,
-          "elapsedMs": 133.8449999988079,
+          "totalMs": 142.9949999973178,
+          "elapsedMs": 124.8449999988079,
           "timing": {
-            "decodeMs": 16.844999998807907,
-            "spectralMs": 13.330000001937151,
+            "decodeMs": 9.349999997764826,
+            "spectralMs": 13.54500000178814,
             "preprocessMs": 0,
-            "distilledMs": 96.07000000029802,
+            "distilledMs": 99.51500000059605,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 133.8449999988079,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 124.8449999988079,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.449|visual:0.609[ai-image-detect-distilled=0.609,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.1,forensicsMs=0.0,engine=ort-web]|fusion:0.577"
+          "tiers": "provenance:0.500|spectral:0.449|visual:0.609[ai-image-detect-distilled=0.609,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.5,forensicsMs=0.0,engine=ort-web]|fusion:0.577"
         },
         {
           "file": "real/picsum_274.jpg",
@@ -2985,19 +2985,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 139.79499999806285,
-          "elapsedMs": 128.84999999776483,
+          "totalMs": 140.36500000208616,
+          "elapsedMs": 126.17999999970198,
           "timing": {
-            "decodeMs": 14.839999999850988,
-            "spectralMs": 14.890000000596046,
+            "decodeMs": 12.610000003129244,
+            "spectralMs": 13.679999999701977,
             "preprocessMs": 0,
-            "distilledMs": 96.66000000014901,
+            "distilledMs": 98.32499999925494,
             "forensicsMs": 0,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 128.84999999776483,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 126.17999999970198,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.405|visual:0.401[ai-image-detect-distilled=0.401,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.7,forensicsMs=0.0,engine=ort-web]|fusion:0.398"
+          "tiers": "provenance:0.500|spectral:0.405|visual:0.401[ai-image-detect-distilled=0.401,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=98.3,forensicsMs=0.0,engine=ort-web]|fusion:0.398"
         },
         {
           "file": "real/picsum_292.jpg",
@@ -3007,19 +3007,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 134.964999999851,
-          "elapsedMs": 120.7800000011921,
+          "totalMs": 135.00999999791384,
+          "elapsedMs": 131.12999999895692,
           "timing": {
-            "decodeMs": 11.394999999552965,
-            "spectralMs": 12.615000002086163,
+            "decodeMs": 17.199999999254942,
+            "spectralMs": 16.650000002235174,
             "preprocessMs": 0,
-            "distilledMs": 95.27499999850988,
+            "distilledMs": 95.88500000163913,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 120.7800000011921,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 131.12999999895692,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.351|visual:0.612[ai-image-detect-distilled=0.612,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=95.3,forensicsMs=0.0,engine=ort-web]|fusion:0.557"
+          "tiers": "provenance:0.500|spectral:0.351|visual:0.612[ai-image-detect-distilled=0.612,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=95.9,forensicsMs=0.0,engine=ort-web]|fusion:0.557"
         },
         {
           "file": "real/picsum_314.jpg",
@@ -3029,19 +3029,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 137.50499999895692,
-          "elapsedMs": 125.47999999672174,
+          "totalMs": 142.58500000089407,
+          "elapsedMs": 131.5949999988079,
           "timing": {
-            "decodeMs": 7.644999999552965,
-            "spectralMs": 12.535000000149012,
+            "decodeMs": 12.25,
+            "spectralMs": 13.379999998956919,
             "preprocessMs": 0,
-            "distilledMs": 96.64000000059605,
+            "distilledMs": 103.05000000074506,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 125.47999999672174,
+            "fuseMs": 0.009999997913837433,
+            "totalMs": 131.5949999988079,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.457|visual:0.445[ai-image-detect-distilled=0.445,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.6,forensicsMs=0.0,engine=ort-web]|fusion:0.445"
+          "tiers": "provenance:0.500|spectral:0.457|visual:0.445[ai-image-detect-distilled=0.445,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=103.1,forensicsMs=0.0,engine=ort-web]|fusion:0.445"
         },
         {
           "file": "real/picsum_338.jpg",
@@ -3051,19 +3051,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 134.10999999940395,
-          "elapsedMs": 120.8099999986589,
+          "totalMs": 140.10500000044703,
+          "elapsedMs": 130.66500000283122,
           "timing": {
-            "decodeMs": 8.184999998658895,
-            "spectralMs": 13.949999999254942,
+            "decodeMs": 15.445000000298023,
+            "spectralMs": 14.089999999850988,
             "preprocessMs": 0,
-            "distilledMs": 96.02499999850988,
+            "distilledMs": 98.98999999836087,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 120.8099999986589,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 130.66500000283122,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.442|visual:0.315[ai-image-detect-distilled=0.315,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.0,forensicsMs=0.0,engine=ort-web]|fusion:0.340"
+          "tiers": "provenance:0.500|spectral:0.442|visual:0.315[ai-image-detect-distilled=0.315,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.0,forensicsMs=0.0,engine=ort-web]|fusion:0.340"
         },
         {
           "file": "real/picsum_349.jpg",
@@ -3073,19 +3073,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 140.29500000178814,
-          "elapsedMs": 121.95000000298023,
+          "totalMs": 145.535000000149,
+          "elapsedMs": 124.14999999850988,
           "timing": {
-            "decodeMs": 11.91499999910593,
-            "spectralMs": 13.184999998658895,
+            "decodeMs": 12.934999998658895,
+            "spectralMs": 12.109999999403954,
             "preprocessMs": 0,
-            "distilledMs": 96.23000000044703,
+            "distilledMs": 95.95000000298023,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 121.95000000298023,
+            "fuseMs": 0.015000000596046448,
+            "totalMs": 124.14999999850988,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.441|visual:0.311[ai-image-detect-distilled=0.311,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.2,forensicsMs=0.0,engine=ort-web]|fusion:0.338"
+          "tiers": "provenance:0.500|spectral:0.441|visual:0.311[ai-image-detect-distilled=0.311,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.0,forensicsMs=0.0,engine=ort-web]|fusion:0.338"
         },
         {
           "file": "real/picsum_366.jpg",
@@ -3095,16 +3095,16 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 132.58500000089407,
-          "elapsedMs": 122.66499999910593,
+          "totalMs": 136.74500000104308,
+          "elapsedMs": 123.35999999940395,
           "timing": {
-            "decodeMs": 8.774999998509884,
-            "spectralMs": 12.244999997317791,
+            "decodeMs": 8.949999999254942,
+            "spectralMs": 12.904999997466803,
             "preprocessMs": 0,
             "distilledMs": 96.66000000014901,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 122.66499999910593,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 123.35999999940395,
             "ranForensics": false
           },
           "tiers": "provenance:0.500|spectral:0.499|visual:0.439[ai-image-detect-distilled=0.439,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.7,forensicsMs=0.0,engine=ort-web]|fusion:0.450"
@@ -3117,19 +3117,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 136.98000000044703,
-          "elapsedMs": 117.36499999836087,
+          "totalMs": 137.40000000223517,
+          "elapsedMs": 119.6550000011921,
           "timing": {
-            "decodeMs": 5.370000001043081,
-            "spectralMs": 14.660000000149012,
+            "decodeMs": 7.419999998062849,
+            "spectralMs": 13.71000000089407,
             "preprocessMs": 0,
-            "distilledMs": 96.67999999970198,
+            "distilledMs": 97.83000000193715,
             "forensicsMs": 0,
             "fuseMs": 0.015000000596046448,
-            "totalMs": 117.36499999836087,
+            "totalMs": 119.6550000011921,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.469|visual:0.174[ai-image-detect-distilled=0.174,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.7,forensicsMs=0.0,engine=ort-web]|fusion:0.250"
+          "tiers": "provenance:0.500|spectral:0.469|visual:0.174[ai-image-detect-distilled=0.174,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.8,forensicsMs=0.0,engine=ort-web]|fusion:0.250"
         },
         {
           "file": "real/picsum_433.jpg",
@@ -3139,19 +3139,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 558.8250000029802,
-          "elapsedMs": 544.4499999992549,
+          "totalMs": 578.019999999553,
+          "elapsedMs": 558.0599999986589,
           "timing": {
-            "decodeMs": 12.860000003129244,
-            "spectralMs": 13.375,
+            "decodeMs": 14.100000001490116,
+            "spectralMs": 12.769999999552965,
             "preprocessMs": 0,
-            "distilledMs": 95.08000000193715,
-            "forensicsMs": 421.214999999851,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 544.4499999992549,
+            "distilledMs": 97.89499999955297,
+            "forensicsMs": 429.75,
+            "fuseMs": 0.02499999850988388,
+            "totalMs": 558.0599999986589,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.421|visual:0.624[ai-image-detect-distilled=0.624,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=95.1,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.661,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=421.2]|visual:0.661[community-forensics]|fusion:0.583"
+          "tiers": "provenance:0.500|spectral:0.421|visual:0.624[ai-image-detect-distilled=0.624,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.9,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.661,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=429.7]|visual:0.661[community-forensics]|fusion:0.583"
         },
         {
           "file": "real/picsum_453.jpg",
@@ -3161,19 +3161,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 127.48999999836087,
-          "elapsedMs": 119.42500000074506,
+          "totalMs": 138.4049999974668,
+          "elapsedMs": 124.43999999761581,
           "timing": {
-            "decodeMs": 8.685000002384186,
-            "spectralMs": 12.83499999716878,
+            "decodeMs": 9.809999998658895,
+            "spectralMs": 13.189999997615814,
             "preprocessMs": 0,
-            "distilledMs": 96.75499999895692,
+            "distilledMs": 100.28999999910593,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 119.42500000074506,
+            "fuseMs": 0.01499999687075615,
+            "totalMs": 124.43999999761581,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.431|visual:0.405[ai-image-detect-distilled=0.405,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.8,forensicsMs=0.0,engine=ort-web]|fusion:0.407"
+          "tiers": "provenance:0.500|spectral:0.431|visual:0.405[ai-image-detect-distilled=0.405,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=100.3,forensicsMs=0.0,engine=ort-web]|fusion:0.407"
         },
         {
           "file": "real/picsum_488.jpg",
@@ -3183,19 +3183,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 565.5100000016391,
-          "elapsedMs": 544.3799999989569,
+          "totalMs": 578.7099999971688,
+          "elapsedMs": 553.644999999553,
           "timing": {
-            "decodeMs": 7.685000002384186,
-            "spectralMs": 13.054999999701977,
+            "decodeMs": 14.08500000089407,
+            "spectralMs": 12.309999998658895,
             "preprocessMs": 0,
-            "distilledMs": 95.95000000298023,
-            "forensicsMs": 421.54499999806285,
+            "distilledMs": 95.55000000074506,
+            "forensicsMs": 427.16499999910593,
             "fuseMs": 0.015000000596046448,
-            "totalMs": 544.3799999989569,
+            "totalMs": 553.644999999553,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.412|visual:0.305[ai-image-detect-distilled=0.305,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.0,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.608,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=421.5]|visual:0.608[community-forensics]|fusion:0.327"
+          "tiers": "provenance:0.500|spectral:0.412|visual:0.305[ai-image-detect-distilled=0.305,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=95.6,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.608,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=427.1]|visual:0.608[community-forensics]|fusion:0.327"
         },
         {
           "file": "real/picsum_525.jpg",
@@ -3205,19 +3205,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 134.44500000029802,
-          "elapsedMs": 117.30499999970198,
+          "totalMs": 130.10999999940395,
+          "elapsedMs": 119.26500000059605,
           "timing": {
-            "decodeMs": 7.134999997913837,
-            "spectralMs": 12.294999998062849,
+            "decodeMs": 7.660000000149012,
+            "spectralMs": 11.940000001341105,
             "preprocessMs": 0,
-            "distilledMs": 97.31000000238419,
+            "distilledMs": 99.07499999925494,
             "forensicsMs": 0,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 117.30499999970198,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 119.26500000059605,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.407|visual:0.184[ai-image-detect-distilled=0.184,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.3,forensicsMs=0.0,engine=ort-web]|fusion:0.245"
+          "tiers": "provenance:0.500|spectral:0.407|visual:0.184[ai-image-detect-distilled=0.184,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=99.1,forensicsMs=0.0,engine=ort-web]|fusion:0.245"
         },
         {
           "file": "real/picsum_553.jpg",
@@ -3227,19 +3227,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 146.9400000013411,
-          "elapsedMs": 132.29999999701977,
+          "totalMs": 154.76999999955297,
+          "elapsedMs": 143.12999999895692,
           "timing": {
-            "decodeMs": 7.754999998956919,
-            "spectralMs": 12.440000001341105,
+            "decodeMs": 9.719999998807907,
+            "spectralMs": 12.714999999850988,
             "preprocessMs": 0,
-            "distilledMs": 103.41000000014901,
+            "distilledMs": 107.98499999940395,
             "forensicsMs": 0,
-            "fuseMs": 0.004999998956918716,
-            "totalMs": 132.29999999701977,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 143.12999999895692,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.284|visual:0.289[ai-image-detect-distilled=0.289,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=103.4,forensicsMs=0.0,engine=ort-web]|fusion:0.291"
+          "tiers": "provenance:0.500|spectral:0.284|visual:0.289[ai-image-detect-distilled=0.289,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=108.0,forensicsMs=0.0,engine=ort-web]|fusion:0.291"
         },
         {
           "file": "real/picsum_582.jpg",
@@ -3249,19 +3249,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 139.08500000089407,
-          "elapsedMs": 124.5949999988079,
+          "totalMs": 149.35500000044703,
+          "elapsedMs": 136.39499999955297,
           "timing": {
-            "decodeMs": 8.880000002682209,
-            "spectralMs": 15.859999999403954,
+            "decodeMs": 13.144999999552965,
+            "spectralMs": 12.845000002533197,
             "preprocessMs": 0,
-            "distilledMs": 97.88499999791384,
+            "distilledMs": 97.74500000104308,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 124.5949999988079,
+            "fuseMs": 0.005000002682209015,
+            "totalMs": 136.39499999955297,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.390|visual:0.448[ai-image-detect-distilled=0.448,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.9,forensicsMs=0.0,engine=ort-web]|fusion:0.432"
+          "tiers": "provenance:0.500|spectral:0.390|visual:0.448[ai-image-detect-distilled=0.448,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.7,forensicsMs=0.0,engine=ort-web]|fusion:0.432"
         },
         {
           "file": "real/picsum_593.jpg",
@@ -3271,19 +3271,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 567.5399999991059,
-          "elapsedMs": 549.5850000008941,
+          "totalMs": 577.8700000010431,
+          "elapsedMs": 562.8150000013411,
           "timing": {
-            "decodeMs": 8.770000003278255,
-            "spectralMs": 12.949999999254942,
+            "decodeMs": 11.779999997466803,
+            "spectralMs": 15.230000000447035,
             "preprocessMs": 0,
-            "distilledMs": 98.89999999850988,
-            "forensicsMs": 421.320000000298,
-            "fuseMs": 0.019999999552965164,
-            "totalMs": 549.5850000008941,
+            "distilledMs": 98.44500000029802,
+            "forensicsMs": 425.0849999971688,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 562.8150000013411,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.337|visual:0.391[ai-image-detect-distilled=0.391,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=98.9,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.656,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=420.9]|visual:0.656[community-forensics]|fusion:0.375"
+          "tiers": "provenance:0.500|spectral:0.337|visual:0.391[ai-image-detect-distilled=0.391,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=98.4,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.656,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=425.1]|visual:0.656[community-forensics]|fusion:0.375"
         },
         {
           "file": "real/picsum_628.jpg",
@@ -3293,19 +3293,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 133.375,
-          "elapsedMs": 120.68000000342727,
+          "totalMs": 158.0300000011921,
+          "elapsedMs": 128.23499999940395,
           "timing": {
-            "decodeMs": 8.524999998509884,
-            "spectralMs": 12.660000000149012,
+            "decodeMs": 7.6099999994039536,
+            "spectralMs": 11.754999998956919,
             "preprocessMs": 0,
-            "distilledMs": 97.67499999701977,
+            "distilledMs": 105.62999999895692,
             "forensicsMs": 0,
-            "fuseMs": 0.010000001639127731,
-            "totalMs": 120.68000000342727,
+            "fuseMs": 0.019999999552965164,
+            "totalMs": 128.23499999940395,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.397|visual:0.615[ai-image-detect-distilled=0.615,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.7,forensicsMs=0.0,engine=ort-web]|fusion:0.570"
+          "tiers": "provenance:0.500|spectral:0.397|visual:0.615[ai-image-detect-distilled=0.615,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=105.6,forensicsMs=0.0,engine=ort-web]|fusion:0.570"
         },
         {
           "file": "real/picsum_660.jpg",
@@ -3315,19 +3315,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 124.81499999761581,
-          "elapsedMs": 119.43500000238419,
+          "totalMs": 134.26500000059605,
+          "elapsedMs": 122.35500000044703,
           "timing": {
-            "decodeMs": 5.649999998509884,
-            "spectralMs": 12.925000000745058,
+            "decodeMs": 10.609999999403954,
+            "spectralMs": 13.214999999850988,
             "preprocessMs": 0,
-            "distilledMs": 100.07499999925494,
+            "distilledMs": 97.62000000104308,
             "forensicsMs": 0,
-            "fuseMs": 0.005000002682209015,
-            "totalMs": 119.43500000238419,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 122.35500000044703,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.465|visual:0.291[ai-image-detect-distilled=0.291,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=100.1,forensicsMs=0.0,engine=ort-web]|fusion:0.328"
+          "tiers": "provenance:0.500|spectral:0.465|visual:0.291[ai-image-detect-distilled=0.291,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.6,forensicsMs=0.0,engine=ort-web]|fusion:0.328"
         },
         {
           "file": "real/picsum_718.jpg",
@@ -3337,19 +3337,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 126.14500000327826,
-          "elapsedMs": 119.14499999955297,
+          "totalMs": 140.53499999642372,
+          "elapsedMs": 128.98000000044703,
           "timing": {
-            "decodeMs": 7.430000003427267,
-            "spectralMs": 14.785000000149012,
+            "decodeMs": 11.555000003427267,
+            "spectralMs": 12.45499999821186,
             "preprocessMs": 0,
-            "distilledMs": 95.12000000104308,
+            "distilledMs": 102.98000000044703,
             "forensicsMs": 0,
-            "fuseMs": 0.009999997913837433,
-            "totalMs": 119.14499999955297,
+            "fuseMs": 0.010000001639127731,
+            "totalMs": 128.98000000044703,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.434|visual:0.433[ai-image-detect-distilled=0.433,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=95.1,forensicsMs=0.0,engine=ort-web]|fusion:0.430"
+          "tiers": "provenance:0.500|spectral:0.434|visual:0.433[ai-image-detect-distilled=0.433,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=103.0,forensicsMs=0.0,engine=ort-web]|fusion:0.430"
         },
         {
           "file": "real/picsum_741.jpg",
@@ -3359,19 +3359,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 150.29000000283122,
-          "elapsedMs": 135.14999999850988,
+          "totalMs": 132.37000000104308,
+          "elapsedMs": 120.30000000074506,
           "timing": {
-            "decodeMs": 13.370000001043081,
-            "spectralMs": 16.87999999895692,
+            "decodeMs": 5.510000001639128,
+            "spectralMs": 15.804999999701977,
             "preprocessMs": 0,
-            "distilledMs": 103.76999999955297,
+            "distilledMs": 98.14999999850988,
             "forensicsMs": 0,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 135.14999999850988,
+            "fuseMs": 0.005000002682209015,
+            "totalMs": 120.30000000074506,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.366|visual:0.352[ai-image-detect-distilled=0.352,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=103.8,forensicsMs=0.0,engine=ort-web]|fusion:0.352"
+          "tiers": "provenance:0.500|spectral:0.366|visual:0.352[ai-image-detect-distilled=0.352,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=98.1,forensicsMs=0.0,engine=ort-web]|fusion:0.352"
         },
         {
           "file": "real/picsum_783.jpg",
@@ -3381,19 +3381,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 144.125,
-          "elapsedMs": 129.54500000178814,
+          "totalMs": 143.410000000149,
+          "elapsedMs": 134.14999999850988,
           "timing": {
-            "decodeMs": 8.339999999850988,
-            "spectralMs": 15.330000001937151,
+            "decodeMs": 16.015000000596046,
+            "spectralMs": 16.375,
             "preprocessMs": 0,
-            "distilledMs": 97.23499999940395,
+            "distilledMs": 96.32499999925494,
             "forensicsMs": 0,
-            "fuseMs": 0.015000000596046448,
-            "totalMs": 129.54500000178814,
+            "fuseMs": 0.004999998956918716,
+            "totalMs": 134.14999999850988,
             "ranForensics": false
           },
-          "tiers": "provenance:0.500|spectral:0.369|visual:0.416[ai-image-detect-distilled=0.416,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=97.2,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
+          "tiers": "provenance:0.500|spectral:0.369|visual:0.416[ai-image-detect-distilled=0.416,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=96.3,forensicsMs=0.0,engine=ort-web]|fusion:0.402"
         },
         {
           "file": "real/picsum_823.jpg",
@@ -3403,19 +3403,19 @@
           "predicted": "real",
           "correct": true,
           "backend": "wasm",
-          "totalMs": 601.8999999985099,
-          "elapsedMs": 594.9900000020862,
+          "totalMs": 631.3100000023842,
+          "elapsedMs": 606.105000000447,
           "timing": {
-            "decodeMs": 16.554999999701977,
-            "spectralMs": 29.78999999910593,
+            "decodeMs": 14.140000000596046,
+            "spectralMs": 26.134999997913837,
             "preprocessMs": 0,
-            "distilledMs": 123.26500000059605,
-            "forensicsMs": 423.39499999955297,
+            "distilledMs": 108.75499999895692,
+            "forensicsMs": 448.7250000014901,
             "fuseMs": 0.019999999552965164,
-            "totalMs": 594.9900000020862,
+            "totalMs": 606.105000000447,
             "ranForensics": true
           },
-          "tiers": "provenance:0.500|spectral:0.334|visual:0.403[ai-image-detect-distilled=0.403,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=123.3,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.535,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=423.4]|visual:0.535[community-forensics]|fusion:0.384"
+          "tiers": "provenance:0.500|spectral:0.334|visual:0.403[ai-image-detect-distilled=0.403,distilled=fp16,dual,skipForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=108.8,forensicsMs=0.0,engine=ort-web;community-forensics-deepfake-det=0.535,distilled=fp16,dual,ranForensics,distilledEp=wasm,forensicsEp=wasm,wasmThreads=4,webgpuSkip=software-adapter,distilledMs=0.0,forensicsMs=448.7]|visual:0.535[community-forensics]|fusion:0.384"
         }
       ]
     }
