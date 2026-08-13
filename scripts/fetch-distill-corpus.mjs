@@ -167,7 +167,8 @@ async function fetchZitacronCandidates(spec) {
   );
   const rows = [];
   const seenIdx = new Set();
-  for (const start of starts) {
+  let done = 0;
+  await mapPool(starts, Math.min(8, CONCURRENCY), async (start) => {
     const params = new URLSearchParams({
       dataset: "Zitacron/real-vs-ai-corpus",
       config: "default",
@@ -192,12 +193,20 @@ async function fetchZitacronCandidates(spec) {
       }
     } catch (err) {
       console.warn(
-        `  candidate offset ${start} failed: ${
+        `\n  candidate offset ${start} failed: ${
           err instanceof Error ? err.message : err
         }`,
       );
+    } finally {
+      done += 1;
+      if (done % 10 === 0 || done === starts.length) {
+        process.stdout.write(
+          `\r  listing offsets ${done}/${starts.length} (rows ${rows.length})`,
+        );
+      }
     }
-  }
+  });
+  process.stdout.write("\n");
   return rows;
 }
 
