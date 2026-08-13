@@ -92,7 +92,17 @@ npm run eval:local                       # prefers Zig+ORT host when built
 # TRUEPIXEL_STUB=1 npm run eval:local
 ```
 
-On that corpus the Zig+cascade path reports **100% balanced accuracy @ 65%** at roughly **~80 ms/image** (14/76 forensics runs), vs ~137 ms for always-dual Node. The host tries WebGPU → Vulkan → XNNPACK → CPU (AVX2 via `x86_64_v3` / ORT MLAS); stock Linux ORT is CPU-only and falls through immediately.
+OpenRouter corpus (76 images, threshold 65%), same machine:
+
+| Config | BA @65% | tp | tn | fp | fn | avg ms/image |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Node CPU · distilled only | 93.4% | 33 | 38 | 0 | 5 | ~47 |
+| Zig CPU · distilled only | 92.1% | 32 | 38 | 0 | 6 | ~46 |
+| Node CPU · dual (always CF) | **100%** | 38 | 38 | 0 | 0 | ~130 |
+| Zig CPU · dual (always CF) | **100%** | 38 | 38 | 0 | 0 | ~158 |
+| Zig CPU · cascade (default eval) | **100%** | 38 | 38 | 0 | 0 | **~78** (CF on 14/76) |
+
+Distilled-alone misses hard Krea/Riverflow cases; dual/cascade recover them via Community Forensics. The Zig host tries WebGPU → Vulkan → XNNPACK → CPU (AVX2 via `x86_64_v3` / ORT MLAS); stock Linux ORT is CPU-only and falls through immediately.
 
 Refresh that corpus incrementally when OpenRouter adds models (needs `OPENROUTER_API_KEY` in `.env`):
 
