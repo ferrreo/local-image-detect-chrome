@@ -12,6 +12,8 @@
     "build": "node scripts/build.mjs",
     "build:watch": "node scripts/build.mjs --watch",
     "setup:models": "node scripts/setup-models.mjs",
+    "setup:ort": "node scripts/setup-ort.mjs",
+    "build:zig": "node scripts/build-zig.mjs",
     "fetch:openrouter": "node scripts/fetch-openrouter-images.mjs",
     "fetch:real": "node scripts/fetch-real-photos.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -22,6 +24,8 @@
     "test:all": "npm run typecheck && npm run test:unit && npm run build && npm run test:integration",
     "lint": "tsc -p tsconfig.json --noEmit",
     "eval:local": "npm run prepare:assets && node scripts/eval-local.mjs",
+    "eval:zig": "TRUEPIXEL_BACKEND=zig npm run eval:local",
+    "eval:node": "TRUEPIXEL_BACKEND=node npm run eval:local",
     "eval:stub": "TRUEPIXEL_STUB=1 npm run eval:local",
     "ci": "npm run test:all"
   },

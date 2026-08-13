@@ -86,12 +86,13 @@ Balanced accuracy is measured at a **65% confidence threshold**, matching the bo
 Local eval prefers the stored OpenRouter multi-model corpus under `benchmark/openrouter/` (real ONNX by default; `TRUEPIXEL_STUB=1` for the heuristic stub):
 
 ```bash
-npm run eval:local
+npm run setup:ort && npm run build:zig   # once (Zig 0.16 + libwebp)
+npm run eval:local                       # prefers Zig+ORT host when built
+# TRUEPIXEL_BACKEND=node npm run eval:local
+# TRUEPIXEL_STUB=1 npm run eval:local
 ```
 
-On that corpus the dual-model path currently reports **100% balanced accuracy @ 65%**, at roughly **~137 ms/image** average on Node CPU (vs ~55 ms with distilled alone).
-
-> **TODO:** Cut dual-model latency. Running Community Forensics on every non-provenance image is the main cost (~2.5× slower than distilled-only). Cascade / early-exit (only run the second head when distilled + spectral are ambiguous), WebGPU parallelism, or a single distilled student would help.
+On that corpus the fused path reports **100% balanced accuracy @ 65%**. The Zig host tries WebGPU → Vulkan → XNNPACK → CPU (AVX2 via `x86_64_v3` / ORT MLAS); stock Linux ORT is CPU-only and falls through immediately. Eval cascades Community Forensics only when spectral gates can use it, so average latency stays below the old always-dual Node path (~137 ms).
 
 Refresh that corpus incrementally when OpenRouter adds models (needs `OPENROUTER_API_KEY` in `.env`):
 

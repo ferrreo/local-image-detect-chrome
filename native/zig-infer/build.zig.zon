@@ -1,0 +1,12 @@
+.{
+    .name = .truepixel_zig_infer,
+    .version = "0.1.0",
+    .minimum_zig_version = "0.16.0",
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "vendor",
+    },
+    .fingerprint = 0x8ef0b8eef16ff345,
+}
