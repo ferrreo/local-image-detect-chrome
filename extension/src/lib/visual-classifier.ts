@@ -10,6 +10,7 @@ import { readCachedModel } from "./model-cache";
 import {
   imageDataToNchwFloat32,
   rasterizeForModel,
+  rasterizeShortCenterCrop,
 } from "./image-decode";
 import {
   asAiConfidence,
@@ -508,14 +509,41 @@ function softmax2(a: number, b: number): [number, number] {
   return [ea / sum, eb / sum];
 }
 
+function sigmoid(x: number): number {
+  if (x >= 0) {
+    const z = Math.exp(-x);
+    return 1 / (1 + z);
+  }
+  const z = Math.exp(x);
+  return z / (1 + z);
+}
+
 export { stubVisualClassify };
+
+async function rasterizeForArtifact(
+  bitmap: ImageBitmap,
+  model: ModelArtifact,
+): Promise<ImageData> {
+  if (model.preprocess === "short440-center384") {
+    return rasterizeShortCenterCrop(bitmap, 440, model.inputSize);
+  }
+  return rasterizeForModel(bitmap, model.inputSize);
+}
+
+function scoreLogits(model: ModelArtifact, logits: number[]): number {
+  if (model.outputKind === "logit" || logits.length < 2) {
+    return sigmoid(logits[0] ?? 0);
+  }
+  const [p0, p1] = softmax2(logits[0] ?? 0, logits[1] ?? 0);
+  return model.aiLabelIndex === 0 ? p0 : p1;
+}
 
 async function runModel(
   ort: OrtModule,
   loaded: LoadedSession,
   bitmap: ImageBitmap,
 ): Promise<number> {
-  const imageData = await rasterizeForModel(bitmap, loaded.model.inputSize);
+  const imageData = await rasterizeForArtifact(bitmap, loaded.model);
   const tensorData = imageDataToNchwFloat32(
     imageData,
     loaded.model.mean,
@@ -527,8 +555,8 @@ async function runModel(
     [inputName]: new ort.Tensor("float32", tensorData, [
       1,
       3,
-      loaded.model.inputSize,
-      loaded.model.inputSize,
+      imageData.height,
+      imageData.width,
     ]),
   };
   const output = await loaded.session.run(feeds);
@@ -537,8 +565,7 @@ async function runModel(
   const outTensor = output[outName];
   if (!outTensor) throw new Error(`${loaded.model.id}: missing tensor`);
   const logits = Array.from(outTensor.data, (v) => Number(v));
-  const [p0, p1] = softmax2(logits[0] ?? 0, logits[1] ?? 0);
-  return loaded.model.aiLabelIndex === 0 ? p0 : p1;
+  return scoreLogits(loaded.model, logits);
 }
 
 export type ClassifyVisualOptions = {

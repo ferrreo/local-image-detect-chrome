@@ -4,7 +4,10 @@ import {
   getModelStatus,
   installModelBytes,
 } from "../../extension/src/lib/model-cache";
-import { VISUAL_MODEL } from "../../extension/src/lib/model-manifest";
+import {
+  MODEL_CACHE_NAME,
+  VISUAL_MODEL,
+} from "../../extension/src/lib/model-manifest";
 
 class MemoryCache {
   store = new Map<string, Response>();
@@ -53,7 +56,7 @@ describe("model-cache", () => {
     const fetchImpl = vi.fn();
     // Monkey-patch by downloading with a custom model list is not exposed;
     // instead assert install left a cache entry.
-    const cache = await caches.open("truepixel-models-v1");
+    const cache = await caches.open(MODEL_CACHE_NAME);
     const hit = await cache.match(`https://truepixel.local/${model.cacheKey}`);
     expect(hit).toBeTruthy();
     expect(fetchImpl).not.toHaveBeenCalled();

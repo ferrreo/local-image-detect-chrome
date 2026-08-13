@@ -174,16 +174,16 @@ function applyConcealment(entry: TrackedImage): void {
 function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
   const parent = ensureParentPositioned(img);
 
-  let badge = parent.querySelector<HTMLElement>(
-    `.${BADGE_CLASS}[${OVERLAY_ATTR}="${id}"]`,
+  let badge = parent.querySelector<HTMLButtonElement>(
+    `button.${BADGE_CLASS}[${OVERLAY_ATTR}="${id}"]`,
   );
   if (!badge) {
-    badge = document.createElement("button");
-    badge.type = "button";
-    badge.className = `${BADGE_CLASS} truepixel-pending`;
-    badge.setAttribute(OVERLAY_ATTR, id);
-    badge.textContent = "…";
-    badge.addEventListener("click", (event) => {
+    const created = document.createElement("button");
+    created.type = "button";
+    created.className = `${BADGE_CLASS} truepixel-pending`;
+    created.setAttribute(OVERLAY_ATTR, id);
+    created.textContent = "…";
+    created.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
       const entry = tracked.get(id);
@@ -197,14 +197,15 @@ function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
       if (entry.result) renderResult(entry.element, entry.result);
       else {
         applyConcealment(entry);
-        badge.classList.add("truepixel-clickable");
-        badge.textContent = entry.revealed ? "hide" : "…";
-        badge.title = entry.revealed
+        created.classList.add("truepixel-clickable");
+        created.textContent = entry.revealed ? "hide" : "…";
+        created.title = entry.revealed
           ? "TruePixel: click to hide again"
           : "TruePixel: analyzing… click to peek";
       }
     });
-    parent.appendChild(badge);
+    parent.appendChild(created);
+    badge = created;
   }
   positionOverImage(img, badge, 6);
   return badge;
@@ -305,13 +306,14 @@ async function requestAnalyze(
   return response.result;
 }
 
-/** Mid-band / uncertain first paint → pay for Community Forensics refine. */
+/**
+ * Realtime distilled often scores Lexica-class AI near zero (labeled real).
+ * Refine any non-AI first paint so the Proofmark accurate head can recover.
+ */
 function needsAccurateRefine(result: DetectionResult): boolean {
   if (result.label.kind === "error") return false;
-  if (result.label.kind === "uncertain") return true;
   if (result.timing?.ranForensics) return false;
-  const c = result.confidence;
-  return c >= 0.48 && c < options.threshold;
+  return result.confidence < options.threshold;
 }
 
 async function analyze(

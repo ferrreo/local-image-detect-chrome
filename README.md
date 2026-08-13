@@ -12,8 +12,8 @@ Detection pipeline:
 
 1. **Provenance** — EXIF/XMP/C2PA/AIGC/string fingerprints (scans file head + tail)
 2. **Spectral forensics** — FFT / noise / chroma features in plain TypeScript
-3. **Visual classifiers** — distilled ViT + Community Forensics ONNX via `onnxruntime-web`
-4. **Fusion** — calibrated ensemble at a default **65%** AI threshold (bounty evaluation point)
+3. **Visual classifiers** — fast distilled ViT, then Proofmark webwild-v3 (accurate) via `onnxruntime-web`
+4. **Fusion** — calibrated ensemble (product AI label ≥69.51%; bounty eval often uses 65%)
 
 ## Requirements
 
@@ -102,7 +102,7 @@ OpenRouter corpus (76 images, threshold 65%), same machine:
 | Zig CPU · dual (always CF) | **100%** | 38 | 38 | 0 | 0 | ~158 |
 | Zig CPU · cascade (default eval) | **100%** | 38 | 38 | 0 | 0 | **~78** (CF on 14/76) |
 
-Distilled-alone misses hard Krea/Riverflow cases; dual/cascade recover them via Community Forensics. The Zig host tries **WebGPU** (Dawn→Vulkan, all GPUs) → CUDA (optional ORT gpu package) → XNNPACK → CPU (`x86_64_v3` / ORT MLAS). `npm run setup:ort` pulls ORT 1.29 + the WebGPU plugin; without a GPU/Vulkan stack it falls through to CPU.
+Distilled-alone misses hard Krea/Riverflow and Lexica feed cases. The browser cascade now recovers with **Proofmark webwild-v3** (Q8 accurate head; ~77–78% BA @65% on the 130-image OpenRouter+Lexica corpus, 0 hardcase FPs). `npm run eval:compare` ranks heads; see `benchmark/model-survey/compare-top6-latest.md`. The Zig host still tries **WebGPU** (Dawn→Vulkan) → CUDA → XNNPACK → CPU; browser accurate path prefers ort-web while Proofmark needs ImageNet center-crop preprocess.
 
 ### Full offline suite (CPU + GPU modes)
 

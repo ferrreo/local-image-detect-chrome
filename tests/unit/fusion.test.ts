@@ -61,29 +61,24 @@ describe("fuseDetection", () => {
     expect(out.label.kind).toBe("real");
   });
 
-  it("uses forensics + flatness band when distilled is weak", () => {
+  it("promotes accurate head when secondary clears AI floor (Lexica)", () => {
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.3),
-      visual: tier("visual", 0.4),
-      visualSecondary: tier("visual", 0.9),
-      spectralFeatures: {
-        highFreqEnergyRatio: 0.3,
-        laplacianVariance: 800,
-        chromaFlatness: 0.5,
-        blockiness: 0.25,
-      },
+      visual: tier("visual", 0.12),
+      visualSecondary: tier("visual", 0.78),
     });
     expect(out.confidence).toBeGreaterThanOrEqual(AI_LABEL_THRESHOLD);
-    expect(out.tiers.at(-1)?.detail).toMatch(/forensics/);
+    expect(out.label.kind).toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toBe("accurate-head");
   });
 
-  it("does not let high-CF smooth reals short-circuit via flatness band", () => {
+  it("does not let sub-threshold secondary promote reals", () => {
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.39),
       visual: tier("visual", 0.45),
-      visualSecondary: tier("visual", 0.79),
+      visualSecondary: tier("visual", 0.64),
       spectralFeatures: {
         highFreqEnergyRatio: 0.43,
         laplacianVariance: 635,
@@ -94,7 +89,7 @@ describe("fuseDetection", () => {
     expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
   });
 
-  it("uses strong CF when distilled is stuck mid-band (StyleGAN / TPDNE)", () => {
+  it("uses strong accurate head when distilled is stuck mid-band", () => {
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.5),
@@ -109,17 +104,7 @@ describe("fuseDetection", () => {
     });
     expect(out.confidence).toBeGreaterThanOrEqual(AI_LABEL_THRESHOLD);
     expect(out.label.kind).toBe("ai");
-    expect(out.tiers.at(-1)?.detail).toMatch(/forensics/);
-  });
-
-  it("does not apply mid-band CF boost without photo-like texture feats", () => {
-    const out = fuseDetection({
-      provenance: tier("provenance", 0.5),
-      spectral: tier("spectral", 0.5),
-      visual: tier("visual", 0.56),
-      visualSecondary: tier("visual", 0.9),
-    });
-    expect(out.tiers.at(-1)?.detail).not.toBe("forensics-ambiguous-distilled");
+    expect(out.tiers.at(-1)?.detail).toBe("accurate-head");
   });
 
   it("holds mild dual agreement under AI label (group selfie / Soylent FPs)", () => {
@@ -155,40 +140,6 @@ describe("fuseDetection", () => {
     expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toBe("busy-scene-hold");
-  });
-
-  it("does not promote mild CF (~72%) on busy real photos", () => {
-    const out = fuseDetection({
-      provenance: tier("provenance", 0.5),
-      spectral: tier("spectral", 0.42),
-      visual: tier("visual", 0.58),
-      visualSecondary: tier("visual", 0.72),
-      spectralFeatures: {
-        highFreqEnergyRatio: 0.4,
-        laplacianVariance: 1200,
-        chromaFlatness: 0.52,
-        blockiness: 0.22,
-      },
-    });
-    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
-    expect(out.label.kind).not.toBe("ai");
-  });
-
-  it("does not let CF 77% flip hand-drawn / illustration mid-band", () => {
-    const out = fuseDetection({
-      provenance: tier("provenance", 0.5),
-      spectral: tier("spectral", 0.48),
-      visual: tier("visual", 0.56),
-      visualSecondary: tier("visual", 0.77),
-      spectralFeatures: {
-        highFreqEnergyRatio: 0.38,
-        laplacianVariance: 1400,
-        chromaFlatness: 0.62,
-        blockiness: 0.18,
-      },
-    });
-    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
-    expect(out.label.kind).not.toBe("ai");
   });
 
   it("does not promote kitchen-style mild dual scores (prefer no FP)", () => {

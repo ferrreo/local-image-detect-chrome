@@ -2,6 +2,7 @@
 /**
  * One-time download of public model weights into ./models for packaging/tests.
  * The extension itself downloads into Cache Storage on first setup.
+ * Proofmark is seeded from a local vendor path (no public HF URL).
  */
 import { createHash } from "node:crypto";
 import {
@@ -11,6 +12,7 @@ import {
   readFileSync,
   writeFileSync,
   renameSync,
+  copyFileSync,
 } from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
@@ -41,25 +43,57 @@ const MODELS = [
     license: "MIT",
   },
   {
-    id: "community-forensics-deepfake-det",
-    url: "https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX/resolve/main/onnx/model_q4.onnx",
-    outPath: path.join(root, "models/community-forensics/model_q4.onnx"),
-    sha256: "263c46052167a15b981848465b8adb9f28dbd1f9ad8ecf8157cb05d876f7091b",
-    bytes: 24_416_892,
-    license: "MIT",
+    id: "proofmark-webwild-v3",
+    url: "",
+    outPath: path.join(
+      root,
+      "models/proofmark-webwild-v3/model_quantized.onnx",
+    ),
+    sha256:
+      "ed17ceb332bef84d0adcc2fa537eef85ed3ac6fb32c30393c326321fbbe54683",
+    bytes: 24_031_833,
+    license: "MIT (Proofmark / OwensLab fine-tune; vendored)",
+    seedPaths: [
+      path.join(
+        root,
+        "models/compare/proofmark-webwild-v3/model_quantized.onnx",
+      ),
+      "/tmp/Dino-ImageGen-Ext/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
+      path.join(
+        root,
+        "vendor/Dino-ImageGen-Ext/public/models/Proofmark/proofmark-webwild-v3/onnx/model_quantized.onnx",
+      ),
+    ],
   },
 ];
+
+function digestFile(filePath) {
+  return createHash("sha256").update(readFileSync(filePath)).digest("hex");
+}
 
 async function download(model) {
   mkdirSync(path.dirname(model.outPath), { recursive: true });
   if (existsSync(model.outPath)) {
-    const existing = readFileSync(model.outPath);
-    const digest = createHash("sha256").update(existing).digest("hex");
+    const digest = digestFile(model.outPath);
     if (digest === model.sha256) {
       console.log(`Already present: ${model.outPath}`);
       return;
     }
-    console.log(`Checksum mismatch for ${model.id}, re-downloading…`);
+    console.log(`Checksum mismatch for ${model.id}, re-fetching…`);
+  }
+
+  for (const seed of model.seedPaths ?? []) {
+    if (!seed || !existsSync(seed)) continue;
+    if (digestFile(seed) !== model.sha256) continue;
+    copyFileSync(seed, model.outPath);
+    console.log(`Seeded ${model.id} ← ${seed}`);
+    return;
+  }
+
+  if (!model.url) {
+    throw new Error(
+      `No weights for ${model.id}. Place ONNX at ${model.outPath} or one of: ${(model.seedPaths ?? []).join(", ")}`,
+    );
   }
 
   console.log(`Downloading ${model.url}`);
@@ -70,8 +104,7 @@ async function download(model) {
 
   const tmp = `${model.outPath}.partial`;
   await pipeline(Readable.fromWeb(response.body), createWriteStream(tmp));
-  const buf = readFileSync(tmp);
-  const digest = createHash("sha256").update(buf).digest("hex");
+  const digest = digestFile(tmp);
   if (digest !== model.sha256) {
     throw new Error(
       `Checksum mismatch: expected ${model.sha256}, got ${digest}`,
@@ -79,7 +112,7 @@ async function download(model) {
   }
   renameSync(tmp, model.outPath);
   console.log(
-    `Saved ${model.outPath} (${buf.byteLength} bytes, sha256=${digest})`,
+    `Saved ${model.outPath} (${readFileSync(model.outPath).byteLength} bytes, sha256=${digest})`,
   );
 }
 
@@ -91,13 +124,13 @@ writeFileSync(
   path.join(root, "models/manifest.json"),
   JSON.stringify(
     {
-      version: "distilled-fp16+fp32+community-forensics-q4-v1",
+      version: "distilled-fp16+fp32+proofmark-webwild-v3-q8-v1",
       models: MODELS.map((m) => ({
         id: m.id,
         path: path.relative(path.join(root, "models"), m.outPath),
         sha256: m.sha256,
         bytes: m.bytes,
-        source: m.url,
+        source: m.url || "(vendored seed)",
         license: m.license,
       })),
     },

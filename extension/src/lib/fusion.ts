@@ -107,6 +107,15 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     confidence = asAiConfidence(Math.max(distilled, threshold));
     detail = "distilled-near-threshold";
   } else if (
+    // Proofmark-class accurate head: trust it when it clears the AI floor
+    // even if distilled is near-zero (Lexica / modern generator misses).
+    forensics !== undefined &&
+    forensics >= threshold &&
+    distilled < 0.88
+  ) {
+    confidence = asAiConfidence(Math.max(forensics, threshold));
+    detail = "accurate-head";
+  } else if (
     forensics !== undefined &&
     feats &&
     forensics >= 0.88 &&

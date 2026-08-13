@@ -24,6 +24,17 @@ describe("needsForensicsCascade", () => {
     ).toBe(true);
   });
 
+  it("requests forensics for low distilled (Lexica-class misses)", () => {
+    expect(
+      needsForensicsCascade({
+        distilled: 0.12,
+        spectral: 0.55,
+        laplacianVariance: 200,
+        chromaFlatness: 0.2,
+      }),
+    ).toBe(true);
+  });
+
   it("requests forensics in the flatness band used by fusion", () => {
     expect(
       needsForensicsCascade({
@@ -33,17 +44,6 @@ describe("needsForensicsCascade", () => {
         chromaFlatness: 0.45,
       }),
     ).toBe(true);
-  });
-
-  it("skips obvious low-signal reals outside forensics gates", () => {
-    expect(
-      needsForensicsCascade({
-        distilled: 0.25,
-        spectral: 0.55,
-        laplacianVariance: 200,
-        chromaFlatness: 0.2,
-      }),
-    ).toBe(false);
   });
 
   it("requests forensics when distilled is mid-band even without texture gates", () => {

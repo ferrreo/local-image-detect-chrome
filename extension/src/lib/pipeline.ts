@@ -12,6 +12,7 @@ import {
 } from "./image-decode";
 import { fuseDetection } from "./fusion";
 import { needsForensicsCascade } from "./forensics-cascade";
+import { accurateHeadNeedsOrtWeb } from "./model-manifest";
 import {
   asAiConfidence,
   type AiConfidence,
@@ -92,9 +93,12 @@ export async function detectAiImage(
           .TRUEPIXEL_VISUAL_ENGINE === "zig-wasm"
           ? "zig-wasm"
           : "auto");
+      // Proofmark secondary needs ImageNet + center-crop; Zig WASM still
+      // stretch/0.5 — prefer ort-web while the accurate head requires it.
       const useZig =
-        prefer === "zig-wasm" ||
-        (prefer === "auto" && (await isZigWasmOrtReady()));
+        !accurateHeadNeedsOrtWeb() &&
+        (prefer === "zig-wasm" ||
+          (prefer === "auto" && (await isZigWasmOrtReady())));
       const classify = useZig ? classifyVisualZigWasm : classifyVisual;
 
       // Overlap spectral CPU with distilled infer — gate CF after both finish.
@@ -180,7 +184,7 @@ export async function detectAiImage(
             tier: "visual" as const,
             aiScore: visualSecondary,
             weight: 0.5,
-            detail: "community-forensics",
+            detail: "accurate-head",
           },
         }
       : {}),

@@ -71,6 +71,38 @@ export async function rasterizeForModel(
 }
 
 /**
+ * Proofmark / Detectra-style preprocess: scale shortest side to `resizeShort`,
+ * then center-crop `crop`×`crop`.
+ */
+export async function rasterizeShortCenterCrop(
+  bitmap: ImageBitmap,
+  resizeShort = 440,
+  crop = 384,
+): Promise<ImageData> {
+  const short = Math.min(bitmap.width, bitmap.height);
+  const scale = resizeShort / Math.max(1, short);
+  const nw = Math.max(1, Math.round(bitmap.width * scale));
+  const nh = Math.max(1, Math.round(bitmap.height * scale));
+  const left = Math.max(0, Math.floor((nw - crop) / 2));
+  const top = Math.max(0, Math.floor((nh - crop) / 2));
+
+  const resized = new OffscreenCanvas(nw, nh);
+  const rctx = resized.getContext("2d", { willReadFrequently: true });
+  if (!rctx) {
+    throw new Error("OffscreenCanvas 2d context unavailable");
+  }
+  rctx.drawImage(bitmap, 0, 0, nw, nh);
+
+  const canvas = new OffscreenCanvas(crop, crop);
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  if (!ctx) {
+    throw new Error("OffscreenCanvas 2d context unavailable");
+  }
+  ctx.drawImage(resized, left, top, crop, crop, 0, 0, crop, crop);
+  return ctx.getImageData(0, 0, crop, crop);
+}
+
+/**
  * Area-average downsample so spectral features stay stable across browsers
  * and the Node canvas polyfill (nearest-neighbor drawImage skews Laplacian).
  */

@@ -95,6 +95,12 @@ export async function downloadModels(args?: {
         await cache.delete(model.cacheKey);
       }
 
+      if (!model.url) {
+        return {
+          kind: "error",
+          message: `${model.id} has no public URL — package models/${model.localPath} (npm run setup:models)`,
+        };
+      }
       const response = await fetchImpl(model.url, { redirect: "follow" });
       if (!response.ok || !response.body) {
         return {

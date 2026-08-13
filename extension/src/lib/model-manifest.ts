@@ -1,29 +1,38 @@
 /**
  * One-time setup downloads only these publicly available weights.
  * After caching, inference never fetches models again.
+ * Proofmark is packaged-only (no public HF URL in this repo).
  */
+export type ModelPreprocess = "stretch" | "short440-center384";
+export type ModelOutputKind = "logits2" | "logit";
+
 export type ModelArtifact = {
   id: string;
   /** Relative path under the Cache Storage namespace. */
   cacheKey: string;
   /** Local path used by Node eval (onnxruntime-node). */
   localPath: string;
-  /** Public Hugging Face URL (resolved at setup time only). */
+  /**
+   * Public Hugging Face URL (resolved at setup time only).
+   * Empty when the artifact must be seeded from a packaged/vendored file.
+   */
   url: string;
   /** Expected SHA-256 hex digest of the artifact bytes. */
   sha256: string;
   bytes: number;
   role: "visual-classifier";
   inputSize: number;
-  /** Label index that corresponds to AI / fake. */
+  /** Label index that corresponds to AI / fake (logits2 only). */
   aiLabelIndex: number;
   mean: readonly [number, number, number];
   std: readonly [number, number, number];
   /** ORT graphOptimizationLevel for this export. */
   graphOptimizationLevel: "disabled" | "all";
+  preprocess: ModelPreprocess;
+  outputKind: ModelOutputKind;
 };
 
-export const MODEL_CACHE_NAME = "truepixel-models-v1";
+export const MODEL_CACHE_NAME = "truepixel-models-v2";
 
 /**
  * Cache / package version. Bump when the required artifact set changes.
@@ -31,7 +40,7 @@ export const MODEL_CACHE_NAME = "truepixel-models-v1";
  * on WASM when the adapter lacks shader-f16 (never fp32-on-WebGPU).
  */
 export const MODEL_VERSION =
-  "distilled-fp16+fp32+community-forensics-q4-v1";
+  "distilled-fp16+fp32+proofmark-webwild-v3-q8-v1";
 
 /**
  * Distilled ViT AI image detector (MIT), fp16 ONNX.
@@ -55,6 +64,8 @@ export const DISTILLED_MODEL = {
   // "all" triggers SimplifiedLayerNormFusion bugs on this fp16 ViT with some
   // ORT builds (session create → GetIndexFromName / InsertedPrecisionFreeCast).
   graphOptimizationLevel: "disabled",
+  preprocess: "stretch",
+  outputKind: "logits2",
 } as const satisfies ModelArtifact;
 
 /**
@@ -75,30 +86,33 @@ export const DISTILLED_MODEL_FP32 = {
   mean: [0.5, 0.5, 0.5],
   std: [0.5, 0.5, 0.5],
   graphOptimizationLevel: "disabled",
+  preprocess: "stretch",
+  outputKind: "logits2",
 } as const satisfies ModelArtifact;
 
 /**
- * Community Forensics ViT-Small detector (MIT), q4 ONNX.
- * Source: https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX
- * Labels: softmax index 1 treated as AI/fake for this export.
+ * Proofmark webwild-v3 Q8 (accurate secondary head).
+ * Vendored from Dyno-man/Dino-ImageGen-Ext (OwensLab/commfor-model-384 fine-tune).
+ * Preprocess: shortest side → 440, center-crop 384, ImageNet norm, logit+sigmoid.
  *
- * Cascade picks WASM vs WebGPU via a warm timing probe. WebGPU uses ORT
- * #29599 `preferredMatmulAccumulatorPrecision: "f32"` (vendored via
- * `npm run setup:ort-web-pr29599`).
+ * Zig+ORT WASM still hardcodes stretch/0.5 — pipeline prefers ort-web while
+ * this head is active.
  */
 export const FORENSICS_MODEL = {
-  id: "community-forensics-deepfake-det",
-  cacheKey: "models/community-forensics/model_q4.onnx",
-  localPath: "models/community-forensics/model_q4.onnx",
-  url: "https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX/resolve/main/onnx/model_q4.onnx",
-  sha256: "263c46052167a15b981848465b8adb9f28dbd1f9ad8ecf8157cb05d876f7091b",
-  bytes: 24_416_892,
+  id: "proofmark-webwild-v3",
+  cacheKey: "models/proofmark-webwild-v3/model_quantized.onnx",
+  localPath: "models/proofmark-webwild-v3/model_quantized.onnx",
+  url: "",
+  sha256: "ed17ceb332bef84d0adcc2fa537eef85ed3ac6fb32c30393c326321fbbe54683",
+  bytes: 24_031_833,
   role: "visual-classifier",
   inputSize: 384,
-  aiLabelIndex: 1,
-  mean: [0.5, 0.5, 0.5],
-  std: [0.5, 0.5, 0.5],
-  graphOptimizationLevel: "all",
+  aiLabelIndex: 0,
+  mean: [0.485, 0.456, 0.406],
+  std: [0.229, 0.224, 0.225],
+  graphOptimizationLevel: "disabled",
+  preprocess: "short440-center384",
+  outputKind: "logit",
 } as const satisfies ModelArtifact;
 
 /** Primary model kept for backwards-compatible imports. */
@@ -115,7 +129,7 @@ export const ALL_MODELS: readonly ModelArtifact[] = [
 ];
 
 /**
- * Heads used by Node dual / cascade eval (fp16 distilled + forensics).
+ * Heads used by Node dual / cascade eval (fp16 distilled + accurate secondary).
  * Do not include the WebGPU-only fp32 distilled variant here.
  */
 export const INFERENCE_MODELS: readonly ModelArtifact[] = [
@@ -125,4 +139,11 @@ export const INFERENCE_MODELS: readonly ModelArtifact[] = [
 
 export function isDistilledModelId(id: string): boolean {
   return id === DISTILLED_MODEL.id || id === DISTILLED_MODEL_FP32.id;
+}
+
+/** True when the accurate head needs JS preprocess (not Zig stretch/0.5). */
+export function accurateHeadNeedsOrtWeb(): boolean {
+  const preprocess: string = FORENSICS_MODEL.preprocess;
+  const outputKind: string = FORENSICS_MODEL.outputKind;
+  return preprocess !== "stretch" || outputKind !== "logits2";
 }
