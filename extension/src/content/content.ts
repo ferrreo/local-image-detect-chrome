@@ -65,7 +65,7 @@ function applyConcealment(entry: TrackedImage): void {
   clearConcealClasses(img);
   if (entry.revealed) return;
 
-  // Blank placeholder until sure — don't flash AI pixels during refine.
+  // Blur until sure — don't flash AI pixels during refine.
   if (isUndecided(entry)) {
     img.classList.add(CONCEAL_PENDING);
     return;
@@ -180,7 +180,7 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
       badge.textContent = entry?.revealed ? `? ${pct}% · hide` : `? ${pct}%`;
       badge.title = entry?.revealed
         ? `TruePixel: still checking (${pct}% AI). Click to hide.`
-        : `TruePixel: checking (${pct}% AI) — image hidden until sure. Click to peek.`;
+        : `TruePixel: checking (${pct}% AI) — blurred until sure. Click to peek.`;
       break;
     case "error":
       badge.classList.add("truepixel-error");
@@ -249,7 +249,7 @@ async function analyze(img: HTMLImageElement, id: string): Promise<void> {
   const pendingBadge = ensureBadge(img, id);
   pendingBadge.classList.add("truepixel-pending", "truepixel-clickable");
   pendingBadge.textContent = "…";
-  pendingBadge.title = "TruePixel: analyzing… image hidden until sure";
+  pendingBadge.title = "TruePixel: analyzing… blurred until sure";
   applyConcealment(entry);
 
   try {

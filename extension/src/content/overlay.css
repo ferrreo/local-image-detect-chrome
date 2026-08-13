@@ -41,20 +41,15 @@
   background: rgba(40, 44, 48, 0.9);
 }
 
-img.truepixel-conceal-blur {
+img.truepixel-conceal-blur,
+img.truepixel-conceal-pending {
   filter: blur(18px) brightness(0.85) saturate(0.7) !important;
   transition: filter 120ms ease;
 }
 
-img.truepixel-conceal-blank,
-img.truepixel-conceal-pending {
+img.truepixel-conceal-blank {
   /* Keep layout; hide pixels under a solid plate. */
   filter: brightness(0) contrast(1) !important;
   background: #121212 !important;
   transition: filter 120ms ease;
-}
-
-img.truepixel-conceal-pending {
-  outline: 1px dashed rgba(244, 241, 234, 0.2);
-  outline-offset: -1px;
 }
