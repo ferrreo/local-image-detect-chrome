@@ -7,8 +7,11 @@
  *   vendor/onnxruntime-web/   — drop-in package (dist + package.json)
  *   native/ort-web-pr29599/active.json
  *
- * First run is slow (emscripten jsep wasm). Re-runs reuse artifacts unless
- * TRUEPIXEL_FORCE_ORT_WEB_PR=1.
+ * First run is slow (emscripten + native WebGPU EP / asyncify). Re-runs reuse
+ * artifacts unless TRUEPIXEL_FORCE_ORT_WEB_PR=1.
+ *
+ * Applies scripts/patches/ort-pr29599-designator-order.patch so PR #29599
+ * compiles (WGSL template designator order).
  *
  *   npm run setup:ort-web-pr29599
  */
@@ -131,6 +134,19 @@ const sha = execFileSync("git", ["rev-parse", "HEAD"], {
   encoding: "utf8",
 }).trim();
 console.log(`Building onnxruntime-web from ${sha} (${prRef})`);
+
+// PR #29599 does not compile as-is: designated initializers for WGSL
+// template params must be alphabetical (a_length_per_tile before acc_f32).
+const designatorPatch = path.join(
+  root,
+  "scripts/patches/ort-pr29599-designator-order.patch",
+);
+if (!existsSync(designatorPatch)) {
+  throw new Error(`Missing compile fix patch: ${designatorPatch}`);
+}
+run("git", ["apply", "--check", designatorPatch], { cwd: ortSrc });
+run("git", ["apply", designatorPatch], { cwd: ortSrc });
+console.log(`Applied ${path.relative(root, designatorPatch)}`);
 
 // Stop Node from treating ORT's CJS post-build scripts as ESM because
 // /workspace/package.json has "type": "module".
