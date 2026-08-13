@@ -38,6 +38,7 @@
     "eval:compare": "node scripts/eval-model-compare.mjs",
     "eval:truthlens": "python3 scripts/eval-truthlens.py",
     "distill:accurate": "python3 scripts/distill-accurate-head.py",
+    "fetch:distill-corpus": "node scripts/fetch-distill-corpus.mjs",
     "ci": "npm run test:all",
     "fetch:lexica": "node scripts/fetch-lexica-images.mjs"
   },

@@ -50,6 +50,8 @@ npm run eval:compare   # full-corpus numbers are contaminated if Lexica was in t
 
 See `benchmark/model-survey/truepixel-accurate-holdout.md`. Domain-holdout Lexica TPR is still ~15% — not ready to replace Community Forensics.
 
+Full distill / finetune / quant source map: `benchmark/model-survey/sources-distill-finetune-quant.md`. Pull a Proofmark-scale public train set with `npm run fetch:distill-corpus` (Zitacron + Tiny-GenImage; Lexica stays holdout).
+
 TruthLens-named image heads on HF (mostly text detectors under that name) can be scored with:
 
 ```bash
