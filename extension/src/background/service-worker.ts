@@ -350,6 +350,7 @@ async function detectFromBytes(args: {
       ? offscreen.result.label.message
       : "Offscreen visual inference unavailable";
   backendCache = { kind: "none" };
+  backendErrorCache = message;
   return {
     imageId: args.imageId,
     label: { kind: "error", message },
@@ -430,6 +431,8 @@ async function analyzeImage(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    backendCache = { kind: "none" };
+    backendErrorCache = message;
     return {
       kind: "analyze-image-result",
       requestId: request.requestId,
@@ -634,6 +637,26 @@ chrome.runtime.onInstalled.addListener(() => {
   void (async () => {
     await loadOptions();
     modelStatusCache = await getModelStatus();
+    if (modelStatusCache.kind === "ready") {
+      try {
+        const reset = await resetViaOffscreen({
+          requestId: crypto.randomUUID(),
+          warm: true,
+          visualProvider: optionsCache.visualProvider,
+          visualEngine: "auto",
+        });
+        if (reset && reset.backend.kind !== "none") {
+          backendCache = reset.backend;
+          backendErrorCache = "";
+          gpuAvailableCache = reset.gpuAvailable;
+        } else if (reset?.error) {
+          backendErrorCache = reset.error;
+        }
+      } catch (error) {
+        backendErrorCache =
+          error instanceof Error ? error.message : String(error);
+      }
+    }
   })();
 });
 
