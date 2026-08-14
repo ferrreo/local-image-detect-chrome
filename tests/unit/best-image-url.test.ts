@@ -309,7 +309,7 @@ describe("fuseDetection small-source hold", () => {
     });
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toMatch(
-      /chart-infographic|digital-graphic|ui-no-real/,
+      /digital-graphic|chart-infographic|ui-no-real/,
     );
   });
 
@@ -333,7 +333,77 @@ describe("fuseDetection small-source hold", () => {
     });
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toMatch(
-      /chart-infographic|digital-graphic|ui-no-real/,
+      /digital-graphic|chart-infographic|ui-no-real/,
     );
+  });
+
+  it("holds tweet-framed busy scatter plots (colors ~190)", () => {
+    // Measured from tests/fixtures/images/ui-fp/scatter_tweet.jpg
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.25),
+      visual: tier("visual", 0.98),
+      visualSecondary: tier("visual", 0.96),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.164,
+        laplacianVariance: 1052,
+        chromaFlatness: 0.989,
+        blockiness: 0.086,
+        axisAlignedEdgeRatio: 0.788,
+        quantizedColorCount: 193,
+        topColorShare: 0.981,
+        frameAxisAlignedEdgeRatio: 0.839,
+        frameTopColorShare: 0.983,
+      },
+      sourceMinSide: 900,
+    });
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(/digital-graphic|ui-no-real/);
+  });
+
+  it("holds laptop screen captures of KPI charts (not AI 98%)", () => {
+    // Measured from tests/fixtures/images/ui-fp/laptop_screen.jpg
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.3),
+      visual: tier("visual", 0.98),
+      visualSecondary: tier("visual", 0.97),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.214,
+        laplacianVariance: 1785,
+        chromaFlatness: 0.953,
+        blockiness: 0.633,
+        axisAlignedEdgeRatio: 0.909,
+        quantizedColorCount: 109,
+        topColorShare: 0.906,
+        frameAxisAlignedEdgeRatio: 0.949,
+        frameTopColorShare: 0.925,
+      },
+      sourceMinSide: 900,
+    });
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(/digital-graphic|ui-no-real/);
+  });
+
+  it("holds LLM Performance Evaluation KPI cards at maxed distilled", () => {
+    // Measured from tests/fixtures/images/ui-fp/llm_perf_eval.jpg
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.35),
+      visual: tier("visual", 0.98),
+      visualSecondary: tier("visual", 0.96),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.219,
+        laplacianVariance: 1960,
+        chromaFlatness: 0.95,
+        blockiness: 0.822,
+        axisAlignedEdgeRatio: 0.851,
+        quantizedColorCount: 110,
+        topColorShare: 0.949,
+      },
+      sourceMinSide: 900,
+    });
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(/digital-graphic|ui-no-real/);
   });
 });

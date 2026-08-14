@@ -398,10 +398,11 @@ export function looksLikeDigitalUi(features: {
   // Dense tables / process lists / settings panes — lots of H/V rules,
   // limited palette, not camera grain (Activity Monitor FPs).
   // Axis floor is high so neon CGI grid landscapes do not match.
+  // Color ceiling allows KPI legends / laptop screen captures (~150–180).
   if (
     axis >= 0.72 &&
     colors > 0 &&
-    colors <= 140 &&
+    colors <= 180 &&
     share >= 0.65 &&
     chroma >= 0.55 &&
     hf <= 0.4
@@ -567,7 +568,7 @@ export function looksLikeChartOrInfographic(features: {
   // grid / legend) stays strong. Neon CGI heads rarely clear share ≥ 0.85.
   if (
     axis >= 0.55 &&
-    colors <= 160 &&
+    colors <= 220 &&
     share >= 0.85 &&
     chroma >= 0.7 &&
     hf <= 0.55 &&
@@ -769,7 +770,12 @@ export function looksLikeSyntheticCgi(features: {
   );
 }
 
-/** UI chrome or flat brand/vector graphics — visual heads often FP these as AI. */
+/**
+ * UI chrome, flat brand/vector, charts, laptop/desktop screen captures.
+ * Visual heads routinely FP these as AI 72–98%; fusion must hold them.
+ * Broader than the narrow UI/chart bands so busy legends / social chrome /
+ * laptop bezels do not fall through to distilled-near-threshold.
+ */
 export function looksLikeNonPhotoGraphic(features: {
   axisAlignedEdgeRatio: number;
   quantizedColorCount: number;
@@ -783,11 +789,71 @@ export function looksLikeNonPhotoGraphic(features: {
   windowChromeScore?: number;
   blockiness?: number;
 }): boolean {
-  return (
+  if (
     looksLikeDigitalUi(features) ||
     looksLikeFlatGraphic(features) ||
     looksLikeChartOrInfographic(features)
-  );
+  ) {
+    return true;
+  }
+
+  const axis = features.axisAlignedEdgeRatio;
+  const colors = features.quantizedColorCount;
+  const share = features.topColorShare;
+  const chroma = features.chromaFlatness;
+  const hf = features.highFreqEnergyRatio;
+  const lap = features.laplacianVariance;
+  const block = features.blockiness ?? 0;
+  const frameAxis = features.frameAxisAlignedEdgeRatio ?? 0;
+  const frameShare = features.frameTopColorShare ?? 0;
+  if (colors <= 0) return false;
+
+  // Neon CGI subjects: mid/low page fill + colorful body — leave for promote.
+  if (share < 0.72 && colors >= 36 && axis < 0.72) return false;
+
+  // Laptop / monitor bezel + screen: strong frame lattice, flat screen fill.
+  if (
+    frameAxis >= 0.72 &&
+    frameShare >= 0.55 &&
+    axis >= 0.55 &&
+    share >= 0.55 &&
+    chroma >= 0.55 &&
+    colors <= 220 &&
+    hf <= 0.55 &&
+    lap >= 80 &&
+    lap <= 20_000
+  ) {
+    return true;
+  }
+
+  // Busy-palette charts / scatter / KPI cards with dominant page fill.
+  if (
+    share >= 0.9 &&
+    chroma >= 0.7 &&
+    axis >= 0.55 &&
+    colors <= 220 &&
+    hf <= 0.55 &&
+    lap >= 80 &&
+    lap <= 20_000 &&
+    block <= 0.85
+  ) {
+    return true;
+  }
+
+  // Hard H/V desktop / multi-panel UI even with logo-heavy palettes.
+  if (
+    axis >= 0.78 &&
+    chroma >= 0.55 &&
+    share >= 0.55 &&
+    colors <= 200 &&
+    hf <= 0.5 &&
+    lap >= 100 &&
+    lap <= 20_000
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 function highFreqEnergyRatio(gray: Float32Array, width: number, height: number): number {

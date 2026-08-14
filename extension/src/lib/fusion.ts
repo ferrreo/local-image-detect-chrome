@@ -9,9 +9,6 @@ import {
 } from "../shared/types";
 import { aiThresholdBumpForSourceSide } from "./best-image-url";
 import {
-  looksLikeChartOrInfographic,
-  looksLikeDigitalUi,
-  looksLikeFlatGraphic,
   looksLikeNeonAiSubject,
   looksLikeNonPhotoGraphic,
   looksLikeSyntheticCgi,
@@ -159,27 +156,11 @@ export function fuseDetection(input: FusionInput): FusionOutput {
       detail = `small-source-hold(side=${input.sourceMinSide},thr=${threshold.toFixed(2)})`;
     }
   } else if (
-    // UI / flat / chart holds BEFORE neon promote — otherwise maxed distilled
-    // (AI 98% on KPI cards) skips past a late chart hold that never matched.
+    // Structured digital graphics (UI / charts / laptop screens / code cards)
+    // BEFORE neon promote — otherwise maxed distilled (AI 98% on KPI cards)
+    // skips past narrow holds that miss busy legends or laptop bezels.
     feats &&
-    looksLikeDigitalUi(feats) &&
-    !looksLikeNeonAiSubject(feats) &&
-    (feats.axisAlignedEdgeRatio >= 0.58 ||
-      (feats.windowChromeScore ?? 0) >= 0.7 ||
-      (feats.quantizedColorCount <= 48 && feats.topColorShare >= 0.75) ||
-      !looksLikeSyntheticCgi(feats))
-  ) {
-    const held = Math.min(baseline, MILD_HOLD_CAP);
-    confidence = asAiConfidence(
-      held <= realThreshold
-        ? Math.min(MILD_HOLD_CAP, realThreshold + 0.05)
-        : held,
-    );
-    detail = `digital-graphic-hold(axis=${feats.axisAlignedEdgeRatio.toFixed(2)},colors=${feats.quantizedColorCount},flat=${feats.chromaFlatness.toFixed(2)})`;
-  } else if (
-    feats &&
-    looksLikeFlatGraphic(feats) &&
-    !looksLikeSyntheticCgi(feats) &&
+    looksLikeNonPhotoGraphic(feats) &&
     !looksLikeNeonAiSubject(feats)
   ) {
     const held = Math.min(baseline, MILD_HOLD_CAP);
@@ -188,21 +169,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
         ? Math.min(MILD_HOLD_CAP, realThreshold + 0.05)
         : held,
     );
-    detail = `digital-graphic-hold(axis=${feats.axisAlignedEdgeRatio.toFixed(2)},colors=${feats.quantizedColorCount},flat=${feats.chromaFlatness.toFixed(2)})`;
-  } else if (
-    // Bar charts / KPI infographics — heads often FP these as AI ~90%+.
-    // Must beat distilled-near-threshold (observed AI 98% on LLM bench cards).
-    feats &&
-    looksLikeChartOrInfographic(feats) &&
-    !looksLikeNeonAiSubject(feats)
-  ) {
-    const held = Math.min(baseline, MILD_HOLD_CAP);
-    confidence = asAiConfidence(
-      held <= realThreshold
-        ? Math.min(MILD_HOLD_CAP, realThreshold + 0.05)
-        : held,
-    );
-    detail = `chart-infographic-hold(axis=${feats.axisAlignedEdgeRatio.toFixed(2)},colors=${feats.quantizedColorCount},share=${feats.topColorShare.toFixed(2)})`;
+    detail = `digital-graphic-hold(axis=${feats.axisAlignedEdgeRatio.toFixed(2)},colors=${feats.quantizedColorCount},flat=${feats.chromaFlatness.toFixed(2)},share=${feats.topColorShare.toFixed(2)})`;
   } else if (
     // Neon CGI subjects — after UI/chart holds so toast/chart FPs win.
     feats &&
@@ -248,7 +215,11 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   ) {
     confidence = asAiConfidence(Math.min(baseline, MILD_HOLD_CAP));
     detail = "busy-scene-hold";
-  } else if (distilled >= 0.88 && spectral <= 0.4) {
+  } else if (
+    distilled >= 0.88 &&
+    spectral <= 0.4 &&
+    !(feats && looksLikeNonPhotoGraphic(feats))
+  ) {
     confidence = asAiConfidence(Math.max(distilled, threshold));
     detail = "distilled-near-threshold";
   } else if (
@@ -269,9 +240,11 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   } else if (
     // Proofmark-class accurate head: trust it when it clears the AI floor
     // even if distilled is near-zero (Lexica / modern generator misses).
+    // Never override structured digital graphics (chart/laptop FPs).
     forensics !== undefined &&
     forensics >= accurateFloor &&
-    distilled < 0.88
+    distilled < 0.88 &&
+    !(feats && looksLikeNonPhotoGraphic(feats))
   ) {
     confidence = asAiConfidence(Math.max(forensics, accurateFloor));
     detail = "accurate-head";
@@ -296,7 +269,8 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     distilled >= 0.3 &&
     feats.laplacianVariance >= 580 &&
     feats.chromaFlatness >= 0.34 &&
-    feats.chromaFlatness <= 0.7
+    feats.chromaFlatness <= 0.7 &&
+    !looksLikeNonPhotoGraphic(feats)
   ) {
     confidence = asAiConfidence(Math.max(forensics, threshold));
     detail = "forensics-flatness-band";
@@ -306,7 +280,8 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     distilled >= 0.62 &&
     forensics >= 0.88 &&
     feats.chromaFlatness >= 0.74 &&
-    feats.laplacianVariance >= 700
+    feats.laplacianVariance >= 700 &&
+    !looksLikeNonPhotoGraphic(feats)
   ) {
     confidence = asAiConfidence(Math.max(0.7, threshold));
     detail = "distilled-forensics-flatness";
@@ -318,7 +293,8 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     feats.laplacianVariance >= 800 &&
     feats.chromaFlatness >= 0.6 &&
     feats.chromaFlatness <= 0.72 &&
-    spectral <= 0.38
+    spectral <= 0.38 &&
+    !looksLikeNonPhotoGraphic(feats)
   ) {
     confidence = asAiConfidence(Math.max(forensics, threshold));
     detail = "forensics-high-flat-texture";
@@ -331,7 +307,8 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     forensics >= 0.88 &&
     forensics >= distilled + 0.25 &&
     feats.laplacianVariance >= 600 &&
-    feats.chromaFlatness <= 0.58
+    feats.chromaFlatness <= 0.58 &&
+    !looksLikeNonPhotoGraphic(feats)
   ) {
     confidence = asAiConfidence(Math.max(forensics, threshold));
     detail = "forensics-ambiguous-distilled";
@@ -341,6 +318,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     // laplacian which the spectral heuristic treats as "real texture".
     feats &&
     looksLikeSyntheticCgi(feats) &&
+    !looksLikeNonPhotoGraphic(feats) &&
     distilled < 0.92 &&
     (forensics === undefined || forensics < accurateFloor)
   ) {
@@ -399,9 +377,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   } else if (
     feats &&
     !looksPhotographic(feats) &&
-    !looksLikeDigitalUi(feats) &&
-    !looksLikeFlatGraphic(feats) &&
-    !looksLikeChartOrInfographic(feats) &&
+    !looksLikeNonPhotoGraphic(feats) &&
     confidence < accurateFloor &&
     (feats.chromaFlatness >= 0.5 || looksLikeSyntheticCgi(feats)) &&
     !detail.includes("dual-mild") &&
@@ -418,21 +394,12 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   }
 
   // Absolute: never stamp Real unless the pixels look like a camera photo.
-  // UI / flat brand / charts → uncertain (not AI). CGI / smooth generative → AI floor.
+  // UI / flat brand / charts / laptop screens → uncertain (not AI).
+  // CGI / smooth generative → AI floor.
   if (feats && confidence <= realThreshold && !looksPhotographic(feats)) {
-    const hardUi =
-      !looksLikeNeonAiSubject(feats) &&
-      looksLikeDigitalUi(feats) &&
-      (feats.axisAlignedEdgeRatio >= 0.58 ||
-        (feats.windowChromeScore ?? 0) >= 0.7 ||
-        (feats.quantizedColorCount <= 48 && feats.topColorShare >= 0.75) ||
-        !looksLikeSyntheticCgi(feats));
     if (
-      hardUi ||
-      (looksLikeFlatGraphic(feats) &&
-        !looksLikeSyntheticCgi(feats) &&
-        !looksLikeNeonAiSubject(feats)) ||
-      (looksLikeChartOrInfographic(feats) && !looksLikeNeonAiSubject(feats))
+      looksLikeNonPhotoGraphic(feats) &&
+      !looksLikeNeonAiSubject(feats)
     ) {
       confidence = asAiConfidence(
         Math.min(MILD_HOLD_CAP, Math.max(realThreshold + 0.05, confidence + 0.12)),

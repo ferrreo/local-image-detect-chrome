@@ -178,9 +178,13 @@ describe("analyzeSpectral", () => {
     const dir = path.resolve("tests/fixtures/images/ui-fp");
     for (const name of [
       "scatter_chart.png",
+      "scatter_tweet.jpg",
       "bar_chart.png",
       "terminal.png",
       "code_card.png",
+      "llm_perf_eval.jpg",
+      "laptop_screen.jpg",
+      "desktop_screenshot.png",
     ]) {
       const buf = readFileSync(path.join(dir, name));
       const bytes = buf.buffer.slice(
@@ -196,7 +200,8 @@ describe("analyzeSpectral", () => {
       const held =
         looksLikeDigitalUi(feats) ||
         looksLikeFlatGraphic(feats) ||
-        looksLikeChartOrInfographic(feats);
+        looksLikeChartOrInfographic(feats) ||
+        looksLikeNonPhotoGraphic(feats);
       expect(held, name).toBe(true);
       expect(looksLikeNeonAiSubject(feats), name).toBe(false);
     }
