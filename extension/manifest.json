@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NeoPixel AI Image Detector",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Detect AI-generated images entirely in your browser with WebGPU/WASM. No cloud inference.",
   "minimum_chrome_version": "121",
   "icons": {
@@ -39,7 +39,11 @@
   "host_permissions": ["http://*/*", "https://*/*"],
   "web_accessible_resources": [
     {
-      "resources": ["ort/*", "icons/*"],
+      "resources": [
+        "ort/*",
+        "ort-wasm*",
+        "icons/*"
+      ],
       "matches": ["http://*/*", "https://*/*"]
     }
   ],
