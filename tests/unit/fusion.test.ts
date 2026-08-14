@@ -409,10 +409,10 @@ describe("fuseDetection", () => {
       spectralFeatures: {
         highFreqEnergyRatio: 0.58,
         laplacianVariance: 480,
-        chromaFlatness: 0.49,
+        chromaFlatness: 0.58,
         axisAlignedEdgeRatio: 0.54,
         quantizedColorCount: 48,
-        topColorShare: 0.62,
+        topColorShare: 0.45,
         blockiness: 0.5,
       },
       sourceMinSide: 140,
@@ -430,7 +430,7 @@ describe("fuseDetection", () => {
       spectralFeatures: {
         highFreqEnergyRatio: 0.45,
         laplacianVariance: 1600,
-        chromaFlatness: 0.5,
+        chromaFlatness: 0.56,
         axisAlignedEdgeRatio: 0.42,
         quantizedColorCount: 110,
         topColorShare: 0.4,

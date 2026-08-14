@@ -732,10 +732,12 @@ export function looksLikeNeonAiSubject(features: {
     (features.chromaFlatness >= 0.54 && features.quantizedColorCount >= 24);
   // Sparkly neon creature faces (Vidu-style glowing eyes / bokeh dots) often
   // land HF 0.55–0.72 and laplacian well above clean renders.
+  // Chroma floor stays ≥0.55 and page-fill ≤0.55 so cafe/desk lifestyle
+  // photos (mid chroma, material-dominated fill) are not classified as neon.
   return (
-    features.chromaFlatness >= 0.45 &&
+    features.chromaFlatness >= 0.55 &&
     colorful &&
-    features.topColorShare <= 0.8 &&
+    features.topColorShare <= 0.55 &&
     features.highFreqEnergyRatio <= 0.78 &&
     features.laplacianVariance >= 80 &&
     features.laplacianVariance <= 40_000 &&
@@ -789,21 +791,24 @@ export function looksLikeSyntheticCgi(features: {
     features.topColorShare <= 0.94 &&
     features.laplacianVariance >= 60 &&
     features.laplacianVariance <= 40_000;
-  // Smooth generative / neon stock — wins even if HF looks busy / sparkly.
+  // Smooth generative / neon stock. Mid-chroma material photos (cafe/desk)
+  // must not match — require either subject-like page fill or very flat chroma.
   if (
     paletteOk &&
-    features.chromaFlatness >= 0.48 &&
+    features.chromaFlatness >= 0.55 &&
     features.highFreqEnergyRatio <= 0.72 &&
-    block <= 0.55
+    block <= 0.55 &&
+    (features.topColorShare <= 0.55 || features.chromaFlatness >= 0.65)
   ) {
     return true;
   }
   if (looksPhotographic(features)) return false;
   return (
     paletteOk &&
-    features.chromaFlatness >= 0.45 &&
+    features.chromaFlatness >= 0.55 &&
     features.highFreqEnergyRatio <= 0.65 &&
-    block <= 0.55
+    block <= 0.55 &&
+    (features.topColorShare <= 0.55 || features.chromaFlatness >= 0.65)
   );
 }
 

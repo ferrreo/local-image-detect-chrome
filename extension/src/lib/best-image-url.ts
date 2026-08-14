@@ -233,6 +233,50 @@ export function isSearchThumbCdn(url: string): boolean {
 }
 
 /**
+ * Rewrite social CDN thumb URLs to a larger variant before fetch.
+ * X/Twitter feed often serves `name=small` / `:small` while the lightbox uses
+ * `name=large` — mushy thumbs FP as AI ~72% when the full asset is fine.
+ */
+export function upgradeSocialCdnUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    if (!/\.twimg\.com$/i.test(u.hostname)) return url;
+
+    if (u.searchParams.has("name")) {
+      const name = u.searchParams.get("name") ?? "";
+      if (!/^(?:large|orig)$/i.test(name)) {
+        u.searchParams.set("name", "large");
+      }
+      return u.href;
+    }
+
+    if (
+      /:(?:tiny|small|medium|thumb|120x120|240x240|360x360|900x900)$/i.test(
+        u.pathname,
+      )
+    ) {
+      u.pathname = u.pathname.replace(
+        /:(?:tiny|small|medium|thumb|120x120|240x240|360x360|900x900)$/i,
+        ":large",
+      );
+      return u.href;
+    }
+
+    // Profile avatars: `_normal` / `_bigger` are tiny; prefer 400px.
+    if (/\/profile_images\//i.test(u.pathname)) {
+      u.pathname = u.pathname
+        .replace(/_mini(\.\w+)$/i, "_400x400$1")
+        .replace(/_normal(\.\w+)$/i, "_400x400$1")
+        .replace(/_bigger(\.\w+)$/i, "_400x400$1");
+    }
+
+    return u.href;
+  } catch {
+    return url;
+  }
+}
+
+/**
  * Resolve the URL we should fetch for inference.
  * Order: explicit full-size data-* → linked full image → largest srcset → currentSrc.
  */
@@ -281,12 +325,13 @@ export function resolveAnalyzeUrl(img: HTMLImageElement): string {
   );
 
   const best = pickBestCandidate(candidates);
-  if (!best) return current;
+  if (!best) return upgradeSocialCdnUrl(current);
 
   try {
-    return new URL(best, img.baseURI || document.baseURI).href;
+    const absolute = new URL(best, img.baseURI || document.baseURI).href;
+    return upgradeSocialCdnUrl(absolute);
   } catch {
-    return best;
+    return upgradeSocialCdnUrl(best);
   }
 }
 

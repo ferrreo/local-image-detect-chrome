@@ -174,8 +174,10 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     detail = `digital-graphic-hold(axis=${feats.axisAlignedEdgeRatio.toFixed(2)},colors=${feats.quantizedColorCount},flat=${feats.chromaFlatness.toFixed(2)},share=${feats.topColorShare.toFixed(2)})`;
   } else if (
     // Neon CGI subjects — after UI/chart holds so toast/chart FPs win.
+    // Never promote camera / lifestyle photos that only mid-match neon bands.
     feats &&
     looksLikeNeonAiSubject(feats) &&
+    !looksPhotographic(feats) &&
     distilled < 0.92 &&
     (forensics === undefined || forensics < accurateFloor)
   ) {
@@ -332,27 +334,11 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     );
     detail = "cgi-spectral-boost";
     labelThreshold = accurateFloor;
-  } else if (
-    // Non-photographic frame + mid visual signal → AI (photoreal generators
-    // that dodge CGI geometry but still lack camera capture cues).
-    feats &&
-    !looksPhotographic(feats) &&
-    !looksLikeNonPhotoGraphic(feats) &&
-    distilled < 0.92 &&
-    (forensics === undefined || forensics < accurateFloor) &&
-    (Math.max(distilled, spectral) >= 0.32 ||
-      (forensics !== undefined && forensics >= 0.5) ||
-      looksLikeSyntheticCgi(feats))
-  ) {
-    confidence = asAiConfidence(
-      Math.max(
-        accurateFloor,
-        Math.min(0.93, Math.max(distilled, spectral, forensics ?? 0, 0.72)),
-      ),
-    );
-    detail = "non-photo-visual-promote";
-    labelThreshold = accurateFloor;
   } else {
+    // Ambiguous non-photo stays on calibrated baseline — do NOT floor to AI 72%
+    // just because looksPhotographic() failed (cafe bokeh, desk photos, etc.).
+    // AI recall for neon/CGI is handled above; decisive heads use accurate /
+    // distilled-near-threshold paths.
     confidence = asAiConfidence(baseline);
     detail =
       bump > 0
@@ -360,9 +346,9 @@ export function fuseDetection(input: FusionInput): FusionOutput {
         : `threshold=${threshold}`;
   }
 
-  // Camera-photo gate + uncertain-band CGI rescue.
+  // Uncertain-band CGI rescue only — never promote on bare mid-chroma.
   // "? 41%" / "? 45%" neon heads were stuck mid-band after soft holds.
-  // Do not override an explicit digital-graphic UI hold (Activity Monitor FPs).
+  // Do not override an explicit digital-graphic UI hold.
   if (
     feats &&
     !looksPhotographic(feats) &&
@@ -376,28 +362,11 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     );
     detail = `${detail}|cgi-floor`;
     labelThreshold = accurateFloor;
-  } else if (
-    feats &&
-    !looksPhotographic(feats) &&
-    !looksLikeNonPhotoGraphic(feats) &&
-    confidence < accurateFloor &&
-    (feats.chromaFlatness >= 0.5 || looksLikeSyntheticCgi(feats)) &&
-    !detail.includes("dual-mild") &&
-    !detail.includes("busy-scene") &&
-    !detail.includes("photo-evidence") &&
-    !detail.includes("digital-graphic") &&
-    !detail.includes("chart-infographic")
-  ) {
-    confidence = asAiConfidence(
-      Math.max(accurateFloor, Math.min(0.93, Math.max(confidence, 0.72))),
-    );
-    detail = `${detail}|nonphoto-floor`;
-    labelThreshold = accurateFloor;
   }
 
   // Absolute: never stamp Real unless the pixels look like a camera photo.
   // UI / flat brand / charts / laptop screens → uncertain (not AI).
-  // CGI / smooth generative → AI floor.
+  // Explicit neon/CGI → AI floor. Everything else → uncertain.
   if (feats && confidence <= realThreshold && !looksPhotographic(feats)) {
     if (looksLikeNonPhotoGraphic(feats)) {
       confidence = asAiConfidence(
@@ -406,8 +375,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
       detail = `${detail}|ui-no-real`;
     } else if (
       looksLikeNeonAiSubject(feats) ||
-      looksLikeSyntheticCgi(feats) ||
-      feats.chromaFlatness >= 0.5
+      looksLikeSyntheticCgi(feats)
     ) {
       confidence = asAiConfidence(
         Math.max(accurateFloor, Math.min(0.95, Math.max(confidence, 0.72))),

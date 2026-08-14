@@ -3,6 +3,7 @@ import {
   aiThresholdBumpForSourceSide,
   parseSrcset,
   pickBestCandidate,
+  upgradeSocialCdnUrl,
 } from "../../extension/src/lib/best-image-url";
 import { fuseDetection } from "../../extension/src/lib/fusion";
 import { asAiConfidence } from "../../extension/src/shared/types";
@@ -20,6 +21,38 @@ describe("parseSrcset / pickBestCandidate", () => {
       "https://cdn.example/1x.jpg 1x, https://cdn.example/2x.jpg 2x, https://cdn.example/wide.jpg 1600w",
     );
     expect(pickBestCandidate(parsed)).toBe("https://cdn.example/wide.jpg");
+  });
+});
+
+describe("upgradeSocialCdnUrl", () => {
+  it("upgrades Twitter name=small/medium to name=large", () => {
+    expect(
+      upgradeSocialCdnUrl(
+        "https://pbs.twimg.com/media/ABC123?format=jpg&name=small",
+      ),
+    ).toBe("https://pbs.twimg.com/media/ABC123?format=jpg&name=large");
+    expect(
+      upgradeSocialCdnUrl(
+        "https://pbs.twimg.com/media/ABC123?format=jpg&name=360x360",
+      ),
+    ).toBe("https://pbs.twimg.com/media/ABC123?format=jpg&name=large");
+    expect(
+      upgradeSocialCdnUrl(
+        "https://pbs.twimg.com/media/ABC123?format=jpg&name=large",
+      ),
+    ).toBe("https://pbs.twimg.com/media/ABC123?format=jpg&name=large");
+  });
+
+  it("upgrades legacy :small path suffixes", () => {
+    expect(
+      upgradeSocialCdnUrl("https://pbs.twimg.com/media/ABC123.jpg:small"),
+    ).toBe("https://pbs.twimg.com/media/ABC123.jpg:large");
+  });
+
+  it("leaves non-Twitter URLs alone", () => {
+    expect(upgradeSocialCdnUrl("https://cdn.example/photo.jpg")).toBe(
+      "https://cdn.example/photo.jpg",
+    );
   });
 });
 
@@ -456,5 +489,31 @@ describe("fuseDetection small-source hold", () => {
     });
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toMatch(/digital-graphic|ui-no-real/);
+  });
+
+  it("does not stamp AI 72% just because mid-chroma fails looksPhotographic", () => {
+    // Root fusion rule: ambiguous non-photo → uncertain, not an AI floor.
+    // Cafe/desk lifestyle FPs were caused by nonphoto-floor / stock-ai-floor
+    // treating chromaFlatness ≥ 0.5 as synthetic.
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.38),
+      visual: tier("visual", 0.55),
+      visualSecondary: tier("visual", 0.48),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.36,
+        laplacianVariance: 1100,
+        chromaFlatness: 0.52,
+        blockiness: 0.3,
+        axisAlignedEdgeRatio: 0.42,
+        quantizedColorCount: 150,
+        topColorShare: 0.64,
+      },
+      sourceMinSide: 900,
+    });
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).not.toMatch(
+      /nonphoto-floor|stock-ai-floor|non-photo-visual/,
+    );
   });
 });
