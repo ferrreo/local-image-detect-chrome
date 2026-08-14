@@ -38,9 +38,10 @@ type OrtSession = {
 type OrtModule = {
   env: {
     wasm: {
-      wasmPaths: string;
+      wasmPaths: string | Record<string, string>;
       numThreads: number;
       simd: boolean;
+      proxy?: boolean;
     };
     webgpu?: {
       powerPreference?: "high-performance" | "low-power";
@@ -243,20 +244,48 @@ function wasmThreadCount(): number {
   return Math.max(1, Math.min(8, hc));
 }
 
-function configureOrt(ort: OrtModule): void {
-  const base =
-    typeof chrome !== "undefined" && chrome.runtime?.getURL
-      ? chrome.runtime.getURL("ort/")
-      : "/ort/";
-  ort.env.wasm.wasmPaths = base;
-  // Extension offscreen + COEP: threaded ORT workers fail to fetch .wasm
-  // ("Failed to fetch") and then throw "chrome is not defined". Stay single-
-  // threaded inside the extension; Node eval can still use more threads.
+async function assertOrtWasmAssets(base: string): Promise<void> {
+  // Silent 404s surface as ORT's opaque "both async and sync fetching of the
+  // wasm failed". Probe the files we ship under dist/ort/ up front.
+  const needed = [
+    "ort-wasm-simd-threaded.jsep.wasm",
+    "ort-wasm-simd-threaded.asyncify.wasm",
+    "ort-wasm-simd-threaded.wasm",
+  ];
+  const missing: string[] = [];
+  for (const name of needed) {
+    try {
+      const res = await fetch(`${base}${name}`);
+      if (!res.ok) missing.push(`${name}(${res.status})`);
+    } catch (error) {
+      missing.push(
+        `${name}(${error instanceof Error ? error.message : "fetch failed"})`,
+      );
+    }
+  }
+  if (missing.length > 0) {
+    throw new Error(
+      `ORT wasm missing at ${base} — load the unpacked dist/ folder after npm run build. ${missing.join(", ")}`,
+    );
+  }
+}
+
+async function configureOrt(ort: OrtModule): Promise<void> {
   const inExtension =
-    typeof chrome !== "undefined" && typeof chrome.runtime?.getURL === "function";
+    typeof chrome !== "undefined" &&
+    typeof chrome.runtime?.getURL === "function";
+  const base = inExtension ? chrome.runtime.getURL("ort/") : "/ort/";
+  ort.env.wasm.wasmPaths = base;
+  // Extension offscreen: threaded ORT workers break (Failed to fetch /
+  // chrome is not defined). Stay single-threaded; Node eval can use more.
   wasmThreadCountUsed = inExtension ? 1 : wasmThreadCount();
   ort.env.wasm.numThreads = wasmThreadCountUsed;
   ort.env.wasm.simd = true;
+  // Avoid proxy-worker blob paths that MV3 often blocks.
+  ort.env.wasm.proxy = false;
+  if (inExtension) {
+    await assertOrtWasmAssets(base);
+  }
   if (ort.env.webgpu) {
     ort.env.webgpu.powerPreference = "high-performance";
     ort.env.webgpu.forceFallbackAdapter = false;
@@ -371,7 +400,7 @@ function gpuBeatsWasm(gpuMs: number, wasmMs: number, maxMs: number): boolean {
  * - Software WebGPU loses the probe (hard ms ceilings)
  */
 async function createSessions(ort: OrtModule): Promise<LoadedSession[]> {
-  configureOrt(ort);
+  await configureOrt(ort);
   const caps = await probeWebGpuCapabilities();
   const providers = await providerList(preferredProvider);
   const wantWebgpu = providers[0] === "webgpu";

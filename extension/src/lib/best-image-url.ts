@@ -225,7 +225,7 @@ export function extractLinkedFullImageUrl(
   return undefined;
 }
 
-/** True when the URL is a search-engine thumbnail CDN (prefer full asset). */
+/** True when the URL is a search-engine thumbnail CDN. */
 export function isSearchThumbCdn(url: string): boolean {
   return /encrypted-tbn|tse\d+\.mm\.bing|th\.bing\.com|gstatic\.com\/images/i.test(
     url,
@@ -233,9 +233,9 @@ export function isSearchThumbCdn(url: string): boolean {
 }
 
 /**
- * Rewrite social CDN thumb URLs to a larger variant before fetch.
- * X/Twitter feed often serves `name=small` / `:small` while the lightbox uses
- * `name=large` — mushy thumbs FP as AI ~72% when the full asset is fine.
+ * Rewrite social CDN thumb URLs to a larger variant.
+ * Used on the confirm pass only — always fetching large on every feed tile
+ * made scrolling unusably slow.
  */
 export function upgradeSocialCdnUrl(url: string): string {
   try {
@@ -262,7 +262,6 @@ export function upgradeSocialCdnUrl(url: string): string {
       return u.href;
     }
 
-    // Profile avatars: `_normal` / `_bigger` are tiny; prefer 400px.
     if (/\/profile_images\//i.test(u.pathname)) {
       u.pathname = u.pathname
         .replace(/_mini(\.\w+)$/i, "_400x400$1")
@@ -276,29 +275,47 @@ export function upgradeSocialCdnUrl(url: string): string {
   }
 }
 
+export type AnalyzeUrlMode = "fast" | "full";
+
+function toAbsoluteUrl(url: string, img: HTMLImageElement): string {
+  try {
+    return new URL(url, img.baseURI || document.baseURI).href;
+  } catch {
+    return url;
+  }
+}
+
 /**
  * Resolve the URL we should fetch for inference.
- * Order: explicit full-size data-* → linked full image → largest srcset → currentSrc.
+ *
+ * - `fast` (default): the displayed / srcset asset — cheap first paint.
+ * - `full`: linked original / Twitter large / explicit data-full hints —
+ *   used only to confirm an AI label or recover Lexica-class misses.
  */
-export function resolveAnalyzeUrl(img: HTMLImageElement): string {
+export function resolveAnalyzeUrl(
+  img: HTMLImageElement,
+  mode: AnalyzeUrlMode = "fast",
+): string {
   const candidates: SrcCandidate[] = [];
+  const current = img.currentSrc || img.src || "";
 
-  // Explicit full-resolution hints used by many galleries / CDNs.
-  for (const attr of [
-    "data-full-url",
-    "data-original",
-    "data-orig-src",
-    "data-src-large",
-    "data-large-src",
-    "data-hi-res",
-    "data-iurl",
-    "data-ou",
-  ] as const) {
-    pushAttr(candidates, img.getAttribute(attr), 10_000_000);
+  if (mode === "full") {
+    for (const attr of [
+      "data-full-url",
+      "data-original",
+      "data-orig-src",
+      "data-src-large",
+      "data-large-src",
+      "data-hi-res",
+      "data-iurl",
+      "data-ou",
+    ] as const) {
+      pushAttr(candidates, img.getAttribute(attr), 10_000_000);
+    }
+
+    const linked = extractLinkedFullImageUrl(img);
+    if (linked) pushAttr(candidates, linked, 9_000_000);
   }
-
-  const linked = extractLinkedFullImageUrl(img);
-  if (linked) pushAttr(candidates, linked, 9_000_000);
 
   const picture = img.closest("picture");
   if (picture) {
@@ -310,29 +327,29 @@ export function resolveAnalyzeUrl(img: HTMLImageElement): string {
 
   if (img.srcset) candidates.push(...parseSrcset(img.srcset));
 
-  const current = img.currentSrc || img.src || "";
-  // Deprioritize Google/Bing thumbnail CDNs so a linked full URL always wins.
-  const thumbish = isSearchThumbCdn(current);
   const naturalScore = Math.max(
     1,
     (img.naturalWidth || 0) * (img.naturalHeight || 0),
   );
-  pushAttr(candidates, current, thumbish ? Math.min(naturalScore, 50) : naturalScore);
+  // On the fast path, keep search-CDN thumbs as thumbs — do not lose to a
+  // remote full URL we are intentionally not considering yet.
+  const thumbish = isSearchThumbCdn(current);
+  pushAttr(
+    candidates,
+    current,
+    mode === "fast" && thumbish ? Math.max(naturalScore, 1_000) : naturalScore,
+  );
   pushAttr(
     candidates,
     img.getAttribute("src"),
-    thumbish ? 25 : Math.max(1, naturalScore * 0.5),
+    mode === "fast" && thumbish
+      ? Math.max(naturalScore * 0.5, 500)
+      : Math.max(1, naturalScore * 0.5),
   );
 
-  const best = pickBestCandidate(candidates);
-  if (!best) return upgradeSocialCdnUrl(current);
-
-  try {
-    const absolute = new URL(best, img.baseURI || document.baseURI).href;
-    return upgradeSocialCdnUrl(absolute);
-  } catch {
-    return upgradeSocialCdnUrl(best);
-  }
+  const best = pickBestCandidate(candidates) || current;
+  const absolute = toAbsoluteUrl(best, img);
+  return mode === "full" ? upgradeSocialCdnUrl(absolute) : absolute;
 }
 
 /**

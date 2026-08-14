@@ -10,7 +10,7 @@ import {
   DEFAULT_OPTIONS,
   parseAiConcealMode,
 } from "../shared/types";
-import { resolveAnalyzeUrl, isSearchThumbCdn } from "../lib/best-image-url";
+import { resolveAnalyzeUrl } from "../lib/best-image-url";
 
 /** Skip favicons / 1x1 trackers only — thumbs still get scored. */
 const MIN_SIDE = 48;
@@ -169,9 +169,10 @@ function pumpAnalyzeQueue(): void {
 
 
 
-function imageKey(img: HTMLImageElement): string {
-  // Prefer largest srcset / data-full URL so CSS thumbs aren't scored on mush.
-  return resolveAnalyzeUrl(img) || img.currentSrc || img.src || "";
+function imageKey(img: HTMLImageElement, mode: "fast" | "full" = "fast"): string {
+  // Fast path: displayed/srcset bytes. Full path: linked original / CDN large
+  // — only used to confirm AI or recover Lexica-class misses.
+  return resolveAnalyzeUrl(img, mode) || img.currentSrc || img.src || "";
 }
 
 /** Decode finished with real pixels — early discover often sees naturalWidth 0. */
@@ -521,17 +522,16 @@ async function analyze(
   try {
     if (yieldToVisible()) return;
 
-    const preferred = imageKey(img);
-    // Only force accurate-first when we are still fetching a mushy thumb CDN
-    // URL. Resolved full assets use realtime first (faster paint).
-    const analyzingThumb = isSearchThumbCdn(preferred);
-    const firstMode = analyzingThumb ? "accurate" : "realtime";
+    const fastUrl = imageKey(img, "fast");
+    const fullUrl = imageKey(img, "full");
+    // Always realtime-first on the cheap asset. Accurate-first on every Google
+    // thumb was a major scroll stall; confirm/refine below covers hard cases.
     const fast = await analyzeWithFallback(
       img,
       id,
-      firstMode,
+      "realtime",
       bypassCache,
-      preferred,
+      fastUrl,
     );
     if (tracked.get(id)?.src !== entry.src) return;
 
@@ -550,32 +550,58 @@ async function analyze(
     entry.scoredComplete = imageDecodeReady(img);
     renderResult(img, fast);
 
-    if (analyzingThumb || !needsAccurateRefine(fast)) return;
+    const canUpgrade = Boolean(fullUrl && fullUrl !== fastUrl);
+    let scoredFull = false;
 
-    // Stay blurred through accurate refine — clear only after final label.
-    applyConcealment(entry);
-    if (yieldToVisible()) return;
+    // Lexica-class miss recovery: accurate head on a better asset when possible.
+    if (needsAccurateRefine(fast)) {
+      applyConcealment(entry);
+      if (yieldToVisible()) return;
 
-    const accurate = await analyzeWithFallback(
-      img,
-      id,
-      "accurate",
-      bypassCache,
-      preferred,
-    );
-    if (tracked.get(id)?.src !== entry.src) return;
-    if (yieldToVisible()) {
-      if (accurate.label.kind === "ai") {
-        entry.result = accurate;
-        entry.scoredComplete = imageDecodeReady(img);
-        renderResult(img, accurate);
-        requeueAfter = false;
+      const refineUrl = canUpgrade ? fullUrl : fastUrl;
+      scoredFull = canUpgrade;
+      const accurate = await analyzeWithFallback(
+        img,
+        id,
+        "accurate",
+        bypassCache,
+        refineUrl,
+      );
+      if (tracked.get(id)?.src !== entry.src) return;
+      if (yieldToVisible()) {
+        if (accurate.label.kind === "ai") {
+          entry.result = accurate;
+          entry.scoredComplete = imageDecodeReady(img);
+          renderResult(img, accurate);
+          requeueAfter = false;
+        }
+        return;
       }
-      return;
+      entry.result = accurate;
+      entry.scoredComplete = imageDecodeReady(img);
+      renderResult(img, accurate);
     }
-    entry.result = accurate;
-    entry.scoredComplete = imageDecodeReady(img);
-    renderResult(img, accurate);
+
+    // Confirm AI on a larger asset when the first pass only saw the thumb.
+    // Avoids feed/lightbox disagreement without fetching large for every tile.
+    const current = entry.result ?? fast;
+    if (current.label.kind === "ai" && canUpgrade && !scoredFull) {
+      applyConcealment(entry);
+      if (yieldToVisible()) return;
+      const confirmed = await analyzeWithFallback(
+        img,
+        id,
+        "accurate",
+        bypassCache,
+        fullUrl,
+      );
+      if (tracked.get(id)?.src !== entry.src) return;
+      if (confirmed.label.kind !== "error") {
+        entry.result = confirmed;
+        entry.scoredComplete = imageDecodeReady(img);
+        renderResult(img, confirmed);
+      }
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     entry.scoredComplete = false;

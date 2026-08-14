@@ -24,7 +24,7 @@ describe("Google Images URL resolution (image fetch, not page text)", () => {
     expect(url).toBe("https://cdn.example/full.jpg");
   });
 
-  it("prefers linked full image over encrypted-tbn thumb", () => {
+  it("fast path keeps encrypted-tbn; full path prefers linked original", () => {
     const link = document.createElement("a");
     link.href =
       "https://www.google.com/imgres?imgurl=https%3A%2F%2Fcdn.example%2Fhires.png&imgrefurl=https%3A%2F%2Fexample.com";
@@ -35,8 +35,22 @@ describe("Google Images URL resolution (image fetch, not page text)", () => {
     link.append(img);
     document.body.append(link);
     expect(extractLinkedFullImageUrl(img)).toBe("https://cdn.example/hires.png");
-    expect(resolveAnalyzeUrl(img)).toBe("https://cdn.example/hires.png");
+    expect(resolveAnalyzeUrl(img, "fast")).toBe(
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:demo",
+    );
+    expect(resolveAnalyzeUrl(img, "full")).toBe("https://cdn.example/hires.png");
     link.remove();
+  });
+
+  it("fast path keeps Twitter small; full path upgrades to large", () => {
+    const img = document.createElement("img");
+    img.src = "https://pbs.twimg.com/media/ABC123?format=jpg&name=small";
+    Object.defineProperty(img, "currentSrc", {
+      configurable: true,
+      get: () => img.src,
+    });
+    expect(resolveAnalyzeUrl(img, "fast")).toContain("name=small");
+    expect(resolveAnalyzeUrl(img, "full")).toContain("name=large");
   });
 
   it("resolves full URL from AF_initDataCallback data-id map", () => {

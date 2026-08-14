@@ -55,7 +55,7 @@ async function refresh(): Promise<void> {
   if (backendStatusEl) {
     backendStatusEl.textContent =
       response.backend.kind === "none"
-        ? "none (ORT not warmed — check extension Errors)"
+        ? "none (ORT not warmed — reload unpacked dist/ after npm run build; check Errors)"
         : response.backend.kind;
   }
   if (thresholdStatusEl) {
