@@ -183,6 +183,8 @@ describe("analyzeSpectral", () => {
       "terminal.png",
       "code_card.png",
       "llm_perf_eval.jpg",
+      "llm_perf_user_officechai.png",
+      "llm_perf_user_6panel.png",
       "laptop_screen.jpg",
       "desktop_screenshot.png",
     ]) {
@@ -197,11 +199,7 @@ describe("analyzeSpectral", () => {
       );
       const spectralImage = await rasterizeForSpectral(decoded.bitmap);
       const feats = analyzeSpectral(spectralImage).features;
-      const held =
-        looksLikeDigitalUi(feats) ||
-        looksLikeFlatGraphic(feats) ||
-        looksLikeChartOrInfographic(feats) ||
-        looksLikeNonPhotoGraphic(feats);
+      const held = looksLikeNonPhotoGraphic(feats);
       expect(held, name).toBe(true);
       expect(looksLikeNeonAiSubject(feats), name).toBe(false);
     }

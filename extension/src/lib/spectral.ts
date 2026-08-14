@@ -813,42 +813,44 @@ export function looksLikeNonPhotoGraphic(features: {
 
   // Laptop / monitor bezel + screen: strong frame lattice, flat screen fill.
   if (
-    frameAxis >= 0.72 &&
-    frameShare >= 0.55 &&
-    axis >= 0.55 &&
-    share >= 0.55 &&
-    chroma >= 0.55 &&
-    colors <= 220 &&
-    hf <= 0.55 &&
-    lap >= 80 &&
-    lap <= 20_000
+    frameAxis >= 0.65 &&
+    frameShare >= 0.5 &&
+    axis >= 0.5 &&
+    share >= 0.5 &&
+    chroma >= 0.5 &&
+    colors <= 280 &&
+    hf <= 0.65 &&
+    lap >= 60 &&
+    lap <= 25_000
   ) {
     return true;
   }
 
-  // Busy-palette charts / scatter / KPI cards with dominant page fill.
+  // Busy-palette charts / KPI cards (real Z.AI LLM Performance Evaluation
+  // lands colors≈207, share≈0.90). Browser canvas decode can inflate palette
+  // past Node, so ceilings stay loose; neon heads miss on share/chroma.
   if (
-    share >= 0.9 &&
-    chroma >= 0.7 &&
-    axis >= 0.55 &&
-    colors <= 220 &&
-    hf <= 0.55 &&
-    lap >= 80 &&
-    lap <= 20_000 &&
-    block <= 0.85
+    share >= 0.82 &&
+    chroma >= 0.65 &&
+    axis >= 0.48 &&
+    colors <= 280 &&
+    hf <= 0.65 &&
+    lap >= 60 &&
+    lap <= 25_000 &&
+    block <= 0.9
   ) {
     return true;
   }
 
   // Hard H/V desktop / multi-panel UI even with logo-heavy palettes.
   if (
-    axis >= 0.78 &&
-    chroma >= 0.55 &&
-    share >= 0.55 &&
-    colors <= 200 &&
-    hf <= 0.5 &&
-    lap >= 100 &&
-    lap <= 20_000
+    axis >= 0.72 &&
+    chroma >= 0.5 &&
+    share >= 0.5 &&
+    colors <= 260 &&
+    hf <= 0.6 &&
+    lap >= 80 &&
+    lap <= 25_000
   ) {
     return true;
   }

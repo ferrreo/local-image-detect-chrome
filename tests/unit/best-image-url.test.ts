@@ -406,4 +406,29 @@ describe("fuseDetection small-source hold", () => {
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toMatch(/digital-graphic|ui-no-real/);
   });
+
+  it("holds real Z.AI LLM Performance Evaluation chart (officechai pixels)", () => {
+    // Measured from tests/fixtures/images/ui-fp/llm_perf_user_officechai.png
+    // (source of the user's FP). colors≈207 blows past old KPI ceilings.
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.39),
+      visual: tier("visual", 0.98),
+      visualSecondary: tier("visual", 0.96),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.359,
+        laplacianVariance: 2531,
+        chromaFlatness: 0.929,
+        blockiness: 0.218,
+        axisAlignedEdgeRatio: 0.739,
+        quantizedColorCount: 207,
+        topColorShare: 0.904,
+        frameAxisAlignedEdgeRatio: 0.704,
+        frameTopColorShare: 0.888,
+      },
+      sourceMinSide: 985,
+    });
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(/digital-graphic|ui-no-real/);
+  });
 });

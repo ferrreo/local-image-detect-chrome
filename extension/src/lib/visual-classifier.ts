@@ -249,7 +249,12 @@ function configureOrt(ort: OrtModule): void {
       ? chrome.runtime.getURL("ort/")
       : "/ort/";
   ort.env.wasm.wasmPaths = base;
-  wasmThreadCountUsed = wasmThreadCount();
+  // Extension offscreen + COEP: threaded ORT workers fail to fetch .wasm
+  // ("Failed to fetch") and then throw "chrome is not defined". Stay single-
+  // threaded inside the extension; Node eval can still use more threads.
+  const inExtension =
+    typeof chrome !== "undefined" && typeof chrome.runtime?.getURL === "function";
+  wasmThreadCountUsed = inExtension ? 1 : wasmThreadCount();
   ort.env.wasm.numThreads = wasmThreadCountUsed;
   ort.env.wasm.simd = true;
   if (ort.env.webgpu) {
