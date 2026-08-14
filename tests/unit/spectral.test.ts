@@ -187,6 +187,11 @@ describe("analyzeSpectral", () => {
       "llm_perf_user_6panel.png",
       "laptop_screen.jpg",
       "desktop_screenshot.png",
+      "billing_card.png",
+      "billing_card_tweet.jpg",
+      "billing_card_photo.jpg",
+      "billing_card_small.jpg",
+      "billing_card_diluted.jpg",
     ]) {
       const buf = readFileSync(path.join(dir, name));
       const bytes = buf.buffer.slice(

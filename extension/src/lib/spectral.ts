@@ -15,6 +15,8 @@ export type SpectralFeatures = {
   frameAxisAlignedEdgeRatio: number;
   frameTopColorShare: number;
   frameQuantizedColorCount: number;
+  /** Center 50% band top-color share — invoice cards over photos. */
+  centerTopColorShare: number;
   /** 0–1 confidence that macOS traffic lights sit in the title bar. */
   windowChromeScore: number;
 };
@@ -218,6 +220,7 @@ function digitalUiGeometry(
   frameAxisAlignedEdgeRatio: number;
   frameTopColorShare: number;
   frameQuantizedColorCount: number;
+  centerTopColorShare: number;
   windowChromeScore: number;
 } {
   let hEdge = 0;
@@ -228,10 +231,15 @@ function digitalUiGeometry(
   let frameOther = 0;
   const counts = new Map<number, number>();
   const frameCounts = new Map<number, number>();
+  const centerCounts = new Map<number, number>();
   const quant = (v: number) => v >> 4;
   const thr = 40;
   const leftBand = Math.max(8, Math.floor(width * 0.2));
   const topBand = Math.max(8, Math.floor(height * 0.12));
+  const x0 = Math.floor(width * 0.25);
+  const x1 = Math.floor(width * 0.75);
+  const y0 = Math.floor(height * 0.25);
+  const y1 = Math.floor(height * 0.75);
 
   for (let y = 1; y < height - 1; y += 1) {
     for (let x = 1; x < width - 1; x += 1) {
@@ -245,6 +253,9 @@ function digitalUiGeometry(
       const inFrame = x < leftBand || y < topBand;
       if (inFrame) {
         frameCounts.set(key, (frameCounts.get(key) ?? 0) + 1);
+      }
+      if (x >= x0 && x < x1 && y >= y0 && y < y1) {
+        centerCounts.set(key, (centerCounts.get(key) ?? 0) + 1);
       }
 
       const right = i + 4;
@@ -300,6 +311,7 @@ function digitalUiGeometry(
 
   const full = summarize(counts);
   const frame = summarize(frameCounts);
+  const center = summarize(centerCounts);
 
   return {
     axisAlignedEdgeRatio,
@@ -308,6 +320,7 @@ function digitalUiGeometry(
     frameAxisAlignedEdgeRatio,
     frameTopColorShare: frame.topColorShare,
     frameQuantizedColorCount: frame.quantizedColorCount,
+    centerTopColorShare: center.topColorShare,
     windowChromeScore: macTrafficLightScore(data, width, height),
   };
 }
@@ -379,6 +392,7 @@ export function looksLikeDigitalUi(features: {
   frameAxisAlignedEdgeRatio?: number;
   frameTopColorShare?: number;
   frameQuantizedColorCount?: number;
+  centerTopColorShare?: number;
   windowChromeScore?: number;
 }): boolean {
   if ((features.windowChromeScore ?? 0) >= 0.7) return true;
@@ -386,6 +400,7 @@ export function looksLikeDigitalUi(features: {
   const axis = features.axisAlignedEdgeRatio;
   const colors = features.quantizedColorCount;
   const share = features.topColorShare;
+  const centerShare = features.centerTopColorShare ?? 0;
   const chroma = features.chromaFlatness ?? 0;
   const hf = features.highFreqEnergyRatio ?? 1;
   const lap = features.laplacianVariance ?? 0;
@@ -450,6 +465,21 @@ export function looksLikeDigitalUi(features: {
     hf <= 0.38 &&
     lap >= 300 &&
     lap <= 6_000
+  ) {
+    return true;
+  }
+
+  // Invoice / billing card over a scenic photo: full-frame share is diluted
+  // by water/sky, but the centered white panel is still a flat UI surface.
+  if (
+    centerShare >= 0.72 &&
+    axis >= 0.38 &&
+    colors > 0 &&
+    colors <= 220 &&
+    chroma >= 0.45 &&
+    hf <= 0.5 &&
+    lap >= 55 &&
+    lap <= 8_000
   ) {
     return true;
   }
@@ -653,8 +683,15 @@ export function looksLikeNeonAiSubject(features: {
   axisAlignedEdgeRatio: number;
   blockiness?: number;
   windowChromeScore?: number;
+  centerTopColorShare?: number;
 }): boolean {
   if ((features.windowChromeScore ?? 0) >= 0.7) return false;
+  // Invoice / billing card over a photo: flat white center, diluted full frame.
+  // Scenic backgrounds otherwise look like colorful neon CGI subjects.
+  const centerShare = features.centerTopColorShare ?? 0;
+  if (centerShare >= 0.72 && features.topColorShare < 0.72) {
+    return false;
+  }
   // Hard tables / docs panes only — perspective grids under CGI heads sit ~0.55–0.65.
   if (features.axisAlignedEdgeRatio >= 0.72) return false;
   // Geometric swatch / ePaper posters: strong axis + small palette.
@@ -786,6 +823,7 @@ export function looksLikeNonPhotoGraphic(features: {
   frameAxisAlignedEdgeRatio?: number;
   frameTopColorShare?: number;
   frameQuantizedColorCount?: number;
+  centerTopColorShare?: number;
   windowChromeScore?: number;
   blockiness?: number;
 }): boolean {
@@ -800,6 +838,7 @@ export function looksLikeNonPhotoGraphic(features: {
   const axis = features.axisAlignedEdgeRatio;
   const colors = features.quantizedColorCount;
   const share = features.topColorShare;
+  const centerShare = features.centerTopColorShare ?? 0;
   const chroma = features.chromaFlatness;
   const hf = features.highFreqEnergyRatio;
   const lap = features.laplacianVariance;
@@ -807,6 +846,20 @@ export function looksLikeNonPhotoGraphic(features: {
   const frameAxis = features.frameAxisAlignedEdgeRatio ?? 0;
   const frameShare = features.frameTopColorShare ?? 0;
   if (colors <= 0) return false;
+
+  // Centered light document/billing card over a photo background.
+  if (
+    centerShare >= 0.7 &&
+    axis >= 0.36 &&
+    chroma >= 0.42 &&
+    colors <= 240 &&
+    hf <= 0.55 &&
+    lap >= 50 &&
+    lap <= 10_000 &&
+    block <= 0.85
+  ) {
+    return true;
+  }
 
   // Neon CGI subjects: mid/low page fill + colorful body — leave for promote.
   if (share < 0.72 && colors >= 36 && axis < 0.72) return false;
@@ -904,6 +957,7 @@ export function analyzeSpectral(
         frameAxisAlignedEdgeRatio: 0,
         frameTopColorShare: 0,
         frameQuantizedColorCount: 0,
+        centerTopColorShare: 0,
         windowChromeScore: 0,
       },
     };
@@ -941,6 +995,7 @@ export function analyzeSpectral(
       frameAxisAlignedEdgeRatio: ui.frameAxisAlignedEdgeRatio,
       frameTopColorShare: ui.frameTopColorShare,
       frameQuantizedColorCount: ui.frameQuantizedColorCount,
+      centerTopColorShare: ui.centerTopColorShare,
       windowChromeScore: ui.windowChromeScore,
     },
   };

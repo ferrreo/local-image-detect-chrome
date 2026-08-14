@@ -26,6 +26,7 @@ export type SpectralFusionFeatures = {
   frameAxisAlignedEdgeRatio?: number;
   frameTopColorShare?: number;
   frameQuantizedColorCount?: number;
+  centerTopColorShare?: number;
   windowChromeScore?: number;
 };
 
@@ -159,9 +160,10 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     // Structured digital graphics (UI / charts / laptop screens / code cards)
     // BEFORE neon promote — otherwise maxed distilled (AI 98% on KPI cards)
     // skips past narrow holds that miss busy legends or laptop bezels.
+    // Prefer this even when scenic photo chrome also trips neon heuristics
+    // (billing card over a coastal landscape).
     feats &&
-    looksLikeNonPhotoGraphic(feats) &&
-    !looksLikeNeonAiSubject(feats)
+    looksLikeNonPhotoGraphic(feats)
   ) {
     const held = Math.min(baseline, MILD_HOLD_CAP);
     confidence = asAiConfidence(
@@ -397,10 +399,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   // UI / flat brand / charts / laptop screens → uncertain (not AI).
   // CGI / smooth generative → AI floor.
   if (feats && confidence <= realThreshold && !looksPhotographic(feats)) {
-    if (
-      looksLikeNonPhotoGraphic(feats) &&
-      !looksLikeNeonAiSubject(feats)
-    ) {
+    if (looksLikeNonPhotoGraphic(feats)) {
       confidence = asAiConfidence(
         Math.min(MILD_HOLD_CAP, Math.max(realThreshold + 0.05, confidence + 0.12)),
       );

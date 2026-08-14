@@ -431,4 +431,30 @@ describe("fuseDetection small-source hold", () => {
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toMatch(/digital-graphic|ui-no-real/);
   });
+
+  it("holds billing/invoice cards over scenic photos (not AI 81%)", () => {
+    // Measured from tests/fixtures/images/ui-fp/billing_card_diluted.jpg —
+    // full-frame share diluted by landscape; center band stays flat white UI.
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.5),
+      visual: tier("visual", 0.81),
+      visualSecondary: tier("visual", 0.81),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.241,
+        laplacianVariance: 309,
+        chromaFlatness: 0.605,
+        blockiness: 0.195,
+        axisAlignedEdgeRatio: 0.708,
+        quantizedColorCount: 190,
+        topColorShare: 0.578,
+        centerTopColorShare: 0.946,
+        frameAxisAlignedEdgeRatio: 0.536,
+        frameTopColorShare: 0.594,
+      },
+      sourceMinSide: 900,
+    });
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(/digital-graphic|ui-no-real/);
+  });
 });
