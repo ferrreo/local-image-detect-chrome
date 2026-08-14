@@ -224,6 +224,11 @@ function ensureParentPositioned(img: HTMLImageElement): HTMLElement {
   if (computed.position === "static") {
     parent.style.position = "relative";
   }
+  // eBay / grid hosts often paint the img above later siblings — raise our
+  // overlays by keeping the parent a stacking context.
+  if (computed.zIndex === "auto" || computed.zIndex === "0") {
+    parent.style.zIndex = "0";
+  }
   return parent;
 }
 
@@ -233,6 +238,9 @@ function positionOverImage(
   inset = 0,
 ): void {
   const parent = ensureParentPositioned(img);
+  if (el.parentElement !== parent) {
+    parent.appendChild(el);
+  }
   const imgRect = img.getBoundingClientRect();
   const parentRect = parent.getBoundingClientRect();
   const top = Math.max(0, imgRect.top - parentRect.top) + inset;
@@ -243,6 +251,33 @@ function positionOverImage(
     el.style.width = `${Math.max(0, imgRect.width)}px`;
     el.style.height = `${Math.max(0, imgRect.height)}px`;
   }
+}
+
+function clearInlineConceal(img: HTMLImageElement): void {
+  img.style.removeProperty("filter");
+  img.style.removeProperty("opacity");
+  img.style.removeProperty("visibility");
+}
+
+/**
+ * Site stylesheets often beat attribute selectors. Inline !important is what
+ * actually sticks on eBay/Amazon product grids.
+ */
+function applyInlineConceal(
+  img: HTMLImageElement,
+  mode: "blur" | "blank",
+): void {
+  if (mode === "blank") {
+    img.style.setProperty("filter", "brightness(0)", "important");
+    img.style.setProperty("opacity", "0", "important");
+    return;
+  }
+  img.style.setProperty(
+    "filter",
+    "blur(20px) saturate(0.65) brightness(0.72)",
+    "important",
+  );
+  img.style.setProperty("opacity", "1", "important");
 }
 
 function removeVeil(id: string): void {
@@ -265,17 +300,19 @@ function ensureVeil(
     veil.className = VEIL_CLASS;
     veil.setAttribute(OVERLAY_ATTR, id);
     veil.setAttribute("aria-hidden", "true");
-    parent.appendChild(veil);
+    img.insertAdjacentElement("afterend", veil);
   }
   veil.classList.toggle("neopixel-veil-blur", mode === "blur");
   veil.classList.toggle("neopixel-veil-blank", mode === "blank");
   positionOverImage(img, veil);
+  applyInlineConceal(img, mode);
   return veil;
 }
 
 /**
  * Cover the image with a veil while pending, or when labeled AI (per setting).
- * CSS filter on <img> is unreliable across sites — use an overlay instead.
+ * CSS filter on <img> is unreliable across sites — use an overlay + inline
+ * filter !important so marketplaces can't leave AI tiles sharp.
  */
 function applyConcealment(entry: TrackedImage): void {
   const img = entry.element;
@@ -283,6 +320,7 @@ function applyConcealment(entry: TrackedImage): void {
 
   if (entry.revealed) {
     removeVeil(id);
+    clearInlineConceal(img);
     img.setAttribute(STATE_ATTR, "clear");
     return;
   }
@@ -300,6 +338,7 @@ function applyConcealment(entry: TrackedImage): void {
       img.setAttribute(STATE_ATTR, "ai");
     } else {
       removeVeil(id);
+      clearInlineConceal(img);
       img.setAttribute(STATE_ATTR, "clear");
     }
     return;
@@ -307,6 +346,7 @@ function applyConcealment(entry: TrackedImage): void {
 
   // real / uncertain / error — not AI → show (badges for Real/? only in debug)
   removeVeil(id);
+  clearInlineConceal(img);
   img.setAttribute(STATE_ATTR, "clear");
 }
 
@@ -325,6 +365,7 @@ function ensureBadge(img: HTMLImageElement, id: string): HTMLElement {
     created.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
+      event.stopImmediatePropagation();
       const entry = tracked.get(id);
       if (!entry) return;
       const canToggle =
@@ -742,6 +783,7 @@ function forgetEntry(id: string): void {
   const entry = tracked.get(id);
   if (!entry) return;
   removeVeil(id);
+  clearInlineConceal(entry.element);
   document
     .querySelectorAll(`.${BADGE_CLASS}[${OVERLAY_ATTR}="${id}"]`)
     .forEach((node) => node.remove());
@@ -1030,9 +1072,16 @@ function start(): void {
     if (document.visibilityState === "visible") onViewportMaybeChanged();
   });
   // Infinite feeds: rediscover often so previously skipped / late-src tiles retry.
+  // Also re-stick AI concealment — marketplace DOMs drop our veil/filter.
   window.setInterval(() => {
     pruneTracked();
     discover();
+    for (const entry of tracked.values()) {
+      if (!entry.element.isConnected) continue;
+      if (entry.result?.label.kind === "ai" && !entry.revealed) {
+        applyConcealment(entry);
+      }
+    }
     scheduleAnalyzePump();
   }, 1000);
 
