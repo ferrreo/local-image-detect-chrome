@@ -4,7 +4,10 @@ import path from "node:path";
 import {
   analyzeSpectral,
   looksLikeCameraCapture,
+  looksLikeCameraJpegScene,
+  looksLikeNeonAiSubject,
   looksLikeNonPhotoGraphic,
+  looksLikeSyntheticCgi,
   looksPhotographic,
 } from "../../extension/src/lib/spectral";
 import { fuseDetection } from "../../extension/src/lib/fusion";
@@ -119,5 +122,51 @@ describe("real photo false-positive holds", () => {
     expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toBe("photo-evidence-hold");
+  });
+
+  it("holds real retail product JPEG (RGB PC) under AI floor", async () => {
+    // eBay hardware listings were neon/CGI-floored to AI 72–80% despite being
+    // real camera product photos (user revealed tiles; blur was not the bug).
+    const spectral = await loadSpectral("real-fp/product_rgb_pc.jpg");
+    const feats = spectral.features;
+    expect(looksLikeCameraJpegScene(feats)).toBe(true);
+    expect(looksLikeCameraCapture(feats)).toBe(true);
+    expect(looksLikeNeonAiSubject(feats)).toBe(false);
+    expect(looksLikeSyntheticCgi(feats)).toBe(false);
+
+    const out = fuseDetection({
+      provenance: {
+        tier: "provenance",
+        aiScore: asAiConfidence(0.5),
+        weight: 0.08,
+        detail: "none",
+      },
+      spectral: {
+        tier: "spectral",
+        aiScore: spectral.score,
+        weight: 0.2,
+        detail: spectral.detail,
+      },
+      visual: {
+        tier: "visual",
+        aiScore: asAiConfidence(0.34),
+        weight: 0.72,
+        detail: "distilled",
+      },
+      visualSecondary: {
+        tier: "visual",
+        aiScore: asAiConfidence(0.99),
+        weight: 0.5,
+        detail: "accurate",
+      },
+      spectralFeatures: feats,
+      sourceMinSide: 512,
+      threshold: AI_LABEL_THRESHOLD,
+    });
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(
+      /photo-evidence-hold|dual-mild-hold|busy-scene-hold/,
+    );
   });
 });

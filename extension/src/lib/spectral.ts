@@ -671,6 +671,56 @@ export function looksPhotographic(features: {
 }
 
 /**
+ * JPEG / phone capture prior for product & lifestyle photos. Distinct from
+ * looksPhotographic (stricter). Used to veto neon/CGI false promotes and
+ * accurate-head FPs on retail hardware shots (RGB PCs, GPU boxes, etc.).
+ *
+ * Kept disjoint from neon stock heads (low page-fill, mid palette, soft block).
+ */
+export function looksLikeCameraJpegScene(features: {
+  highFreqEnergyRatio: number;
+  laplacianVariance: number;
+  chromaFlatness: number;
+  quantizedColorCount: number;
+  topColorShare: number;
+  blockiness?: number;
+}): boolean {
+  const block = features.blockiness ?? 0;
+  if (block < 0.16 || block > 0.5) return false;
+  if (features.laplacianVariance < 350 || features.laplacianVariance > 20_000) {
+    return false;
+  }
+  if (features.quantizedColorCount < 80) return false;
+  if (features.topColorShare > 0.95) return false;
+  if (features.chromaFlatness >= 0.92) return false;
+
+  // Dark product / room fill — case or wall dominates (eBay PC / GPU box shots).
+  if (features.topColorShare >= 0.58 && block >= 0.18) return true;
+
+  // Busy retail / packaging: richer palette than neon stock heads, and not
+  // sparkly CGI (those often land HF ≥ 0.6).
+  if (
+    features.quantizedColorCount >= 160 &&
+    block >= 0.22 &&
+    features.highFreqEnergyRatio >= 0.18 &&
+    features.highFreqEnergyRatio <= 0.55
+  ) {
+    return true;
+  }
+
+  // Classic phone JPEG lifestyle — stronger block, material chroma (not neon).
+  if (
+    block >= 0.22 &&
+    features.quantizedColorCount >= 100 &&
+    features.chromaFlatness < 0.55
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Broader camera-capture prior than looksPhotographic: outdoor / lifestyle
  * photos with mild bokeh still count. Used to veto accurate-head false
  * promotes — not to label Real by itself.
@@ -691,24 +741,13 @@ export function looksLikeCameraCapture(features: {
 }): boolean {
   if (looksPhotographic(features)) return true;
   if ((features.windowChromeScore ?? 0) >= 0.7) return false;
+  // Evaluate JPEG camera prior BEFORE neon/CGI veto — RGB product photos
+  // (gaming PCs, LED builds) were classified as neon and then floored to AI 72%.
+  if (looksLikeCameraJpegScene(features)) return true;
   if (looksLikeNeonAiSubject(features) || looksLikeSyntheticCgi(features)) {
     return false;
   }
   const block = features.blockiness ?? 0;
-  // Phone / camera JPEG of a mixed scene (device screen + surroundings).
-  // Pure UI / billing cards miss via tiny palette, near-solid fill, or
-  // blockiness outside the camera-JPEG band.
-  if (
-    block >= 0.18 &&
-    block <= 0.42 &&
-    features.laplacianVariance >= 600 &&
-    features.laplacianVariance <= 12_000 &&
-    features.quantizedColorCount >= 70 &&
-    features.topColorShare <= 0.82 &&
-    features.chromaFlatness < 0.9
-  ) {
-    return true;
-  }
   return (
     features.quantizedColorCount >= 80 &&
     features.laplacianVariance >= 350 &&
@@ -739,6 +778,8 @@ export function looksLikeNeonAiSubject(features: {
   centerTopColorShare?: number;
 }): boolean {
   if ((features.windowChromeScore ?? 0) >= 0.7) return false;
+  // Retail / product camera JPEGs (RGB PCs, GPU boxes on carpet) — not neon CGI.
+  if (looksLikeCameraJpegScene(features)) return false;
   // Invoice / billing card over a photo: flat white center, diluted full frame.
   // Scenic backgrounds otherwise look like colorful neon CGI subjects.
   const centerShare = features.centerTopColorShare ?? 0;
@@ -815,6 +856,9 @@ export function looksLikeSyntheticCgi(features: {
   windowChromeScore?: number;
 }): boolean {
   if ((features.windowChromeScore ?? 0) >= 0.7) return false;
+  // Product / retail camera JPEGs must not inherit generative CGI floors
+  // (observed AI 72–80% on real eBay hardware photos).
+  if (looksLikeCameraJpegScene(features)) return false;
   // Hard UI chrome only — weaker table heuristics must not veto neon CGI.
   if (features.axisAlignedEdgeRatio >= 0.78) return false;
   // Geometric swatch / ePaper design grids are posters, not CGI creatures.

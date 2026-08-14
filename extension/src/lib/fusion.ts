@@ -158,17 +158,14 @@ export function fuseDetection(input: FusionInput): FusionOutput {
       detail = `small-source-hold(side=${input.sourceMinSide},thr=${threshold.toFixed(2)})`;
     }
   } else if (
-    // Soft distilled + camera JPEG scene (incl. photos of devices outdoors):
+    // Soft/mid distilled + camera JPEG (product photos, lifestyle, devices):
     // accurate head often maxes while distilled stays mid/real. Hold BEFORE
-    // digital-graphic so an iPad screen in a real yard does not inherit
-    // billing-card / screenshot treatment.
+    // neon / digital-graphic so RGB retail shots do not get AI 72% floors.
     feats &&
     !smallSource &&
-    distilled < 0.55 &&
-    spectral < 0.55 &&
-    looksLikeCameraCapture(feats) &&
-    !looksLikeNeonAiSubject(feats) &&
-    !looksLikeSyntheticCgi(feats)
+    distilled < 0.7 &&
+    spectral < 0.6 &&
+    looksLikeCameraCapture(feats)
   ) {
     confidence = asAiConfidence(Math.min(baseline, MILD_HOLD_CAP));
     detail = "photo-evidence-hold";
@@ -190,9 +187,10 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     detail = `digital-graphic-hold(axis=${feats.axisAlignedEdgeRatio.toFixed(2)},colors=${feats.quantizedColorCount},flat=${feats.chromaFlatness.toFixed(2)},share=${feats.topColorShare.toFixed(2)})`;
   } else if (
     // Neon CGI subjects — after UI/chart holds so toast/chart FPs win.
-    // Never promote camera / lifestyle photos that only mid-match neon bands.
+    // Never promote camera / product JPEGs that only mid-match neon bands.
     feats &&
     looksLikeNeonAiSubject(feats) &&
+    !looksLikeCameraCapture(feats) &&
     !looksPhotographic(feats) &&
     distilled < 0.92 &&
     (forensics === undefined || forensics < accurateFloor)
@@ -216,22 +214,22 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     forensics >= 0.55 &&
     forensics < 0.88 &&
     feats &&
-    looksPhotographic(feats) &&
+    looksLikeCameraCapture(feats) &&
     !looksLikeSyntheticCgi(feats) &&
-    feats.chromaFlatness < 0.54
+    feats.chromaFlatness < 0.65
   ) {
     confidence = asAiConfidence(Math.min(baseline, MILD_HOLD_CAP));
     detail = "dual-mild-hold";
   } else if (
     // Busy natural scenes with only a strong distilled head.
     feats &&
-    looksPhotographic(feats) &&
+    looksLikeCameraCapture(feats) &&
     feats.laplacianVariance >= 900 &&
     distilled >= 0.6 &&
     distilled < 0.9 &&
     (forensics === undefined || forensics < 0.88) &&
     !looksLikeSyntheticCgi(feats) &&
-    feats.chromaFlatness < 0.54
+    feats.chromaFlatness < 0.65
   ) {
     confidence = asAiConfidence(Math.min(baseline, MILD_HOLD_CAP));
     detail = "busy-scene-hold";
@@ -340,6 +338,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     // laplacian which the spectral heuristic treats as "real texture".
     feats &&
     looksLikeSyntheticCgi(feats) &&
+    !looksLikeCameraCapture(feats) &&
     !looksLikeNonPhotoGraphic(feats) &&
     distilled < 0.92 &&
     (forensics === undefined || forensics < accurateFloor)
@@ -369,6 +368,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   // Do not override an explicit digital-graphic UI hold.
   if (
     feats &&
+    !looksLikeCameraCapture(feats) &&
     !looksPhotographic(feats) &&
     (looksLikeNeonAiSubject(feats) || looksLikeSyntheticCgi(feats)) &&
     confidence < accurateFloor &&
@@ -385,7 +385,12 @@ export function fuseDetection(input: FusionInput): FusionOutput {
   // Absolute: never stamp Real unless the pixels look like a camera photo.
   // UI / flat brand / charts / laptop screens → uncertain (not AI).
   // Explicit neon/CGI → AI floor. Everything else → uncertain.
-  if (feats && confidence <= realThreshold && !looksPhotographic(feats)) {
+  if (
+    feats &&
+    confidence <= realThreshold &&
+    !looksPhotographic(feats) &&
+    !looksLikeCameraCapture(feats)
+  ) {
     if (looksLikeNonPhotoGraphic(feats)) {
       confidence = asAiConfidence(
         Math.min(MILD_HOLD_CAP, Math.max(realThreshold + 0.05, confidence + 0.12)),
