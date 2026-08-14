@@ -1,12 +1,21 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import {
   analyzeSpectral,
   fftMagnitude,
+  looksLikeChartOrInfographic,
   looksLikeDigitalUi,
   looksLikeFlatGraphic,
+  looksLikeNeonAiSubject,
   looksLikeNonPhotoGraphic,
   looksPhotographic,
 } from "../../extension/src/lib/spectral";
+import {
+  decodeImageBytes,
+  guessMimeType,
+  rasterizeForSpectral,
+} from "../../extension/src/lib/image-decode";
 
 function makeImageData(
   width: number,
@@ -163,5 +172,33 @@ describe("analyzeSpectral", () => {
         blockiness: 0.1,
       }),
     ).toBe(false);
+  });
+
+  it("flags UI FP fixtures (scatter / terminal / code) without neon promote", async () => {
+    const dir = path.resolve("tests/fixtures/images/ui-fp");
+    for (const name of [
+      "scatter_chart.png",
+      "bar_chart.png",
+      "terminal.png",
+      "code_card.png",
+    ]) {
+      const buf = readFileSync(path.join(dir, name));
+      const bytes = buf.buffer.slice(
+        buf.byteOffset,
+        buf.byteOffset + buf.byteLength,
+      );
+      const decoded = await decodeImageBytes(
+        bytes,
+        guessMimeType(new Uint8Array(bytes)) ?? "image/png",
+      );
+      const spectralImage = await rasterizeForSpectral(decoded.bitmap);
+      const feats = analyzeSpectral(spectralImage).features;
+      const held =
+        looksLikeDigitalUi(feats) ||
+        looksLikeFlatGraphic(feats) ||
+        looksLikeChartOrInfographic(feats);
+      expect(held, name).toBe(true);
+      expect(looksLikeNeonAiSubject(feats), name).toBe(false);
+    }
   });
 });

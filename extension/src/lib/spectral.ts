@@ -453,6 +453,23 @@ export function looksLikeDigitalUi(features: {
     return true;
   }
 
+  // Dark terminal / code cards: solid fill + glyph-scale HF. Real monospace
+  // screenshots often sit HF ~0.4–0.55 with laplacian below toast thresholds.
+  // Share floor stays high so colorful neon CGI heads (share ~0.3–0.6) miss.
+  if (
+    share >= 0.88 &&
+    colors > 0 &&
+    colors <= 80 &&
+    chroma >= 0.55 &&
+    hf <= 0.58 &&
+    lap >= 60 &&
+    lap <= 8_000 &&
+    axis >= 0.45 &&
+    axis <= 0.82
+  ) {
+    return true;
+  }
+
   const frameAxis = features.frameAxisAlignedEdgeRatio ?? 0;
   const frameShare = features.frameTopColorShare ?? 0;
   const frameColors = features.frameQuantizedColorCount ?? 999;
@@ -528,7 +545,8 @@ export function looksLikeChartOrInfographic(features: {
   const chroma = features.chromaFlatness;
   const hf = features.highFreqEnergyRatio;
   const lap = features.laplacianVariance;
-  if (colors <= 0 || block > 0.5) return false;
+  // Solid-color bars look "blocky"; only reject extreme JPEG mush.
+  if (colors <= 0 || block > 0.72) return false;
 
   // Clean light-bg chart / KPI card (tight axis so mid-axis neon heads miss).
   if (
@@ -538,7 +556,24 @@ export function looksLikeChartOrInfographic(features: {
     chroma >= 0.42 &&
     hf <= 0.5 &&
     lap >= 60 &&
-    lap <= 18_000
+    lap <= 18_000 &&
+    block <= 0.65
+  ) {
+    return true;
+  }
+
+  // Scatter / multi-series plots: colored dots inflate the palette past the
+  // KPI color ceiling, but page fill stays dominant and axis lattice (ticks /
+  // grid / legend) stays strong. Neon CGI heads rarely clear share ≥ 0.85.
+  if (
+    axis >= 0.55 &&
+    colors <= 160 &&
+    share >= 0.85 &&
+    chroma >= 0.7 &&
+    hf <= 0.55 &&
+    lap >= 80 &&
+    lap <= 14_000 &&
+    block <= 0.45
   ) {
     return true;
   }
@@ -553,7 +588,8 @@ export function looksLikeChartOrInfographic(features: {
     chroma >= 0.4 &&
     hf <= 0.45 &&
     lap >= 150 &&
-    lap <= 16_000
+    lap <= 16_000 &&
+    block <= 0.55
   ) {
     return true;
   }
@@ -569,7 +605,8 @@ export function looksLikeChartOrInfographic(features: {
     chroma >= 0.42 &&
     hf <= 0.5 &&
     lap >= 80 &&
-    lap <= 16_000
+    lap <= 16_000 &&
+    block <= 0.55
   );
 }
 

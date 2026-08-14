@@ -288,4 +288,52 @@ describe("fuseDetection small-source hold", () => {
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toMatch(/chart-infographic|digital-graphic|ui-no-real/);
   });
+
+  it("holds multi-series scatter plots (inflated palette, high page fill)", () => {
+    // Measured from tests/fixtures/images/ui-fp/scatter_chart.png
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.35),
+      visual: tier("visual", 0.98),
+      visualSecondary: tier("visual", 0.96),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.44,
+        laplacianVariance: 567,
+        chromaFlatness: 0.989,
+        blockiness: 0.24,
+        axisAlignedEdgeRatio: 0.694,
+        quantizedColorCount: 119,
+        topColorShare: 0.99,
+      },
+      sourceMinSide: 900,
+    });
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(
+      /chart-infographic|digital-graphic|ui-no-real/,
+    );
+  });
+
+  it("holds dark code cards with glyph HF (not AI 72/98%)", () => {
+    // Measured from tests/fixtures/images/ui-fp/code_card.png
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.32),
+      visual: tier("visual", 0.98),
+      visualSecondary: tier("visual", 0.72),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.51,
+        laplacianVariance: 189,
+        chromaFlatness: 0.821,
+        blockiness: 0.18,
+        axisAlignedEdgeRatio: 0.736,
+        quantizedColorCount: 26,
+        topColorShare: 0.993,
+      },
+      sourceMinSide: 520,
+    });
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(
+      /chart-infographic|digital-graphic|ui-no-real/,
+    );
+  });
 });
