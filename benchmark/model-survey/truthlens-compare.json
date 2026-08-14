@@ -1,0 +1,143 @@
+{
+  "generatedAt": "2026-08-13T22:06:41Z",
+  "corpusImages": 130,
+  "hardCases": 6,
+  "lexicaImages": 48,
+  "note": "TruthLens name is overloaded on HF. Image-capable public weights evaluated here: umm-maybe (used by Pikachu771 TruthLens server) and Medsa's TruthLens-branded TorchScript detector. Most other TruthLens repos are text/fake-news classifiers.",
+  "rankingAt065": [
+    {
+      "rank": 1,
+      "id": "umm-maybe/AI-image-detector",
+      "ba": 0.5813953488372093,
+      "tpr": 0.16279069767441862,
+      "tnr": 1.0,
+      "lexicaTpr": 0.2916666666666667,
+      "avgMsPerImage": 88.71849149243364,
+      "hardCaseFp": 0,
+      "role": "TruthLens Pikachu771 backend (Swin)"
+    },
+    {
+      "rank": 2,
+      "id": "Medsa/ai-image-authenticity-detector",
+      "ba": 0.5002642706131079,
+      "tpr": 0.5232558139534884,
+      "tnr": 0.4772727272727273,
+      "lexicaTpr": 0.5208333333333334,
+      "avgMsPerImage": 9.798518669301233,
+      "hardCaseFp": 3,
+      "role": "TruthLens-branded TorchScript CNN (32\u00d732 CIFAKE)"
+    }
+  ],
+  "models": [
+    {
+      "id": "umm-maybe/AI-image-detector",
+      "role": "TruthLens Pikachu771 backend (Swin)",
+      "hf": "umm-maybe/AI-image-detector",
+      "imageCount": 130,
+      "wallMs": 13556.580976997793,
+      "at065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.5813953488372093,
+        "tpr": 0.16279069767441862,
+        "tnr": 1.0,
+        "confusion": {
+          "tp": 14,
+          "tn": 44,
+          "fp": 0,
+          "fn": 72
+        },
+        "avgMsPerImage": 88.71849149243364,
+        "totalMs": 11533.403894016374,
+        "hardCaseFp": 0,
+        "hardCaseN": 6,
+        "lexicaTp": 14,
+        "lexicaN": 48,
+        "lexicaTpr": 0.2916666666666667
+      },
+      "atProduct": {
+        "threshold": 0.6951,
+        "balancedAccuracy": 0.563953488372093,
+        "tpr": 0.12790697674418605,
+        "tnr": 1.0,
+        "confusion": {
+          "tp": 11,
+          "tn": 44,
+          "fp": 0,
+          "fn": 75
+        },
+        "avgMsPerImage": 88.71849149243364,
+        "totalMs": 11533.403894016374,
+        "hardCaseFp": 0,
+        "hardCaseN": 6,
+        "lexicaTp": 11,
+        "lexicaN": 48,
+        "lexicaTpr": 0.22916666666666666
+      },
+      "soylent": {
+        "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+        "label": "real",
+        "hardCase": true,
+        "lexica": false,
+        "confidence": 0.047744616866111755,
+        "preprocessMs": 3.8747660000808537,
+        "inferMs": 77.4403750001511,
+        "totalMs": 81.31514100023196
+      }
+    },
+    {
+      "id": "Medsa/ai-image-authenticity-detector",
+      "role": "TruthLens-branded TorchScript CNN (32\u00d732 CIFAKE)",
+      "hf": "Medsa/ai-image-authenticity-detector",
+      "imageCount": 130,
+      "wallMs": 3199.586206999811,
+      "at065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.5002642706131079,
+        "tpr": 0.5232558139534884,
+        "tnr": 0.4772727272727273,
+        "confusion": {
+          "tp": 45,
+          "tn": 21,
+          "fp": 23,
+          "fn": 41
+        },
+        "avgMsPerImage": 9.798518669301233,
+        "totalMs": 1273.8074270091602,
+        "hardCaseFp": 3,
+        "hardCaseN": 6,
+        "lexicaTp": 25,
+        "lexicaN": 48,
+        "lexicaTpr": 0.5208333333333334
+      },
+      "atProduct": {
+        "threshold": 0.6951,
+        "balancedAccuracy": 0.4883720930232558,
+        "tpr": 0.47674418604651164,
+        "tnr": 0.5,
+        "confusion": {
+          "tp": 41,
+          "tn": 22,
+          "fp": 22,
+          "fn": 45
+        },
+        "avgMsPerImage": 9.798518669301233,
+        "totalMs": 1273.8074270091602,
+        "hardCaseFp": 3,
+        "hardCaseN": 6,
+        "lexicaTp": 24,
+        "lexicaN": 48,
+        "lexicaTpr": 0.5
+      },
+      "soylent": {
+        "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+        "label": "real",
+        "hardCase": true,
+        "lexica": false,
+        "confidence": 0.2443094700574875,
+        "preprocessMs": 2.2156390004965942,
+        "inferMs": 3.8978049997240305,
+        "totalMs": 6.113444000220625
+      }
+    }
+  ]
+}

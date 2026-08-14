@@ -21,12 +21,14 @@ async function launchExtensionContext(): Promise<{
     throw new Error("dist/ missing. Run npm run build first.");
   }
 
-  const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "truepixel-pw-"));
+  const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "neopixel-pw-"));
 
   // Branded Google Chrome removed --load-extension (137+).
   // Playwright's Chromium / Chrome for Testing still supports it.
+  // New headless supports MV3 extensions; PW_HEADED=1 forces a window.
+  const headed = process.env.PW_HEADED === "1";
   const launchOptions: Parameters<typeof chromium.launchPersistentContext>[1] = {
-    headless: false,
+    headless: !headed,
     channel: "chromium",
     args: [
       `--disable-extensions-except=${extensionPath}`,
@@ -34,6 +36,7 @@ async function launchExtensionContext(): Promise<{
       "--no-first-run",
       "--no-default-browser-check",
       "--disable-gpu-sandbox",
+      ...(headed ? [] : ["--headless=new"]),
     ],
   };
 
@@ -80,7 +83,7 @@ async function enableStubInference(
   await page.close();
 }
 
-test.describe("TruePixel Chrome extension", () => {
+test.describe("NeoPixel Chrome extension", () => {
   let context: BrowserContext;
   let extensionId: string;
   let userDataDir: string;
@@ -108,12 +111,12 @@ test.describe("TruePixel Chrome extension", () => {
   });
 
   test("content script badges images on a local gallery page", async () => {
-    await context.route("https://truepixel.test/**", async (route) => {
+    await context.route("https://neopixel.test/**", async (route) => {
       const u = new URL(route.request().url());
       if (u.pathname === "/" || u.pathname === "/gallery.html") {
         const html = fs
           .readFileSync(galleryPath, "utf8")
-          .replaceAll("../images/", "https://truepixel.test/images/");
+          .replaceAll("../images/", "https://neopixel.test/images/");
         await route.fulfill({
           status: 200,
           contentType: "text/html",
@@ -137,11 +140,11 @@ test.describe("TruePixel Chrome extension", () => {
     });
 
     const gallery: Page = await context.newPage();
-    await gallery.goto("https://truepixel.test/gallery.html");
+    await gallery.goto("https://neopixel.test/gallery.html");
     await expect(gallery.locator("img")).toHaveCount(6);
 
     await expect
-      .poll(async () => gallery.locator(".truepixel-badge").count(), {
+      .poll(async () => gallery.locator(".neopixel-badge").count(), {
         timeout: 60_000,
       })
       .toBeGreaterThanOrEqual(1);
@@ -150,7 +153,7 @@ test.describe("TruePixel Chrome extension", () => {
       .poll(
         async () => {
           const texts = await gallery
-            .locator(".truepixel-badge")
+            .locator(".neopixel-badge")
             .allTextContents();
           return texts.some((t) => /AI\s+\d+%/i.test(t));
         },

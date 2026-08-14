@@ -1,0 +1,11 @@
+{
+  "id": "opensynthid-detect",
+  "sha256": "d3801422608b2a0f7b51a08e7417946a0dc88c5d7879e5a6fb8fc4008aaf630f",
+  "bytes": 21665653,
+  "inputSize": 512,
+  "channels": 6,
+  "license": "Apache-2.0",
+  "source": "https://huggingface.co/fyxme/opensynthid-detect-0.1",
+  "artifact": "model_quantized.onnx",
+  "note": "Community SynthID surrogate (Q8) \u2014 not Google DeepMind official."
+}

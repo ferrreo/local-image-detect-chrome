@@ -3,20 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TruePixel</title>
+    <title>NeoPixel</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <main class="shell">
       <header>
-        <p class="brand">TruePixel</p>
+        <p class="brand">NeoPixel</p>
         <p class="tag">Local AI image detection</p>
       </header>
 
       <section class="status" aria-live="polite">
         <p><span class="label">Models</span> <span id="modelStatus">…</span></p>
         <p><span class="label">Backend</span> <span id="backendStatus">…</span></p>
-        <p><span class="label">Threshold</span> <span id="thresholdStatus">65%</span></p>
+        <p><span class="label">Labels</span> <span id="thresholdStatus">AI ≥69.51% · Real ≤40.99%</span></p>
       </section>
 
       <section class="actions">
@@ -26,6 +26,15 @@
           <input id="autoScan" type="checkbox" checked />
           Auto-scan images
         </label>
+        <label class="select-row">
+          <span>Hide AI images</span>
+          <select id="aiConceal" aria-label="Hide AI images">
+            <option value="none">Off (badge only)</option>
+            <option value="blur">Blur</option>
+            <option value="blank">Blank out</option>
+          </select>
+        </label>
+        <p class="hint">Click the AI badge to reveal / hide again.</p>
       </section>
 
       <p id="message" class="message"></p>

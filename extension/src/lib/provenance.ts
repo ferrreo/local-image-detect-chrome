@@ -1,47 +1,9 @@
 import { asAiConfidence, type AiConfidence } from "../shared/types";
-
-const AI_SOFTWARE_PATTERNS: readonly RegExp[] = [
-  /\bmidjourney\b/i,
-  /\bstable[\s_-]?diffusion\b/i,
-  /\bdall[\s.-]?e\b/i,
-  /\bchatgpt\b/i,
-  /\bopenai\b/i,
-  /\badobe\s*firefly\b/i,
-  /\bflux(\.1)?\b/i,
-  /\bcomfyui\b/i,
-  /\bautomatic1111\b/i,
-  /\binvokeai\b/i,
-  /\bnightcafe\b/i,
-  /\bleonardo\.?ai\b/i,
-  /\bideogram\b/i,
-  /\bgrok\b/i,
-  /\bgemini\b/i,
-  /\bimagen\b/i,
-  /\breve\b/i,
-  /\bcivitai\b/i,
-  /\brecraft\b/i,
-  /\bai[\s_-]?generated\b/i,
-  /\bgenerated\s+with\s+ai\b/i,
-  /\btrainedalgorithmicmedia\b/i,
-  /\bcompositedwithtrainedalgorithmicmedia\b/i,
-];
-
-const AI_PARAM_PATTERNS: readonly RegExp[] = [
-  /\bsampler\s*[:=]/i,
-  /\bcfg\s*scale\s*[:=]/i,
-  /\bsteps\s*[:=]\s*\d+/i,
-  /\bnegative\s*prompt\s*[:=]/i,
-  /\btxt2img\b/i,
-  /\bimg2img\b/i,
-  /\bmodel\s*hash\s*[:=]/i,
-  /\bclip\s*skip\s*[:=]/i,
-  /digitalSourceType/i,
-  /c2pa\.actions/i,
-  /\bc2pa\b/i,
-  // PNG tEXt/zTXt/iTXt key used by China AIGC labeling (and similar embeds).
-  /ptEXtAIGC/i,
-  /ContentProducer/i,
-];
+import {
+  AI_PARAM_PATTERNS,
+  AI_SOFTWARE_PATTERNS,
+  SYNTHID_SOFT_BINDING_PATTERNS,
+} from "./ai-watermarks";
 
 export type ProvenanceHit = {
   score: AiConfidence;
@@ -87,10 +49,17 @@ function firstMatch(
 }
 
 /**
- * High-precision provenance scan over raw image bytes.
- * Looks for EXIF/XMP/IPTC/C2PA strings and common generator fingerprints.
- * Does not parse full C2PA cryptographically; string presence is enough for a
- * strong local signal when generators embed declarations.
+ * First-pass watermark / provenance scan over raw image bytes.
+ *
+ * Priority:
+ * 1. SynthID Soft Binding / `c2pa.watermarked.unbound` (Google standard used
+ *    by Gemini/Imagen and OpenAI ChatGPT image / API)
+ * 2. Generator Software / XMP strings
+ * 3. C2PA actions, SD parameter blocks, AIGC labels
+ *
+ * Does not cryptographically verify C2PA. Invisible SynthID *pixels* need the
+ * OpenSynthID surrogate (or Google’s proprietary detector) when metadata is
+ * stripped.
  */
 export function analyzeProvenance(bytes: Uint8Array): ProvenanceHit {
   if (bytes.byteLength === 0) {
@@ -103,11 +72,20 @@ export function analyzeProvenance(bytes: Uint8Array): ProvenanceHit {
 
   const text = provenanceScanText(bytes);
 
+  const synthid = firstMatch(text, SYNTHID_SOFT_BINDING_PATTERNS);
+  if (synthid) {
+    return {
+      score: asAiConfidence(0.99),
+      detail: `watermark-synthid-meta:${synthid.source}`,
+      shortCircuit: true,
+    };
+  }
+
   const software = firstMatch(text, AI_SOFTWARE_PATTERNS);
   if (software) {
     return {
       score: asAiConfidence(0.98),
-      detail: `software:${software.source}`,
+      detail: `watermark-meta:software:${software.source}`,
       shortCircuit: true,
     };
   }
@@ -116,7 +94,7 @@ export function analyzeProvenance(bytes: Uint8Array): ProvenanceHit {
   if (params) {
     return {
       score: asAiConfidence(0.93),
-      detail: `params:${params.source}`,
+      detail: `watermark-meta:params:${params.source}`,
       shortCircuit: true,
     };
   }

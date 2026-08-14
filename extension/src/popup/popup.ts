@@ -1,8 +1,10 @@
 import { newRequestId } from "../shared/messages";
 import type {
+  AiConcealMode,
   GetStatusResponse,
   SetupModelsResponse,
 } from "../shared/types";
+import { parseAiConcealMode } from "../shared/types";
 
 const modelStatusEl = document.querySelector("#modelStatus");
 const backendStatusEl = document.querySelector("#backendStatus");
@@ -11,6 +13,7 @@ const messageEl = document.querySelector("#message");
 const setupBtn = document.querySelector<HTMLButtonElement>("#setupBtn");
 const rescanBtn = document.querySelector<HTMLButtonElement>("#rescanBtn");
 const autoScanEl = document.querySelector<HTMLInputElement>("#autoScan");
+const aiConcealEl = document.querySelector<HTMLSelectElement>("#aiConceal");
 
 function setMessage(text: string, kind: "ok" | "error" | "" = ""): void {
   if (!(messageEl instanceof HTMLElement)) return;
@@ -45,9 +48,14 @@ async function refresh(): Promise<void> {
   if (modelStatusEl) modelStatusEl.textContent = formatModels(response.models);
   if (backendStatusEl) backendStatusEl.textContent = response.backend.kind;
   if (thresholdStatusEl) {
-    thresholdStatusEl.textContent = `${Math.round(response.threshold * 100)}%`;
+    const aiPct = (response.threshold * 100).toFixed(2);
+    const realPct = ((response.realThreshold ?? 0.4099) * 100).toFixed(2);
+    thresholdStatusEl.textContent = `AI ≥${aiPct}% · Real ≤${realPct}%`;
   }
   if (autoScanEl) autoScanEl.checked = response.autoScan;
+  if (aiConcealEl) {
+    aiConcealEl.value = parseAiConcealMode(response.aiConceal);
+  }
 
   if (setupBtn) {
     setupBtn.disabled = response.models.kind === "ready";
@@ -83,8 +91,26 @@ rescanBtn?.addEventListener("click", () => {
       setMessage("No active tab.", "error");
       return;
     }
-    await chrome.tabs.sendMessage(tab.id, { kind: "truepixel-rescan" });
-    setMessage("Rescan requested.", "ok");
+    const url = tab.url ?? "";
+    if (
+      url.startsWith("chrome://") ||
+      url.startsWith("chrome-extension://") ||
+      url.startsWith("edge://") ||
+      url.startsWith("about:") ||
+      url.startsWith("devtools://")
+    ) {
+      setMessage("Can't scan this page type (open a normal website).", "error");
+      return;
+    }
+    try {
+      await chrome.tabs.sendMessage(tab.id, { kind: "neopixel-rescan" });
+      setMessage("Rescan requested.", "ok");
+    } catch {
+      setMessage(
+        "No scanner on this tab — reload the page after installing/updating.",
+        "error",
+      );
+    }
   })();
 });
 
@@ -94,6 +120,21 @@ autoScanEl?.addEventListener("change", () => {
     requestId: newRequestId(),
     autoScan: autoScanEl.checked,
   });
+});
+
+aiConcealEl?.addEventListener("change", () => {
+  const aiConceal: AiConcealMode = parseAiConcealMode(aiConcealEl.value);
+  void chrome.runtime.sendMessage({
+    kind: "set-options",
+    requestId: newRequestId(),
+    aiConceal,
+  });
+  setMessage(
+    aiConceal === "none"
+      ? "AI images show badge only."
+      : `AI images will ${aiConceal}. Click badge to reveal.`,
+    "ok",
+  );
 });
 
 void refresh().catch((error: unknown) => {

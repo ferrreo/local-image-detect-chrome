@@ -21,6 +21,27 @@ describe("analyzeProvenance", () => {
     expect(hit.detail).toMatch(/midjourney/i);
   });
 
+  it("short-circuits on SynthID Soft Binding / c2pa.watermarked.unbound", () => {
+    const hit = analyzeProvenance(
+      bytesFrom(
+        'c2pa.actions {"action":"c2pa.watermarked.unbound","softwareAgent":"OpenAI"}',
+      ),
+    );
+    expect(hit.shortCircuit).toBe(true);
+    expect(hit.score).toBeGreaterThanOrEqual(0.95);
+    expect(hit.detail).toMatch(/synthid/i);
+  });
+
+  it("short-circuits on explicit SynthID Soft Binding URI", () => {
+    const hit = analyzeProvenance(
+      bytesFrom(
+        "jumb softBinding com.google.synthid ContentCredentials Soft Binding",
+      ),
+    );
+    expect(hit.shortCircuit).toBe(true);
+    expect(hit.detail).toMatch(/synthid|soft/i);
+  });
+
   it("short-circuits on Stable Diffusion parameter blocks", () => {
     const hit = analyzeProvenance(
       bytesFrom("Steps: 30, Sampler: Euler a, CFG scale: 7, Negative prompt: blurry"),

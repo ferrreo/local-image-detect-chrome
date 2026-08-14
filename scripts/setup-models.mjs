@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * One-time download of public model weights into ./models for packaging/tests.
- * The extension itself downloads into Cache Storage on first setup.
+ * The accurate head is packaged from a local distill artifact (no public URL).
+ * The extension itself downloads/seeds into Cache Storage on first setup.
  */
 import { createHash } from "node:crypto";
 import {
@@ -20,6 +21,9 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 
+const MODEL_VERSION =
+  "distilled-fp16+fp32+neopixel-accurate-v1-q8+opensynthid-q8";
+
 const MODELS = [
   {
     id: "ai-image-detect-distilled",
@@ -33,25 +37,72 @@ const MODELS = [
     license: "MIT",
   },
   {
-    id: "community-forensics-deepfake-det",
-    url: "https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX/resolve/main/onnx/model_q4.onnx",
-    outPath: path.join(root, "models/community-forensics/model_q4.onnx"),
-    sha256: "263c46052167a15b981848465b8adb9f28dbd1f9ad8ecf8157cb05d876f7091b",
-    bytes: 24_416_892,
+    id: "ai-image-detect-distilled-fp32",
+    url: "https://huggingface.co/onnx-community/ai-image-detect-distilled-ONNX/resolve/main/onnx/model.onnx",
+    outPath: path.join(root, "models/ai-image-detect-distilled/model.onnx"),
+    sha256: "87b4331f22418a4cb50901851a1c28f64a0ca4f58728442d073b4bed9922ba86",
+    bytes: 58_410_332,
     license: "MIT",
   },
+  {
+    id: "neopixel-accurate-v1",
+    url: "",
+    outPath: path.join(
+      root,
+      "models/neopixel-accurate-v1/model_quantized.onnx",
+    ),
+    sha256: "25ef06372b8e5eb5cb183a85d34cc3e9a670c47d6eb7a72c109d7107aa467b0e",
+    bytes: 24_044_443,
+    license: "MIT (OwensLab backbone + NeoPixel-trained head)",
+  },
+  {
+    id: "opensynthid-detect",
+    url: "",
+    outPath: path.join(
+      root,
+      "models/opensynthid-detect/model_quantized.onnx",
+    ),
+    sha256: "d3801422608b2a0f7b51a08e7417946a0dc88c5d7879e5a6fb8fc4008aaf630f",
+    bytes: 21_665_653,
+    license: "Apache-2.0 (OpenSynthID SynthID surrogate)",
+  },
 ];
+
+function digestFile(filePath) {
+  return createHash("sha256").update(readFileSync(filePath)).digest("hex");
+}
+
+async function ensureLocal(model) {
+  mkdirSync(path.dirname(model.outPath), { recursive: true });
+  if (existsSync(model.outPath)) {
+    const digest = digestFile(model.outPath);
+    if (digest === model.sha256) {
+      console.log(`Already present: ${model.outPath}`);
+      return;
+    }
+    throw new Error(
+      `Checksum mismatch for local ${model.id}: expected ${model.sha256}, got ${digest}. Re-run npm run distill:accurate / convert:opensynthid.`,
+    );
+  }
+  throw new Error(
+    `Missing packaged model at ${model.outPath}. Accurate head: npm run distill:accurate. OpenSynthID: npm run convert:opensynthid.`,
+  );
+}
 
 async function download(model) {
   mkdirSync(path.dirname(model.outPath), { recursive: true });
   if (existsSync(model.outPath)) {
-    const existing = readFileSync(model.outPath);
-    const digest = createHash("sha256").update(existing).digest("hex");
+    const digest = digestFile(model.outPath);
     if (digest === model.sha256) {
       console.log(`Already present: ${model.outPath}`);
       return;
     }
     console.log(`Checksum mismatch for ${model.id}, re-downloading…`);
+  }
+
+  if (!model.url) {
+    await ensureLocal(model);
+    return;
   }
 
   console.log(`Downloading ${model.url}`);
@@ -62,8 +113,7 @@ async function download(model) {
 
   const tmp = `${model.outPath}.partial`;
   await pipeline(Readable.fromWeb(response.body), createWriteStream(tmp));
-  const buf = readFileSync(tmp);
-  const digest = createHash("sha256").update(buf).digest("hex");
+  const digest = digestFile(tmp);
   if (digest !== model.sha256) {
     throw new Error(
       `Checksum mismatch: expected ${model.sha256}, got ${digest}`,
@@ -71,27 +121,32 @@ async function download(model) {
   }
   renameSync(tmp, model.outPath);
   console.log(
-    `Saved ${model.outPath} (${buf.byteLength} bytes, sha256=${digest})`,
+    `Saved ${model.outPath} (${readFileSync(model.outPath).byteLength} bytes, sha256=${digest})`,
   );
 }
 
 for (const model of MODELS) {
-  await download(model);
+  if (model.url) {
+    await download(model);
+  } else {
+    await ensureLocal(model);
+  }
 }
 
 writeFileSync(
   path.join(root, "models/manifest.json"),
   JSON.stringify(
     {
-      version: "distilled-fp16+community-forensics-q4-v1",
+      version: MODEL_VERSION,
       models: MODELS.map((m) => ({
         id: m.id,
         path: path.relative(path.join(root, "models"), m.outPath),
         sha256: m.sha256,
         bytes: m.bytes,
-        source: m.url,
+        source: m.url || "local distill (npm run distill:accurate)",
         license: m.license,
       })),
+      note: "Accurate head is NeoPixel-trained Q8; not fetched from third-party fine-tune quants.",
     },
     null,
     2,

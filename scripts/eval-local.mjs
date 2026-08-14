@@ -2,8 +2,8 @@
 /**
  * Local evaluation harness against benchmark/openrouter (preferred).
  *
- * Default: real ONNX model via onnxruntime-node (TRUEPIXEL_STUB=0).
- * Set TRUEPIXEL_STUB=1 to use the heuristic stub instead.
+ * Default: onnxruntime-node dual head.
+ *   NEOPIXEL_STUB=1             heuristic stub
  *
  * Prints per-image confidence, prediction, and timing breakdown.
  */
@@ -11,54 +11,29 @@ import { createServer } from "vite";
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createRequire } from "node:module";
+import { createRequire } from "module";
+import { loadOpenRouterCorpus } from "./lib/corpus.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const require = createRequire(import.meta.url);
-const stubVisual = process.env.TRUEPIXEL_STUB === "1";
+const stubVisual = process.env.NEOPIXEL_STUB === "1";
+const backendMode = "node";
 
 function loadDataset() {
-  const openrouterAi = path.join(root, "benchmark/openrouter/index.json");
-  const openrouterReal = path.join(root, "benchmark/openrouter/real-index.json");
-  if (existsSync(openrouterAi) && existsSync(openrouterReal)) {
-    const ai = JSON.parse(readFileSync(openrouterAi, "utf8"));
-    const real = JSON.parse(readFileSync(openrouterReal, "utf8"));
-    return {
-      name: "openrouter",
-      root: path.join(root, "benchmark/openrouter"),
-      images: [
-        ...ai.images.map((i) => ({
-          file: i.file,
-          label: "ai",
-          model: i.model,
-        })),
-        ...real.images.map((i) => ({
-          file: i.file,
-          label: "real",
-          model: null,
-        })),
-      ],
-    };
-  }
-
-  const fixtures = path.join(root, "tests/fixtures/images/index.json");
-  const index = JSON.parse(readFileSync(fixtures, "utf8"));
+  const corpus = loadOpenRouterCorpus(root);
   return {
-    name: "synthetic-fixtures",
-    root: path.join(root, "tests/fixtures/images"),
-    images: index.images.map((i) => ({
-      file: i.file,
+    name: corpus.source === "openrouter" ? "openrouter" : "synthetic-fixtures",
+    root: corpus.base,
+    images: corpus.images.map((i) => ({
+      file: path.relative(corpus.base, i.abs).split(path.sep).join("/"),
       label: i.label,
-      model: null,
+      model: i.model,
     })),
   };
 }
 
 const dataset = loadDataset();
-console.log(
-  `Dataset: ${dataset.name} (${dataset.images.length} images), stubVisual=${stubVisual}`,
-);
 
 const server = await createServer({
   configFile: false,
@@ -97,15 +72,20 @@ const { asAiConfidence } = await server.ssrLoadModule(
 const { decodeImageBytes, guessMimeType, rasterizeForSpectral } =
   await server.ssrLoadModule("/extension/src/lib/image-decode.ts");
 
+console.log(
+  `Dataset: ${dataset.name} (${dataset.images.length} images), stubVisual=${stubVisual}, backend=${stubVisual ? "stub" : backendMode}`,
+);
+
 let classifyVisualNodeFromBytes;
 let warmVisualNode;
+
 if (!stubVisual) {
   const nodeVisual = await server.ssrLoadModule(
     "/extension/src/lib/visual-node.ts",
   );
   classifyVisualNodeFromBytes = nodeVisual.classifyVisualNodeFromBytes;
   warmVisualNode = nodeVisual.warmVisualNode;
-  console.log("Warming ONNX session…");
+  console.log("Warming ONNX session (node)…");
   const warmStart = performance.now();
   await warmVisualNode();
   console.log(`ONNX ready in ${(performance.now() - warmStart).toFixed(1)} ms`);
@@ -131,6 +111,7 @@ async function detectWithTimings(item, bytes) {
   let inferMs = 0;
   let preprocessMs = 0;
   let backend = { kind: "none" };
+  let ranForensics = false;
 
   if (!provenance.shortCircuit) {
     const decodeStart = performance.now();
@@ -153,7 +134,6 @@ async function detectWithTimings(item, bytes) {
           stubVisual: true,
           threshold: 0.65,
         });
-        // Re-extract visual from tiers for reporting; total timing still measured below.
         const visualTier = result.tiers.find((t) => t.tier === "visual");
         visualScore = visualTier?.aiScore ?? asAiConfidence(0.5);
         visualDetail = visualTier?.detail ?? "stub";
@@ -167,6 +147,7 @@ async function detectWithTimings(item, bytes) {
         backend = visual.backend;
         inferMs = visual.inferMs;
         preprocessMs = visual.preprocessMs;
+        ranForensics = visual.secondaryScore !== undefined;
         visualMs = performance.now() - visStart;
       }
       void decodeMs;
@@ -202,7 +183,7 @@ async function detectWithTimings(item, bytes) {
             tier: "visual",
             aiScore: visualSecondary,
             weight: 0.5,
-            detail: "community-forensics",
+            detail: "neopixel-accurate",
           },
         }
       : {}),
@@ -217,6 +198,7 @@ async function detectWithTimings(item, bytes) {
     label: fused.label,
     backend,
     tiers: fused.tiers,
+    ranForensics,
     timing: {
       totalMs,
       provenanceMs,
@@ -236,6 +218,7 @@ let fn = 0;
 const byModel = new Map();
 const rows = [];
 let totalMsSum = 0;
+let forensicsRuns = 0;
 
 for (const item of dataset.images) {
   const file = path.join(dataset.root, item.file);
@@ -260,6 +243,7 @@ for (const item of dataset.images) {
     byModel.set(item.model, prev);
   }
 
+  if (result.ranForensics) forensicsRuns += 1;
   totalMsSum += result.timing.totalMs;
   rows.push({
     file: item.file,
@@ -269,13 +253,14 @@ for (const item of dataset.images) {
     predicted: predictedAi ? "ai" : "real",
     correct: predictedAi === actualAi,
     backend: result.backend.kind,
+    ranForensics: result.ranForensics,
     ...result.timing,
     tiers: result.tiers.map((t) => `${t.tier}:${Number(t.aiScore).toFixed(3)}`).join("|"),
   });
 
   const mark = predictedAi === actualAi ? "ok" : "MISS";
   console.log(
-    `${mark.padEnd(4)} ${item.file.padEnd(58)} truth=${item.label.padEnd(4)} conf=${result.confidence.toFixed(3)} pred=${predictedAi ? "ai" : "real"} total=${result.timing.totalMs.toFixed(1)}ms infer=${result.timing.inferMs.toFixed(1)}ms visual=${result.timing.visualMs.toFixed(1)}ms spectral=${result.timing.spectralMs.toFixed(1)}ms`,
+    `${mark.padEnd(4)} ${item.file.padEnd(58)} truth=${item.label.padEnd(4)} conf=${result.confidence.toFixed(3)} pred=${predictedAi ? "ai" : "real"} total=${result.timing.totalMs.toFixed(1)}ms infer=${result.timing.inferMs.toFixed(1)}ms visual=${result.timing.visualMs.toFixed(1)}ms spectral=${result.timing.spectralMs.toFixed(1)}ms${result.ranForensics ? " +cf" : ""}`,
   );
 }
 
@@ -291,7 +276,7 @@ console.log(
   `\nConfusion: tp=${tp} tn=${tn} fp=${fp} fn=${fn}\nBalanced accuracy @65%: ${(bal * 100).toFixed(1)}%`,
 );
 console.log(
-  `Timing: avg total=${(totalMsSum / n).toFixed(1)}ms  sum=${totalMsSum.toFixed(1)}ms  n=${rows.length}`,
+  `Timing: avg total=${(totalMsSum / n).toFixed(1)}ms  sum=${totalMsSum.toFixed(1)}ms  n=${rows.length}  forensicsRuns=${forensicsRuns}`,
 );
 
 if (byModel.size > 0) {
@@ -312,6 +297,7 @@ writeFileSync(
     {
       generatedAt: new Date().toISOString(),
       stubVisual,
+      backend: stubVisual ? "stub" : backendMode,
       threshold: 0.65,
       balancedAccuracy: bal,
       confusion: { tp, tn, fp, fn },
@@ -319,6 +305,7 @@ writeFileSync(
         avgTotalMs: totalMsSum / n,
         sumTotalMs: totalMsSum,
         count: rows.length,
+        forensicsRuns,
       },
       rows,
     },

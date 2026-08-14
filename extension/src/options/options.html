@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TruePixel options</title>
+    <title>NeoPixel options</title>
     <link rel="stylesheet" href="options.css" />
   </head>
   <body>
     <main>
-      <h1>TruePixel</h1>
+      <h1>NeoPixel</h1>
       <p class="lede">
         All inference runs inside Chrome using WebGPU or WASM. Image pixels never
         leave your machine after the optional one-time model download.
@@ -16,20 +16,33 @@
 
       <form id="form">
         <label>
-          Confidence threshold
+          AI label threshold
           <input
             id="threshold"
             name="threshold"
             type="number"
             min="0.5"
             max="0.95"
-            step="0.01"
-            value="0.65"
+            step="0.0001"
+            value="0.6951"
+          />
+        </label>
+        <label>
+          Real label threshold
+          <input
+            id="realThreshold"
+            name="realThreshold"
+            type="number"
+            min="0.05"
+            max="0.5"
+            step="0.0001"
+            value="0.4099"
           />
         </label>
         <p class="hint">
-          Bounty evaluation uses 65%. Images at or above this AI confidence are
-          labeled AI.
+          Default: ≤40.99% → Real, ≥69.51% → AI, between → uncertain (?).
+          Bounty evaluation still scores at 65%. On-page badges show AI by
+          default; enable Debug mode to also show Real / ?.
         </p>
 
         <label class="row">
@@ -37,10 +50,28 @@
           Automatically analyze images while browsing
         </label>
 
+        <label>
+          Hide AI-labeled images
+          <select id="aiConceal" name="aiConceal">
+            <option value="none">Off (badge only)</option>
+            <option value="blur">Blur</option>
+            <option value="blank">Blank out</option>
+          </select>
+        </label>
+        <p class="hint">
+          When Blur or Blank out is selected, click the red AI badge on a page to
+          reveal that image (click again to hide).
+        </p>
+
         <label class="row">
           <input id="debug" type="checkbox" />
           Debug mode
         </label>
+        <p class="hint">
+          Debug shows Real and uncertain (?) badges (and a pending … marker).
+          Without it, images blur while scoring and only AI labels appear when
+          done — anything not labeled AI unblurs.
+        </p>
 
         <button type="submit">Save</button>
         <p id="saved" class="saved" hidden>Saved</p>

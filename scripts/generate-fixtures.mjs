@@ -113,9 +113,11 @@ const files = [
   ["real_noise_3.png", realLike(33), "real"],
 ];
 
+const FIXTURE_SIDE = 320;
+
 const index = [];
 for (const [name, fn, label] of files) {
-  const buf = png(192, fn);
+  const buf = png(FIXTURE_SIDE, fn);
   // Embed a fake Midjourney marker into one AI fixture for provenance tests.
   if (name === "ai_smooth_1.png") {
     const marker = Buffer.from("Software\0Midjourney", "latin1");
@@ -142,13 +144,13 @@ writeFileSync(
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>TruePixel fixture gallery</title>
+  <title>NeoPixel fixture gallery</title>
   <style>
     body { font-family: Georgia, serif; margin: 24px; background: #f3efe6; color: #222; }
     h1 { margin: 0 0 16px; }
-    .grid { display: grid; grid-template-columns: repeat(3, 200px); gap: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 280px); gap: 16px; }
     figure { margin: 0; }
-    img { width: 192px; height: 192px; display: block; background: #ddd; }
+    img { width: 256px; height: 256px; display: block; background: #ddd; }
     figcaption { margin-top: 6px; font-size: 12px; }
   </style>
 </head>
@@ -158,7 +160,7 @@ writeFileSync(
     ${index
       .map(
         (item) => `<figure>
-      <img src="../images/${item.file}" alt="${item.label}" width="192" height="192" />
+      <img src="../images/${item.file}" alt="${item.label}" width="256" height="256" />
       <figcaption data-label="${item.label}">${item.file}</figcaption>
     </figure>`,
       )

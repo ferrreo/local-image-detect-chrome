@@ -189,7 +189,7 @@ async function postGenerate(apiKey, body) {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
       "HTTP-Referer": "https://github.com/ferrreo/local-image-detect-chrome",
-      "X-Title": "TruePixel benchmark fetcher",
+      "X-Title": "NeoPixel benchmark fetcher",
     },
     body: JSON.stringify(body),
   });

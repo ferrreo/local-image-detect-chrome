@@ -1,19 +1,107 @@
 import { detectAiImage } from "../lib/pipeline";
-import { warmVisualClassifier } from "../lib/visual-classifier";
+import {
+  getVisualBackend,
+  probeWebGpuAvailable,
+  resetVisualClassifier,
+  setPreferredVisualProvider,
+  warmVisualClassifier,
+} from "../lib/visual-classifier";
 import type {
   OffscreenInferRequest,
   OffscreenInferResponse,
+  OffscreenResetRequest,
+  OffscreenResetResponse,
+  VisualEngineId,
+  VisualProvider,
 } from "../shared/types";
 import { asAiConfidence } from "../shared/types";
+import { base64ToArrayBuffer } from "../lib/bytes-codec";
+import { guessMimeType } from "../lib/image-decode";
+
+async function loadProviderPreference(): Promise<VisualProvider["kind"]> {
+  try {
+    const stored = await chrome.storage.local.get(["options"]);
+    const raw = stored.options;
+    if (
+      typeof raw === "object" &&
+      raw !== null &&
+      "visualProvider" in raw &&
+      (raw.visualProvider === "auto" ||
+        raw.visualProvider === "webgpu" ||
+        raw.visualProvider === "wasm")
+    ) {
+      return raw.visualProvider;
+    }
+  } catch {
+    // ignore
+  }
+  return "auto";
+}
+
+async function loadInferBytes(
+  request: OffscreenInferRequest,
+): Promise<{ bytes: ArrayBuffer; mimeType: string }> {
+  if (request.src) {
+    // Prefer HTTP cache for static CDN URLs (Dyno/Proofmark pattern).
+    // Bust cache for known dynamic same-URL generators.
+    const dynamicUrl =
+      /thispersondoesnotexist|random|uuid=|timestamp=|nocache/i.test(
+        request.src,
+      );
+    const response = await fetch(request.src, {
+      credentials: "omit",
+      cache: dynamicUrl ? "no-cache" : "force-cache",
+    });
+    if (!response.ok) {
+      throw new Error(`Offscreen image fetch failed (${response.status})`);
+    }
+    const bytes = await response.arrayBuffer();
+    const headerType = response.headers.get("content-type") ?? "";
+    const mimeType = headerType.startsWith("image/")
+      ? (headerType.split(";")[0] ?? request.mimeType)
+      : guessMimeType(new Uint8Array(bytes));
+    return { bytes, mimeType };
+  }
+  if (request.bytesBase64) {
+    return {
+      bytes: base64ToArrayBuffer(request.bytesBase64),
+      mimeType: request.mimeType,
+    };
+  }
+  throw new Error("offscreen-infer requires src or bytesBase64");
+}
+
+function formatTiming(result: Awaited<ReturnType<typeof detectAiImage>>): string {
+  const t = result.timing;
+  if (!t) return `total=${result.elapsedMs.toFixed(1)}ms`;
+  return [
+    `total=${t.totalMs.toFixed(1)}ms`,
+    `decode=${t.decodeMs.toFixed(1)}`,
+    `spectral=${t.spectralMs.toFixed(1)}`,
+    `prep=${t.preprocessMs.toFixed(1)}`,
+    `distilled=${t.distilledMs.toFixed(1)}`,
+    `cf=${t.forensicsMs.toFixed(1)}${t.ranForensics ? "" : "(skip)"}`,
+    `fuse=${t.fuseMs.toFixed(1)}`,
+  ].join(" ");
+}
 
 async function handleInfer(
   request: OffscreenInferRequest,
 ): Promise<OffscreenInferResponse> {
+  const fetchT0 = performance.now();
+  const { bytes, mimeType } = await loadInferBytes(request);
+  const fetchMs = performance.now() - fetchT0;
   const result = await detectAiImage({
     imageId: request.imageId,
-    bytes: request.bytes,
-    mimeType: request.mimeType,
+    bytes,
+    mimeType,
+    ...(request.speedMode ? { speedMode: request.speedMode } : {}),
   });
+
+  console.info(
+    `[neopixel] ${request.imageId} fetch=${fetchMs.toFixed(1)}ms ${formatTiming(result)} ` +
+      `mode=${request.speedMode ?? "accurate"}`,
+  );
 
   return {
     kind: "offscreen-infer-result",
@@ -22,33 +110,72 @@ async function handleInfer(
   };
 }
 
+async function handleReset(
+  request: OffscreenResetRequest,
+): Promise<OffscreenResetResponse> {
+  const provider =
+    request.visualProvider ?? (await loadProviderPreference());
+  setPreferredVisualProvider(provider);
+  resetVisualClassifier();
+  let backend = getVisualBackend();
+  let visualEngine: VisualEngineId = "none";
+  if (request.warm !== false) {
+    backend = await warmVisualClassifier();
+    visualEngine = "onnxruntime-web";
+  }
+  return {
+    kind: "offscreen-reset-result",
+    requestId: request.requestId,
+    backend,
+    gpuAvailable: await probeWebGpuAvailable(),
+    visualEngine,
+  };
+}
+
 chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
   if (typeof message !== "object" || message === null || !("kind" in message)) {
     return false;
   }
-  if (message.kind !== "offscreen-infer") return false;
 
-  void handleInfer(message as OffscreenInferRequest)
-    .then(sendResponse)
-    .catch((error: unknown) => {
-      const msg = error instanceof Error ? error.message : String(error);
-      const failure: OffscreenInferResponse = {
-        kind: "offscreen-infer-result",
-        requestId: (message as OffscreenInferRequest).requestId,
-        result: {
-          imageId: (message as OffscreenInferRequest).imageId,
-          label: { kind: "error", message: msg },
-          confidence: asAiConfidence(0.5),
-          tiers: [],
+  if (message.kind === "offscreen-infer") {
+    void handleInfer(message as OffscreenInferRequest)
+      .then(sendResponse)
+      .catch((error: unknown) => {
+        const msg = error instanceof Error ? error.message : String(error);
+        const failure: OffscreenInferResponse = {
+          kind: "offscreen-infer-result",
+          requestId: (message as OffscreenInferRequest).requestId,
+          result: {
+            imageId: (message as OffscreenInferRequest).imageId,
+            label: { kind: "error", message: msg },
+            confidence: asAiConfidence(0.5),
+            tiers: [],
+            backend: { kind: "none" },
+            elapsedMs: 0,
+          },
+        };
+        sendResponse(failure);
+      });
+    return true;
+  }
+
+  if (message.kind === "offscreen-reset") {
+    void handleReset(message as OffscreenResetRequest)
+      .then(sendResponse)
+      .catch((error: unknown) => {
+        const msg = error instanceof Error ? error.message : String(error);
+        const failure: OffscreenResetResponse = {
+          kind: "offscreen-reset-result",
+          requestId: (message as OffscreenResetRequest).requestId,
           backend: { kind: "none" },
-          elapsedMs: 0,
-        },
-      };
-      sendResponse(failure);
-    });
-  return true;
-});
+          gpuAvailable: false,
+          visualEngine: "none",
+        };
+        console.warn("offscreen-reset failed:", msg);
+        sendResponse(failure);
+      });
+    return true;
+  }
 
-void warmVisualClassifier().catch(() => {
-  // Model may not be installed yet; popup setup handles download.
+  return false;
 });

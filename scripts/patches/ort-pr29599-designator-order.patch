@@ -1,0 +1,45 @@
+diff --git a/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits.cc b/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits.cc
+index 749385db4b..fcf85aade6 100644
+--- a/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits.cc
++++ b/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits.cc
+@@ -91,8 +91,9 @@ Status MatMulNBitsProgram::GenerateShaderCode(ShaderHelper& shader) const {
+   uint32_t sub_tile_count = WorkgroupSizeX() / tile_size_k_vec;
+ 
+   return WGSL_TEMPLATE_APPLY(shader, "quantization/matmul_nbits.wgsl.template",
+-                             WGSL_TEMPLATE_PARAMETER(acc_f32, acc_f32_),
++                             // Designators must match generated struct field order (alphabetical).
+                              WGSL_TEMPLATE_PARAMETER(a_length_per_tile, a_length_per_tile),
++                             WGSL_TEMPLATE_PARAMETER(acc_f32, acc_f32_),
+                              WGSL_TEMPLATE_PARAMETER(broadcast_a_row, broadcast_a_row_),
+                              WGSL_TEMPLATE_PARAMETER(component_a, components_a),
+                              WGSL_TEMPLATE_PARAMETER(component_b, components_b),
+diff --git a/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits_mlp.cc b/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits_mlp.cc
+index 502e038ab7..feac0ed03e 100644
+--- a/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits_mlp.cc
++++ b/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits_mlp.cc
+@@ -112,8 +112,9 @@ class MatMulNBitsMlpDecodeProgram final : public Program<MatMulNBitsMlpDecodePro
+     // has_skip_output) combinations; only the AddInput/AddOutput wiring upstream changes.
+     // The template's own #if directives select the appropriate code paths.
+     return WGSL_TEMPLATE_APPLY(shader, "quantization/matmul_nbits_mlp.wgsl.template",
+-                               WGSL_TEMPLATE_PARAMETER(acc_f32, acc_f32_),
++                               // Designators must match generated struct field order (alphabetical).
+                                WGSL_TEMPLATE_PARAMETER(a_length_per_tile, a_length_per_tile),
++                               WGSL_TEMPLATE_PARAMETER(acc_f32, acc_f32_),
+                                WGSL_TEMPLATE_PARAMETER(activation_kind, static_cast<uint32_t>(activation_kind_)),
+                                WGSL_TEMPLATE_PARAMETER(component_a, components_a),
+                                WGSL_TEMPLATE_PARAMETER(component_b, components_b),
+diff --git a/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits_qkv.cc b/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits_qkv.cc
+index ece34e222f..4c55bec734 100644
+--- a/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits_qkv.cc
++++ b/onnxruntime/contrib_ops/webgpu/quantization/matmul_nbits_qkv.cc
+@@ -82,8 +82,9 @@ class MatMulNBitsQkvDecodeProgram final
+     const uint32_t sub_tile_count = WorkgroupSizeX() / tile_size_k_vec;
+ 
+     return WGSL_TEMPLATE_APPLY(shader, "quantization/matmul_nbits_qkv.wgsl.template",
+-                               WGSL_TEMPLATE_PARAMETER(acc_f32, acc_f32_),
++                               // Designators must match generated struct field order (alphabetical).
+                                WGSL_TEMPLATE_PARAMETER(a_length_per_tile, a_length_per_tile),
++                               WGSL_TEMPLATE_PARAMETER(acc_f32, acc_f32_),
+                                WGSL_TEMPLATE_PARAMETER(component_a, components_a),
+                                WGSL_TEMPLATE_PARAMETER(component_b, components_b),
+                                WGSL_TEMPLATE_PARAMETER(elements_in_value_b, elements_in_value_b),

@@ -1,7 +1,6 @@
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "tests/integration",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -11,8 +10,22 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
     ...devices["Desktop Chrome"],
+    headless: process.env.PW_HEADED !== "1",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
   },
+  projects: [
+    {
+      name: "integration",
+      testDir: "tests/integration",
+      timeout: 120_000,
+    },
+    {
+      name: "eval",
+      testDir: "tests/eval",
+      // Full OpenRouter corpus + dual ORT can take a while on CPU.
+      timeout: 30 * 60_000,
+    },
+  ],
 });

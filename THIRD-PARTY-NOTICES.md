@@ -12,14 +12,18 @@
 - License: MIT
 - https://huggingface.co/jacoballessio/ai-image-detect-distilled
 
-TruePixel downloads these weights at setup time (or via `npm run setup:models`) and verifies SHA-256 before caching.
+Downloaded at setup (or `npm run setup:models`) and verified with SHA-256 before caching.
 
-## CommunityForensics-DeepfakeDet-ViT (ONNX)
+## neopixel-accurate-v1 (ONNX)
 
-- Upstream: Jeongsoo Park & Andrew Owens / Community Forensics
-- HF packaging: `onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX`
-- License: MIT
+- Backbone: OwensLab / Community Forensics ViT (`OwensLab/commfor-model-384`)
+- Fine-tune / Q8 export: this repo (`npm run distill:accurate`)
+- License: MIT (upstream backbone)
 - Paper: https://arxiv.org/abs/2411.04125
-- https://huggingface.co/onnx-community/CommunityForensics-DeepfakeDet-ViT-ONNX
 
-Downloaded during one-time setup alongside the distilled detector and used as a secondary visual signal in fusion.
+Shipped under `models/neopixel-accurate-v1/` as the secondary visual (“accurate”) head.
+
+## OpenSynthID detect (optional watermark pass)
+
+- Quantized ONNX under `models/opensynthid-detect/`
+- See that folder’s `manifest.json` for upstream attribution

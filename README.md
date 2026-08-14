@@ -1,121 +1,85 @@
-# TruePixel
+# NeoPixel
 
-Chrome Manifest V3 extension that detects AI-generated images entirely inside the browser.
+Chrome MV3 extension that scores whether an image looks AI-generated. Inference stays on-device (WebGPU or WASM). No page text, no cloud classifier.
 
-No cloud inference. No local Python/Node server. After a one-time download of public model weights, scanning stays offline on-device via WebGPU (preferred) or WASM.
-
-## What it does
-
-Install the extension, open the popup, download models once, then browse. TruePixel automatically analyzes visible images and overlays a confidence badge (`AI 82%`, `Real 71%`, or uncertain).
-
-Detection pipeline:
-
-1. **Provenance** — EXIF/XMP/C2PA/AIGC/string fingerprints (scans file head + tail)
-2. **Spectral forensics** — FFT / noise / chroma features in plain TypeScript
-3. **Visual classifiers** — distilled ViT + Community Forensics ONNX via `onnxruntime-web`
-4. **Fusion** — calibrated ensemble at a default **65%** AI threshold (bounty evaluation point)
-
-## Requirements
-
-- Google Chrome 121+ (WebGPU capable preferred)
-- Node.js 20+ to build from source
-
-## Build from source
+## Install (unpacked)
 
 ```bash
 npm ci
-node scripts/generate-icons.mjs
-node scripts/generate-fixtures.mjs
 npm run build
 ```
 
-Optional: prefetch model weights into `./models` (also downloaded in-browser on first setup):
+1. `chrome://extensions` → Developer mode
+2. **Load unpacked** → `dist/`
+3. Toolbar icon → **Download models** (one-time)
+
+While browsing, NeoPixel blurs images until scored. **AI** tiles stay blurred (with an `AI N%` badge). Real / uncertain stay clear; those badges only show if you enable **Debug** in options.
+
+## How it works
+
+Pixels only — no surrounding captions or page context.
+
+1. **Watermarks / provenance** — visible marks, SynthID soft-binding when present, EXIF/C2PA-ish fingerprints on the byte stream
+2. **Spectral features** — FFT / noise / chroma / edge geometry in TypeScript (`spectral.ts`)
+3. **Visual heads** — fast distilled ViT, then the NeoPixel accurate head (Q8 ONNX) via `onnxruntime-web`
+4. **Fusion** — combines scores with holds for UI screenshots, flat graphics, and photo macros; promotes neon/CGI stock that the heads undershoot
+
+Default labels: AI if P(AI) ≥ **69.51%**, Real if ≤ **40.99%**, else uncertain. Bounty-style eval often scores at 65%.
+
+Google Images: prefers full `imgurl` over mushy `encrypted-tbn` thumbs when the page exposes it.
+
+## Build
+
+```bash
+npm ci
+npm run build          # icons + fixtures + esbuild → dist/
+npm run typecheck
+npm run test:unit
+```
+
+Integration (Playwright Chromium — branded Chrome dropped `--load-extension`):
+
+```bash
+npx playwright install chromium
+npm run build
+xvfb-run --auto-servernum npm run test:integration   # CI / headless
+# or: npm run test:integration
+```
+
+Optional model prefetch into `./models` (otherwise the popup downloads them):
 
 ```bash
 npm run setup:models
 ```
 
-Load unpacked:
+## Options worth knowing
 
-1. Open `chrome://extensions`
-2. Enable **Developer mode**
-3. **Load unpacked** → select the `dist/` directory
-4. Click the TruePixel toolbar icon → **Download models**
+| Setting | Effect |
+| --- | --- |
+| Hide AI images | `blur` / `blank` / off |
+| Debug mode | Also show Real and `?` badges |
+| Thresholds | AI floor / Real ceiling |
 
-## Tests
+## Eval (optional, local images)
 
-Unit tests cover each integrated part (provenance, spectral/FFT, fusion, image decode, model cache, visual stub, pipeline):
-
-```bash
-npm run test:unit
-```
-
-Integration tests launch a real Chromium profile (Playwright's Chromium / Chrome for Testing), load the unpacked extension, and exercise popup/options/content-script overlays.
-
-Branded Google Chrome 137+ removed `--load-extension`, so automated tests use Playwright Chromium. Manual installs still use normal Chrome via Load unpacked.
+Eval **binaries are not in git**. Synthetic fixtures under `tests/fixtures/images/` are enough for smoke runs. For a real multi-model corpus:
 
 ```bash
-npm run build
-npx playwright install chromium
-# headed Chromium is required for --load-extension
-xvfb-run --auto-servernum npm run test:integration   # CI / headless machines
-npm run test:integration                             # local desktop
-```
-
-Full suite:
-
-```bash
-npm run test:all
-```
-
-### GitHub Actions / `gh`
-
-CI is defined in `.github/workflows/ci.yml` (unit, Playwright Chromium integration, production build artifact).
-
-```bash
-gh workflow list
-gh workflow run ci.yml
-gh run watch
-gh run view --log
-```
-
-## Evaluation threshold
-
-Balanced accuracy is measured at a **65% confidence threshold**, matching the bounty brief. Configure the threshold on the options page if you need a different operating point for personal use.
-
-Local eval prefers the stored OpenRouter multi-model corpus under `benchmark/openrouter/` (real ONNX by default; `TRUEPIXEL_STUB=1` for the heuristic stub):
-
-```bash
-npm run eval:local
-```
-
-On that corpus the dual-model path currently reports **100% balanced accuracy @ 65%**, at roughly **~137 ms/image** average on Node CPU (vs ~55 ms with distilled alone).
-
-> **TODO:** Cut dual-model latency. Running Community Forensics on every non-provenance image is the main cost (~2.5× slower than distilled-only). Cascade / early-exit (only run the second head when distilled + spectral are ambiguous), WebGPU parallelism, or a single distilled student would help.
-
-Refresh that corpus incrementally when OpenRouter adds models (needs `OPENROUTER_API_KEY` in `.env`):
-
-```bash
-npm run fetch:openrouter   # skips models already in benchmark/openrouter/registry.json
+# .env: OPENROUTER_API_KEY=...
+npm run fetch:openrouter
 npm run fetch:real
+npm run eval:local
+npm run eval:suite
 ```
+
+`benchmark/openrouter/ai/` and `real/` stay gitignored — fetch for your machine only.
+
+Accurate-head training (Python) is optional and documented under `benchmark/model-survey/`. Shipped forensics weights live in `models/neopixel-accurate-v1/`.
 
 ## Privacy
 
-- Image bytes are fetched by the extension and processed in an offscreen document / service worker
-- No analytics, accounts, or remote inference APIs
-- Model weights are public Hugging Face artifacts downloaded once, then cached with SHA-256 verification
+Image bytes are fetched by the extension and scored in an offscreen document / service worker. No analytics, accounts, or remote inference. Model weights are public HF artifacts, SHA-256 checked, then cached.
 
 ## License
 
-MIT. See [LICENSE](LICENSE) and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
-
-## Reproducibility
-
-| Item | Value |
-| --- | --- |
-| Extension | Manifest V3, TypeScript → esbuild bundle in `dist/` |
-| Visual models | `ai-image-detect-distilled` fp16 + `CommunityForensics-DeepfakeDet-ViT` q4 |
-| Model license | MIT |
-| Runtime | `onnxruntime-web` WebGPU → WASM fallback |
-| Threshold default | 0.65 |
+MIT — see [LICENSE](LICENSE) and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

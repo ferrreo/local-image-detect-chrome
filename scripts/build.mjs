@@ -22,6 +22,7 @@ const entryPoints = {
   offscreen: path.join(root, "extension/src/offscreen/offscreen.ts"),
   popup: path.join(root, "extension/src/popup/popup.ts"),
   options: path.join(root, "extension/src/options/options.ts"),
+  eval: path.join(root, "extension/src/eval/eval.ts"),
 };
 
 function copyStatic() {
@@ -51,6 +52,14 @@ function copyStatic() {
     path.join(outdir, "options.css"),
   );
   cpSync(
+    path.join(root, "extension/src/eval/eval.html"),
+    path.join(outdir, "eval.html"),
+  );
+  cpSync(
+    path.join(root, "extension/src/eval/eval.css"),
+    path.join(outdir, "eval.css"),
+  );
+  cpSync(
     path.join(root, "extension/src/content/overlay.css"),
     path.join(outdir, "overlay.css"),
   );
@@ -59,7 +68,14 @@ function copyStatic() {
   });
 
   // Bundle onnxruntime WASM assets for extension pages.
-  const ortPkg = path.join(root, "node_modules/onnxruntime-web/dist");
+  // Prefer vendored ORT #29599 build when present (MatMulNBits f32 accumulators).
+  const vendorOrt = path.join(root, "vendor/onnxruntime-web/dist");
+  const npmOrt = path.join(root, "node_modules/onnxruntime-web/dist");
+  const ortPkg = existsSync(
+    path.join(vendorOrt, "ort.webgpu.bundle.min.mjs"),
+  )
+    ? vendorOrt
+    : npmOrt;
   const ortOut = path.join(outdir, "ort");
   mkdirSync(ortOut, { recursive: true });
   if (existsSync(ortPkg)) {
@@ -73,10 +89,24 @@ function copyStatic() {
     }
   }
 
-  // Optional: seed packaged models if present (still one-time download path is primary).
-  const modelsSrc = path.join(root, "models");
-  if (existsSync(modelsSrc)) {
-    cpSync(modelsSrc, path.join(outdir, "models"), { recursive: true });
+  // Package only inference artifacts (avoid survey/compare trees).
+  const packagedModels = [
+    "ai-image-detect-distilled/model_fp16.onnx",
+    "ai-image-detect-distilled/model.onnx",
+    "neopixel-accurate-v1/model_quantized.onnx",
+    "opensynthid-detect/model_quantized.onnx",
+  ];
+  for (const rel of packagedModels) {
+    const src = path.join(root, "models", rel);
+    if (!existsSync(src)) continue;
+    const dest = path.join(outdir, "models", rel);
+    mkdirSync(path.dirname(dest), { recursive: true });
+    cpSync(src, dest);
+  }
+  const modelsManifest = path.join(root, "models/manifest.json");
+  if (existsSync(modelsManifest)) {
+    mkdirSync(path.join(outdir, "models"), { recursive: true });
+    cpSync(modelsManifest, path.join(outdir, "models/manifest.json"));
   }
 
   // Stamp build metadata.
@@ -85,7 +115,7 @@ function copyStatic() {
     JSON.stringify(
       {
         builtAt: new Date().toISOString(),
-        stubDefault: process.env.TRUEPIXEL_STUB_INFERENCE === "1",
+        stubDefault: process.env.NEOPIXEL_STUB_INFERENCE === "1",
       },
       null,
       2,
@@ -101,9 +131,23 @@ function copyStatic() {
   }
 }
 
+function ortWebAlias() {
+  const vendorEntry = path.join(
+    root,
+    "vendor/onnxruntime-web/dist/ort.webgpu.bundle.min.mjs",
+  );
+  if (!existsSync(vendorEntry)) return {};
+  console.log("Using vendored onnxruntime-web (PR #29599)");
+  return {
+    "onnxruntime-web": path.join(root, "vendor/onnxruntime-web"),
+    "onnxruntime-web/webgpu": vendorEntry,
+  };
+}
+
 async function buildOnce() {
   rmSync(outdir, { recursive: true, force: true });
   mkdirSync(outdir, { recursive: true });
+  const alias = ortWebAlias();
 
   // Background/content/popup/options must stay free of onnxruntime-web.
   await esbuild.build({
@@ -112,6 +156,7 @@ async function buildOnce() {
       content: entryPoints.content,
       popup: entryPoints.popup,
       options: entryPoints.options,
+      eval: entryPoints.eval,
     },
     outdir,
     entryNames: "[name]",
@@ -136,6 +181,9 @@ async function buildOnce() {
     sourcemap: true,
     logLevel: "info",
     loader: { ".wasm": "file" },
+    ...(Object.keys(alias).length
+      ? { alias }
+      : {}),
   });
 
   copyStatic();

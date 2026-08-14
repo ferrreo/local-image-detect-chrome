@@ -8,13 +8,51 @@ export async function decodeImageBytes(
   bytes: ArrayBuffer,
   mimeType = "image/jpeg",
 ): Promise<DecodedImage> {
-  const blob = new Blob([bytes], { type: mimeType });
-  const bitmap = await createImageBitmap(blob);
-  return {
-    bitmap,
-    width: bitmap.width,
-    height: bitmap.height,
-  };
+  if (bytes.byteLength === 0) {
+    throw new Error("The source image could not be decoded. (empty buffer)");
+  }
+  // Copy first — callers may pass a buffer that structured-clone will detach.
+  const copy = bytes.slice(0);
+  const view = new Uint8Array(copy);
+  const type = mimeType.startsWith("image/")
+    ? mimeType
+    : guessMimeType(view);
+
+  // ImageDecoder handles progressive JPEG reliably in workers/offscreen.
+  if (typeof ImageDecoder !== "undefined") {
+    try {
+      const decoder = new ImageDecoder({ data: view, type });
+      const { image } = await decoder.decode({ frameIndex: 0 });
+      try {
+        const bitmap = await createImageBitmap(image);
+        return {
+          bitmap,
+          width: bitmap.width,
+          height: bitmap.height,
+        };
+      } finally {
+        image.close();
+        decoder.close();
+      }
+    } catch {
+      // fall through to createImageBitmap(Blob)
+    }
+  }
+
+  const blob = new Blob([copy], { type });
+  try {
+    const bitmap = await createImageBitmap(blob);
+    return {
+      bitmap,
+      width: bitmap.width,
+      height: bitmap.height,
+    };
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `The source image could not be decoded. (${type}, ${copy.byteLength} bytes: ${detail})`,
+    );
+  }
 }
 
 export async function rasterizeForModel(
@@ -30,6 +68,38 @@ export async function rasterizeForModel(
   // Match ViTFeatureExtractor: stretch-resize to HxW (no center-crop).
   ctx.drawImage(bitmap, 0, 0, size, size);
   return ctx.getImageData(0, 0, size, size);
+}
+
+/**
+ * Proofmark / Detectra-style preprocess: scale shortest side to `resizeShort`,
+ * then center-crop `crop`×`crop`.
+ */
+export async function rasterizeShortCenterCrop(
+  bitmap: ImageBitmap,
+  resizeShort = 440,
+  crop = 384,
+): Promise<ImageData> {
+  const short = Math.min(bitmap.width, bitmap.height);
+  const scale = resizeShort / Math.max(1, short);
+  const nw = Math.max(1, Math.round(bitmap.width * scale));
+  const nh = Math.max(1, Math.round(bitmap.height * scale));
+  const left = Math.max(0, Math.floor((nw - crop) / 2));
+  const top = Math.max(0, Math.floor((nh - crop) / 2));
+
+  const resized = new OffscreenCanvas(nw, nh);
+  const rctx = resized.getContext("2d", { willReadFrequently: true });
+  if (!rctx) {
+    throw new Error("OffscreenCanvas 2d context unavailable");
+  }
+  rctx.drawImage(bitmap, 0, 0, nw, nh);
+
+  const canvas = new OffscreenCanvas(crop, crop);
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  if (!ctx) {
+    throw new Error("OffscreenCanvas 2d context unavailable");
+  }
+  ctx.drawImage(resized, left, top, crop, crop, 0, 0, crop, crop);
+  return ctx.getImageData(0, 0, crop, crop);
 }
 
 /**
@@ -99,16 +169,21 @@ export async function rasterizeForSpectral(
     );
   }
 
-  // Browser ImageBitmap: read through a capped canvas, then box-downsample.
-  const maxRead = 768;
-  const readScale = Math.min(
+  // Browser ImageBitmap: read native pixels then box-downsample.
+  // Cap below full native (was 4096) for latency; 1536 keeps laplacian /
+  // cascade gates stable vs the old 768-cap regression.
+  const maxNative = 1536;
+  const nativeScale = Math.min(
     1,
-    maxRead / Math.max(bitmap.width, bitmap.height),
+    maxNative / Math.max(bitmap.width, bitmap.height),
   );
-  const readW = Math.max(32, Math.round(bitmap.width * readScale));
-  const readH = Math.max(32, Math.round(bitmap.height * readScale));
+  const readW = Math.max(32, Math.round(bitmap.width * nativeScale));
+  const readH = Math.max(32, Math.round(bitmap.height * nativeScale));
   const canvas = new OffscreenCanvas(readW, readH);
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  const ctx = canvas.getContext("2d", {
+    willReadFrequently: true,
+    colorSpace: "srgb",
+  });
   if (!ctx) {
     throw new Error("OffscreenCanvas 2d context unavailable");
   }

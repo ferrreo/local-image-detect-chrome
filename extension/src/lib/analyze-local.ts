@@ -23,6 +23,7 @@ export async function analyzeLocalStub(args: {
   bytes: ArrayBuffer;
   mimeType?: string;
   threshold?: number;
+  realThreshold?: number;
 }): Promise<DetectionResult> {
   const started = performance.now();
   const bytesView = new Uint8Array(args.bytes);
@@ -51,6 +52,9 @@ export async function analyzeLocalStub(args: {
         detail: "skipped",
       },
       ...(args.threshold !== undefined ? { threshold: args.threshold } : {}),
+      ...(args.realThreshold !== undefined
+        ? { realThreshold: args.realThreshold }
+        : {}),
     });
     return {
       imageId: args.imageId,
@@ -92,6 +96,9 @@ export async function analyzeLocalStub(args: {
       },
       spectralFeatures: spectral.features,
       ...(args.threshold !== undefined ? { threshold: args.threshold } : {}),
+      ...(args.realThreshold !== undefined
+        ? { realThreshold: args.realThreshold }
+        : {}),
     });
     return {
       imageId: args.imageId,

@@ -22,6 +22,19 @@ export type TierSignal = {
   shortCircuit?: boolean;
 };
 
+/** Per-stage wall times for the local pipeline (milliseconds). */
+export type PipelineTiming = {
+  decodeMs: number;
+  spectralMs: number;
+  /** RGBA / NCHW prep inside the visual backend (when reported). */
+  preprocessMs: number;
+  distilledMs: number;
+  forensicsMs: number;
+  fuseMs: number;
+  totalMs: number;
+  ranForensics: boolean;
+};
+
 export type DetectionResult = {
   imageId: string;
   label: DetectionLabel;
@@ -30,6 +43,7 @@ export type DetectionResult = {
   tiers: TierSignal[];
   backend: InferenceBackend;
   elapsedMs: number;
+  timing?: PipelineTiming;
 };
 
 export type InferenceBackend =
@@ -38,11 +52,23 @@ export type InferenceBackend =
   | { kind: "stub" }
   | { kind: "none" };
 
+/** Browser ORT execution provider preference for eval / options. */
+export type VisualProvider =
+  | { kind: "auto" }
+  | { kind: "webgpu" }
+  | { kind: "wasm" };
+
 export type ModelStatus =
   | { kind: "missing" }
   | { kind: "downloading"; progress: number }
   | { kind: "ready"; version: string; bytes: number }
   | { kind: "error"; message: string };
+
+/**
+ * `accurate` — cascade dual (distilled → CF when gated). Eval / overlay refine.
+ * `realtime` — distilled+spectral only (fast first paint; may miss CF recoveries).
+ */
+export type AnalyzeSpeedMode = "accurate" | "realtime";
 
 export type AnalyzeImageRequest = {
   kind: "analyze-image";
@@ -52,6 +78,9 @@ export type AnalyzeImageRequest = {
   src: string;
   width: number;
   height: number;
+  speedMode?: AnalyzeSpeedMode;
+  /** Skip SW result cache (dynamic same-URL images / load rescore). */
+  bypassCache?: boolean;
 };
 
 export type AnalyzeImageResponse = {
@@ -76,13 +105,24 @@ export type GetStatusRequest = {
   requestId: string;
 };
 
+/** How to hide images labeled AI until the user clicks the badge. */
+export type AiConcealMode = "none" | "blur" | "blank";
+
 export type GetStatusResponse = {
   kind: "get-status-result";
   requestId: string;
   models: ModelStatus;
   backend: InferenceBackend;
   autoScan: boolean;
+  /** AI label floor (P(AI) ≥ this → AI). */
   threshold: number;
+  /** Real label ceiling (P(AI) ≤ this → real). */
+  realThreshold: number;
+  visualProvider: VisualProvider["kind"];
+  gpuAvailable: boolean;
+  aiConceal: AiConcealMode;
+  /** When true, show Real / uncertain (?) badges on-page. */
+  debug: boolean;
 };
 
 export type SetOptionsRequest = {
@@ -90,7 +130,11 @@ export type SetOptionsRequest = {
   requestId: string;
   autoScan?: boolean;
   threshold?: number;
+  realThreshold?: number;
   debug?: boolean;
+  visualProvider?: VisualProvider["kind"];
+  stubInference?: boolean;
+  aiConceal?: AiConcealMode;
 };
 
 export type SetOptionsResponse = {
@@ -99,26 +143,82 @@ export type SetOptionsResponse = {
   ok: true;
 };
 
+/** Offline eval: analyze raw image bytes without a network image URL. */
+export type AnalyzeBytesRequest = {
+  kind: "analyze-bytes";
+  requestId: string;
+  imageId: string;
+  bytes: ArrayBuffer;
+  mimeType: string;
+};
+
+export type AnalyzeBytesResponse = {
+  kind: "analyze-bytes-result";
+  requestId: string;
+  result: DetectionResult;
+};
+
+/** Which visual stack to warm / use for inference. */
+export type VisualEnginePreference = "auto" | "onnxruntime-web";
+
+/** Reset ORT sessions (switch WebGPU ↔ WASM) and optionally re-warm. */
+export type ResetVisualRequest = {
+  kind: "reset-visual";
+  requestId: string;
+  warm?: boolean;
+  visualEngine?: VisualEnginePreference;
+};
+
+/** Which visual runtime the offscreen document warmed. */
+export type VisualEngineId = "onnxruntime-web" | "stub" | "none";
+
+export type ResetVisualResponse = {
+  kind: "reset-visual-result";
+  requestId: string;
+  backend: InferenceBackend;
+  gpuAvailable: boolean;
+  visualEngine: VisualEngineId;
+};
+
 export type ExtensionRequest =
   | AnalyzeImageRequest
+  | AnalyzeBytesRequest
   | SetupModelsRequest
   | GetStatusRequest
-  | SetOptionsRequest;
+  | SetOptionsRequest
+  | ResetVisualRequest;
 
 export type ExtensionResponse =
   | AnalyzeImageResponse
+  | AnalyzeBytesResponse
   | SetupModelsResponse
   | GetStatusResponse
   | SetOptionsResponse
+  | ResetVisualResponse
   | { kind: "error"; requestId: string; message: string };
 
 export type OffscreenInferRequest = {
   kind: "offscreen-infer";
   requestId: string;
   imageId: string;
-  /** Transferable ArrayBuffer of image bytes. */
-  bytes: ArrayBuffer;
+  /**
+   * Prefer `src` when the offscreen document can fetch it (eval / http images).
+   * Avoids SW fetch + base64 + second decode on the hot path.
+   */
+  src?: string;
+  /**
+   * Image bytes as base64 when `src` is unavailable.
+   * ArrayBuffer is not reliable across SW↔offscreen structured clone.
+   */
+  bytesBase64?: string;
   mimeType: string;
+  /**
+   * `realtime` → cascade off (distilled+spectral only).
+   * `accurate` / omitted → full cascade (eval default).
+   */
+  speedMode?: AnalyzeSpeedMode;
+  /** Override visual stack for this infer (else last reset preference). */
+  visualEngine?: VisualEnginePreference;
 };
 
 export type OffscreenInferResponse = {
@@ -127,23 +227,63 @@ export type OffscreenInferResponse = {
   result: DetectionResult;
 };
 
+export type OffscreenResetRequest = {
+  kind: "offscreen-reset";
+  requestId: string;
+  warm?: boolean;
+  visualProvider?: VisualProvider["kind"];
+  visualEngine?: VisualEnginePreference;
+};
+
+export type OffscreenResetResponse = {
+  kind: "offscreen-reset-result";
+  requestId: string;
+  backend: InferenceBackend;
+  gpuAvailable: boolean;
+  visualEngine: VisualEngineId;
+};
+
 export type ExtensionOptions = {
   autoScan: boolean;
-  /** Evaluation threshold; default 0.65 per bounty brief. */
+  /**
+   * Product AI label threshold: P(AI) ≥ this → AI.
+   * Bounty eval harnesses still score at {@link EVAL_CONFIDENCE_THRESHOLD}.
+   */
   threshold: number;
+  /** Product real label threshold: P(AI) ≤ this → real. */
+  realThreshold: number;
   debug: boolean;
   /** When true, skip network model fetch and use deterministic stub. */
   stubInference: boolean;
+  /** ORT EP preference for the offscreen visual classifier. */
+  visualProvider: VisualProvider["kind"];
+  /** Hide AI-labeled images (click badge to reveal). */
+  aiConceal: AiConcealMode;
 };
 
 export const DEFAULT_OPTIONS = {
   autoScan: true,
-  threshold: 0.65,
+  threshold: 0.6951,
+  realThreshold: 0.4099,
   debug: false,
   stubInference: false,
+  visualProvider: "auto",
+  aiConceal: "blur",
 } as const satisfies ExtensionOptions;
 
+export function parseAiConcealMode(value: unknown): AiConcealMode {
+  if (value === "blur" || value === "blank" || value === "none") return value;
+  return DEFAULT_OPTIONS.aiConceal;
+}
+
+/** Bounty evaluation operating point (held-out BA @ 65%). */
 export const EVAL_CONFIDENCE_THRESHOLD = 0.65;
+
+/** Product overlay: label AI at or above this P(AI). */
+export const AI_LABEL_THRESHOLD = DEFAULT_OPTIONS.threshold;
+
+/** Product overlay: label real at or below this P(AI). */
+export const REAL_LABEL_THRESHOLD = DEFAULT_OPTIONS.realThreshold;
 
 export function asAiConfidence(value: number): AiConfidence {
   if (!Number.isFinite(value)) {

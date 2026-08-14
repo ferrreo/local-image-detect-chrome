@@ -1,0 +1,65 @@
+{
+  "backbone": "OwensLab/commfor-model-384",
+  "backboneSha256": "b89f36275f3bf5e2b040eee36597a8f19db051bff9a473a9cf7b2466284fb387",
+  "hidden": 64,
+  "epochs": 60,
+  "lr": 0.0012,
+  "weightDecay": 0.004,
+  "augmentViews": 2,
+  "corpus": "/workspace/benchmark/distill-corpus",
+  "corpusImages": 51990,
+  "trainImages": 46791,
+  "trainRows": 140373,
+  "valRows": 5199,
+  "gateImages": 2006,
+  "valAt065": {
+    "threshold": 0.65,
+    "balancedAccuracy": 0.989648743381311,
+    "tpr": 0.991304347826087,
+    "tnr": 0.9879931389365352,
+    "n": 5199
+  },
+  "bestValBaDuringTrain": 0.989648743381311,
+  "preprocess": "short440-center384",
+  "norm": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "outputKind": "logit",
+  "onnxValAt065": {
+    "threshold": 0.65,
+    "balancedAccuracy": 0.9661630248340667,
+    "tpr": 0.984927536231884,
+    "tnr": 0.9473985134362493,
+    "n": 5199
+  },
+  "onnxHoldoutAt065": {
+    "threshold": 0.65,
+    "balancedAccuracy": 0.8771666666666667,
+    "tpr": 0.921,
+    "tnr": 0.8333333333333334,
+    "n": 2006
+  },
+  "onnxLexicaHoldoutAt065": {
+    "threshold": 0.65,
+    "balancedAccuracy": 0.45925,
+    "tpr": 0.9185,
+    "tnr": 0.0,
+    "n": 2000
+  },
+  "onnxHardcaseAt065": {
+    "threshold": 0.65,
+    "balancedAccuracy": 0.5,
+    "tpr": 0.0,
+    "tnr": 1.0,
+    "n": 6
+  }
+}

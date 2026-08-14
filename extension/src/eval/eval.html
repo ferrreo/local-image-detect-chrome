@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NeoPixel offline eval</title>
+    <link rel="stylesheet" href="eval.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>NeoPixel</h1>
+        <p class="lede">
+          Offline OpenRouter corpus eval through the real unpacked extension
+          (offscreen ORT WebGPU / WASM).
+        </p>
+      </header>
+
+      <section class="controls" aria-label="Eval controls">
+        <label>
+          Corpus base URL
+          <input id="corpusBase" type="url" spellcheck="false" />
+        </label>
+        <label>
+          Visual provider
+          <select id="provider">
+            <option value="auto">auto (WebGPU → WASM)</option>
+            <option value="webgpu">webgpu only</option>
+            <option value="wasm">wasm only</option>
+          </select>
+        </label>
+        <label>
+          Threshold
+          <input id="threshold" type="number" min="0" max="1" step="0.01" value="0.65" />
+        </label>
+        <div class="actions">
+          <button id="setupBtn" type="button">Setup models</button>
+          <button id="runBtn" type="button">Run eval</button>
+        </div>
+      </section>
+
+      <section class="status" aria-live="polite">
+        <div id="statusLine">Idle</div>
+        <div id="metaLine"></div>
+      </section>
+
+      <section class="summary">
+        <table id="summaryTable">
+          <thead>
+            <tr>
+              <th>BA @thr</th>
+              <th>tp</th>
+              <th>tn</th>
+              <th>fp</th>
+              <th>fn</th>
+              <th>avg ms</th>
+              <th>p50 / p90</th>
+              <th>cf</th>
+              <th>backend</th>
+              <th>gpu</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="summaryRow">
+              <td colspan="10">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="results">
+        <table id="rowsTable">
+          <thead>
+            <tr>
+              <th>ok</th>
+              <th>file</th>
+              <th>truth</th>
+              <th>conf</th>
+              <th>pred</th>
+              <th>total ms</th>
+              <th>stages</th>
+              <th>backend</th>
+              <th>tiers</th>
+            </tr>
+          </thead>
+          <tbody id="rowsBody"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <pre id="suite-result" hidden></pre>
+    <div id="done" data-state="idle" hidden></div>
+    <script type="module" src="eval.js"></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "TruePixel AI Image Detector",
+  "name": "NeoPixel AI Image Detector",
   "version": "1.0.0",
   "description": "Detect AI-generated images entirely in your browser with WebGPU/WASM. No cloud inference.",
   "minimum_chrome_version": "121",
@@ -10,7 +10,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "TruePixel",
+    "default_title": "NeoPixel",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -31,7 +31,7 @@
       "matches": ["http://*/*", "https://*/*"],
       "js": ["content.js"],
       "css": ["overlay.css"],
-      "run_at": "document_idle",
+      "run_at": "document_start",
       "all_frames": false
     }
   ],
@@ -45,5 +45,11 @@
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; worker-src 'self'"
+  },
+  "cross_origin_embedder_policy": {
+    "value": "require-corp"
+  },
+  "cross_origin_opener_policy": {
+    "value": "same-origin"
   }
 }

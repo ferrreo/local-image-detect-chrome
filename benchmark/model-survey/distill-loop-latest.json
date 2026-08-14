@@ -1,0 +1,257 @@
+{
+  "passed": true,
+  "best": {
+    "ok": true,
+    "round": 2,
+    "cfg": {
+      "hidden": 64,
+      "epochs": 60,
+      "lr": 0.0012,
+      "weight_decay": 0.004,
+      "augment_views": 2,
+      "max_train": 0
+    },
+    "wallSec": 13626.206326961517,
+    "avgMs": 42.252570390701294,
+    "score": 144.8240381471316,
+    "passes": true,
+    "report": {
+      "backbone": "OwensLab/commfor-model-384",
+      "backboneSha256": "b89f36275f3bf5e2b040eee36597a8f19db051bff9a473a9cf7b2466284fb387",
+      "hidden": 64,
+      "epochs": 60,
+      "lr": 0.0012,
+      "weightDecay": 0.004,
+      "augmentViews": 2,
+      "corpus": "/workspace/benchmark/distill-corpus",
+      "corpusImages": 51990,
+      "trainImages": 46791,
+      "trainRows": 140373,
+      "valRows": 5199,
+      "gateImages": 2006,
+      "valAt065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.989648743381311,
+        "tpr": 0.991304347826087,
+        "tnr": 0.9879931389365352,
+        "n": 5199
+      },
+      "bestValBaDuringTrain": 0.989648743381311,
+      "preprocess": "short440-center384",
+      "norm": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ]
+      },
+      "outputKind": "logit",
+      "onnxValAt065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.9661630248340667,
+        "tpr": 0.984927536231884,
+        "tnr": 0.9473985134362493,
+        "n": 5199
+      },
+      "onnxHoldoutAt065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.8771666666666667,
+        "tpr": 0.921,
+        "tnr": 0.8333333333333334,
+        "n": 2006
+      },
+      "onnxLexicaHoldoutAt065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.45925,
+        "tpr": 0.9185,
+        "tnr": 0.0,
+        "n": 2000
+      },
+      "onnxHardcaseAt065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.5,
+        "tpr": 0.0,
+        "tnr": 1.0,
+        "n": 6
+      }
+    },
+    "output": "/workspace/models/neopixel-accurate-loop/round-02-h64-a2-69090"
+  },
+  "history": [
+    {
+      "ok": true,
+      "round": 1,
+      "cfg": {
+        "hidden": 32,
+        "epochs": 50,
+        "lr": 0.0015,
+        "weight_decay": 0.003,
+        "augment_views": 1,
+        "max_train": 0
+      },
+      "wallSec": 7511.203125715256,
+      "avgMs": 42.24884510040283,
+      "score": 141.8308910783132,
+      "passes": false,
+      "report": {
+        "backbone": "OwensLab/commfor-model-384",
+        "backboneSha256": "b89f36275f3bf5e2b040eee36597a8f19db051bff9a473a9cf7b2466284fb387",
+        "hidden": 32,
+        "epochs": 50,
+        "lr": 0.0015,
+        "weightDecay": 0.003,
+        "augmentViews": 1,
+        "corpus": "/workspace/benchmark/distill-corpus",
+        "corpusImages": 43979,
+        "trainImages": 39581,
+        "trainRows": 79162,
+        "valRows": 4398,
+        "gateImages": 2006,
+        "valAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.9859719224769761,
+          "tpr": 0.9845224613061533,
+          "tnr": 0.9874213836477987,
+          "n": 4398
+        },
+        "bestValBaDuringTrain": 0.9859719224769761,
+        "preprocess": "short440-center384",
+        "norm": {
+          "mean": [
+            0.485,
+            0.456,
+            0.406
+          ],
+          "std": [
+            0.229,
+            0.224,
+            0.225
+          ]
+        },
+        "outputKind": "logit",
+        "onnxValAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.9722608032935176,
+          "tpr": 0.9822574556436391,
+          "tnr": 0.9622641509433962,
+          "n": 4398
+        },
+        "onnxHoldoutAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.8756666666666667,
+          "tpr": 0.918,
+          "tnr": 0.8333333333333334,
+          "n": 2006
+        },
+        "onnxLexicaHoldoutAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.46125,
+          "tpr": 0.9225,
+          "tnr": 0.0,
+          "n": 2000
+        },
+        "onnxHardcaseAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.4166666666666667,
+          "tpr": 0.0,
+          "tnr": 0.8333333333333334,
+          "n": 6
+        }
+      },
+      "output": "/workspace/models/neopixel-accurate-loop/round-01-h32-a1-61578"
+    },
+    {
+      "ok": true,
+      "round": 2,
+      "cfg": {
+        "hidden": 64,
+        "epochs": 60,
+        "lr": 0.0012,
+        "weight_decay": 0.004,
+        "augment_views": 2,
+        "max_train": 0
+      },
+      "wallSec": 13626.206326961517,
+      "avgMs": 42.252570390701294,
+      "score": 144.8240381471316,
+      "passes": true,
+      "report": {
+        "backbone": "OwensLab/commfor-model-384",
+        "backboneSha256": "b89f36275f3bf5e2b040eee36597a8f19db051bff9a473a9cf7b2466284fb387",
+        "hidden": 64,
+        "epochs": 60,
+        "lr": 0.0012,
+        "weightDecay": 0.004,
+        "augmentViews": 2,
+        "corpus": "/workspace/benchmark/distill-corpus",
+        "corpusImages": 51990,
+        "trainImages": 46791,
+        "trainRows": 140373,
+        "valRows": 5199,
+        "gateImages": 2006,
+        "valAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.989648743381311,
+          "tpr": 0.991304347826087,
+          "tnr": 0.9879931389365352,
+          "n": 5199
+        },
+        "bestValBaDuringTrain": 0.989648743381311,
+        "preprocess": "short440-center384",
+        "norm": {
+          "mean": [
+            0.485,
+            0.456,
+            0.406
+          ],
+          "std": [
+            0.229,
+            0.224,
+            0.225
+          ]
+        },
+        "outputKind": "logit",
+        "onnxValAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.9661630248340667,
+          "tpr": 0.984927536231884,
+          "tnr": 0.9473985134362493,
+          "n": 5199
+        },
+        "onnxHoldoutAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.8771666666666667,
+          "tpr": 0.921,
+          "tnr": 0.8333333333333334,
+          "n": 2006
+        },
+        "onnxLexicaHoldoutAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.45925,
+          "tpr": 0.9185,
+          "tnr": 0.0,
+          "n": 2000
+        },
+        "onnxHardcaseAt065": {
+          "threshold": 0.65,
+          "balancedAccuracy": 0.5,
+          "tpr": 0.0,
+          "tnr": 1.0,
+          "n": 6
+        }
+      },
+      "output": "/workspace/models/neopixel-accurate-loop/round-02-h64-a2-69090"
+    }
+  ],
+  "gates": {
+    "minLexicaTpr": 0.7,
+    "minHardTnr": 0.95,
+    "minGateBa": 0.78,
+    "maxMs": 130.0
+  }
+}

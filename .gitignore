@@ -1,7 +1,20 @@
 node_modules/
 dist/
-.truepixel-cache/
-models/
+.neopixel-cache/
+models/**
+!models/manifest.json
+!models/neopixel-accurate-v1/
+!models/neopixel-accurate-v1/model_quantized.onnx
+!models/neopixel-accurate-v1/shipping.json
+!models/neopixel-accurate-v1/train-report.json
+!models/opensynthid-detect/
+!models/opensynthid-detect/manifest.json
+!models/opensynthid-detect/model_quantized.onnx
+# Eval image corpora — fetch locally, never commit binaries
+benchmark/distill-corpus/
+benchmark/openrouter/ai/
+benchmark/openrouter/real/
+benchmark/openrouter/lexica-split.json
 coverage/
 test-results/
 playwright-report/
@@ -18,3 +31,7 @@ __pycache__/
 .idea/
 .vscode/
 *.tsbuildinfo
+# Optional ONNX Runtime vendor builds (setup scripts recreate these)
+native/ort-web-pr29599/
+native/ort-web-pr29599-src/
+vendor/onnxruntime-web/

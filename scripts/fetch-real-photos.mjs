@@ -78,7 +78,7 @@ for (const photo of REAL_PHOTOS) {
   const res = await fetch(url, {
     redirect: "follow",
     headers: {
-      "User-Agent": "TruePixelBenchmark/1.0",
+      "User-Agent": "NeoPixelBenchmark/1.0",
       Accept: "image/jpeg,image/*;q=0.8,*/*;q=0.5",
     },
   });

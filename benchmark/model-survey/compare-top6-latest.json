@@ -1,0 +1,469 @@
+{
+  "generatedAt": "2026-08-13T22:00:31.060Z",
+  "corpusImages": 130,
+  "hardCases": 6,
+  "lexicaImages": 48,
+  "note": "Two requested models lacked usable detector ONNX weights; substitutes noted below. Soylent hardcase is a local proxy. We do not fetch private Proofmark quants — train neopixel-accurate-v1 with npm run distill:accurate.",
+  "unavailable": [
+    {
+      "id": "ai-human-generated-image-detection-ONNX",
+      "reason": "Hugging Face repo has no weights (only .gitattributes). Substituted by zonn-ai/ai-image-detection-ONNX."
+    },
+    {
+      "id": "deepguard-ai",
+      "reason": "Repo ships EfficientNet .pth + inswapper face-swap ONNX, not a classifier ONNX. Substituted by current distilled."
+    },
+    {
+      "id": "proofmark-webwild-v3",
+      "reason": "Proofmark/proofmark-webwild-v3 is private on HF; we do not fetch or ship third-party bundled quants. Distill our own accurate head instead."
+    }
+  ],
+  "rankingAt065": [
+    {
+      "rank": 1,
+      "id": "neopixel-accurate-v1",
+      "ba": 0.9941860465116279,
+      "avgMsPerImage": 83.04352392307734,
+      "totalWallSec": 10.828145207000002,
+      "tpr": 0.9883720930232558,
+      "tnr": 1,
+      "hardCaseFp": 0,
+      "lexicaTpr": 0.9791666666666666,
+      "substituteFor": null
+    },
+    {
+      "rank": 2,
+      "id": "Deep-Fake-Detector-v2-Model-ONNX",
+      "ba": 0.6561839323467231,
+      "avgMsPerImage": 110.28938389230767,
+      "totalWallSec": 14.401193319,
+      "tpr": 0.7441860465116279,
+      "tnr": 0.5681818181818182,
+      "hardCaseFp": 4,
+      "lexicaTpr": 0.75,
+      "substituteFor": null
+    },
+    {
+      "rank": 3,
+      "id": "detectra-v1",
+      "ba": 0.639799154334038,
+      "avgMsPerImage": 101.570097346154,
+      "totalWallSec": 13.273526964999999,
+      "tpr": 0.3023255813953488,
+      "tnr": 0.9772727272727273,
+      "hardCaseFp": 1,
+      "lexicaTpr": 0.3333333333333333,
+      "substituteFor": null
+    },
+    {
+      "rank": 4,
+      "id": "ai-image-detect-distilled",
+      "ba": 0.5235200845665962,
+      "avgMsPerImage": 38.87048670769263,
+      "totalWallSec": 5.084841680999998,
+      "tpr": 0.06976744186046512,
+      "tnr": 0.9772727272727273,
+      "hardCaseFp": 0,
+      "lexicaTpr": 0,
+      "substituteFor": "deepguard-ai"
+    }
+  ],
+  "models": [
+    {
+      "id": "Deep-Fake-Detector-v2-Model-ONNX",
+      "hf": "onnx-community/Deep-Fake-Detector-v2-Model-ONNX",
+      "requested": true,
+      "substituteFor": null,
+      "imageCount": 130,
+      "wallMs": 14401.193319,
+      "at065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.6561839323467231,
+        "tpr": 0.7441860465116279,
+        "tnr": 0.5681818181818182,
+        "confusion": {
+          "tp": 64,
+          "tn": 25,
+          "fp": 19,
+          "fn": 22
+        },
+        "avgMsPerImage": 110.28938389230767,
+        "totalMs": 14337.619905999996,
+        "hardCaseFp": 4,
+        "hardCaseN": 6,
+        "lexicaTp": 36,
+        "lexicaN": 48,
+        "lexicaTpr": 0.75
+      },
+      "atProduct": {
+        "threshold": 0.6951,
+        "balancedAccuracy": 0.5613107822410148,
+        "tpr": 0.3953488372093023,
+        "tnr": 0.7272727272727273,
+        "confusion": {
+          "tp": 34,
+          "tn": 32,
+          "fp": 12,
+          "fn": 52
+        },
+        "avgMsPerImage": 110.28938389230767,
+        "totalMs": 14337.619905999996,
+        "hardCaseFp": 2,
+        "hardCaseN": 6,
+        "lexicaTp": 25,
+        "lexicaN": 48,
+        "lexicaTpr": 0.5208333333333334
+      },
+      "hardCases": [
+        {
+          "file": "real/hardcases/hard_boxes_bedroom.jpg",
+          "confidence": 0.7134,
+          "predAt065": "ai",
+          "predAtProduct": "ai",
+          "ms": 102.74
+        },
+        {
+          "file": "real/hardcases/hard_group_indoor.jpg",
+          "confidence": 0.6814,
+          "predAt065": "ai",
+          "predAtProduct": "real",
+          "ms": 105.34
+        },
+        {
+          "file": "real/hardcases/hard_indoor_objects.jpg",
+          "confidence": 0.6706,
+          "predAt065": "ai",
+          "predAtProduct": "real",
+          "ms": 104.29
+        },
+        {
+          "file": "real/hardcases/hard_people_table.jpg",
+          "confidence": 0.5673,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 101.64
+        },
+        {
+          "file": "real/hardcases/hard_product_shelf.jpg",
+          "confidence": 0.5204,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 102.56
+        },
+        {
+          "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+          "confidence": 0.7222,
+          "predAt065": "ai",
+          "predAtProduct": "ai",
+          "ms": 96.29
+        }
+      ],
+      "soylent": {
+        "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+        "label": "real",
+        "hardCase": true,
+        "confidence": 0.7222457137072213,
+        "preprocessMs": 4.367929000000004,
+        "inferMs": 91.92008899999928,
+        "totalMs": 96.28801799999928
+      }
+    },
+    {
+      "id": "detectra-v1",
+      "hf": "Vontra/detectra-v1",
+      "requested": true,
+      "substituteFor": null,
+      "imageCount": 130,
+      "wallMs": 13273.526965,
+      "at065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.639799154334038,
+        "tpr": 0.3023255813953488,
+        "tnr": 0.9772727272727273,
+        "confusion": {
+          "tp": 26,
+          "tn": 43,
+          "fp": 1,
+          "fn": 60
+        },
+        "avgMsPerImage": 101.570097346154,
+        "totalMs": 13204.11265500002,
+        "hardCaseFp": 1,
+        "hardCaseN": 6,
+        "lexicaTp": 16,
+        "lexicaN": 48,
+        "lexicaTpr": 0.3333333333333333
+      },
+      "atProduct": {
+        "threshold": 0.6951,
+        "balancedAccuracy": 0.633985200845666,
+        "tpr": 0.29069767441860467,
+        "tnr": 0.9772727272727273,
+        "confusion": {
+          "tp": 25,
+          "tn": 43,
+          "fp": 1,
+          "fn": 61
+        },
+        "avgMsPerImage": 101.570097346154,
+        "totalMs": 13204.11265500002,
+        "hardCaseFp": 1,
+        "hardCaseN": 6,
+        "lexicaTp": 16,
+        "lexicaN": 48,
+        "lexicaTpr": 0.3333333333333333
+      },
+      "hardCases": [
+        {
+          "file": "real/hardcases/hard_boxes_bedroom.jpg",
+          "confidence": 0.0134,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 97.13
+        },
+        {
+          "file": "real/hardcases/hard_group_indoor.jpg",
+          "confidence": 0.0001,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 101.39
+        },
+        {
+          "file": "real/hardcases/hard_indoor_objects.jpg",
+          "confidence": 0.0001,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 95.59
+        },
+        {
+          "file": "real/hardcases/hard_people_table.jpg",
+          "confidence": 0.7242,
+          "predAt065": "ai",
+          "predAtProduct": "ai",
+          "ms": 95.86
+        },
+        {
+          "file": "real/hardcases/hard_product_shelf.jpg",
+          "confidence": 0.0039,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 94.82
+        },
+        {
+          "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+          "confidence": 0.0001,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 91.58
+        }
+      ],
+      "soylent": {
+        "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+        "label": "real",
+        "hardCase": true,
+        "confidence": 0.00011860778063452758,
+        "preprocessMs": 6.30746100000033,
+        "inferMs": 85.2693709999985,
+        "totalMs": 91.57683199999883
+      }
+    },
+    {
+      "id": "ai-image-detect-distilled",
+      "hf": "onnx-community/ai-image-detect-distilled-ONNX",
+      "requested": false,
+      "substituteFor": "deepguard-ai",
+      "imageCount": 130,
+      "wallMs": 5084.841680999998,
+      "at065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.5235200845665962,
+        "tpr": 0.06976744186046512,
+        "tnr": 0.9772727272727273,
+        "confusion": {
+          "tp": 6,
+          "tn": 43,
+          "fp": 1,
+          "fn": 80
+        },
+        "avgMsPerImage": 38.87048670769263,
+        "totalMs": 5053.163272000042,
+        "hardCaseFp": 0,
+        "hardCaseN": 6,
+        "lexicaTp": 0,
+        "lexicaN": 48,
+        "lexicaTpr": 0
+      },
+      "atProduct": {
+        "threshold": 0.6951,
+        "balancedAccuracy": 0.5058139534883721,
+        "tpr": 0.011627906976744186,
+        "tnr": 1,
+        "confusion": {
+          "tp": 1,
+          "tn": 44,
+          "fp": 0,
+          "fn": 85
+        },
+        "avgMsPerImage": 38.87048670769263,
+        "totalMs": 5053.163272000042,
+        "hardCaseFp": 0,
+        "hardCaseN": 6,
+        "lexicaTp": 0,
+        "lexicaN": 48,
+        "lexicaTpr": 0
+      },
+      "hardCases": [
+        {
+          "file": "real/hardcases/hard_boxes_bedroom.jpg",
+          "confidence": 0.2729,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 38.58
+        },
+        {
+          "file": "real/hardcases/hard_group_indoor.jpg",
+          "confidence": 0.3629,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 38.63
+        },
+        {
+          "file": "real/hardcases/hard_indoor_objects.jpg",
+          "confidence": 0.6224,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 35.83
+        },
+        {
+          "file": "real/hardcases/hard_people_table.jpg",
+          "confidence": 0.4041,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 33.78
+        },
+        {
+          "file": "real/hardcases/hard_product_shelf.jpg",
+          "confidence": 0.6106,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 34.44
+        },
+        {
+          "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+          "confidence": 0.235,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 30.66
+        }
+      ],
+      "soylent": {
+        "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+        "label": "real",
+        "hardCase": true,
+        "confidence": 0.23498433051038123,
+        "preprocessMs": 3.8488670000006096,
+        "inferMs": 26.810647999998764,
+        "totalMs": 30.659514999999374
+      }
+    },
+    {
+      "id": "neopixel-accurate-v1",
+      "hf": "local distill (OwensLab/commfor-model-384 backbone + NeoPixel head)",
+      "requested": false,
+      "substituteFor": null,
+      "imageCount": 130,
+      "wallMs": 10828.145207000001,
+      "at065": {
+        "threshold": 0.65,
+        "balancedAccuracy": 0.9941860465116279,
+        "tpr": 0.9883720930232558,
+        "tnr": 1,
+        "confusion": {
+          "tp": 85,
+          "tn": 44,
+          "fp": 0,
+          "fn": 1
+        },
+        "avgMsPerImage": 83.04352392307734,
+        "totalMs": 10795.658110000055,
+        "hardCaseFp": 0,
+        "hardCaseN": 6,
+        "lexicaTp": 47,
+        "lexicaN": 48,
+        "lexicaTpr": 0.9791666666666666
+      },
+      "atProduct": {
+        "threshold": 0.6951,
+        "balancedAccuracy": 0.9941860465116279,
+        "tpr": 0.9883720930232558,
+        "tnr": 1,
+        "confusion": {
+          "tp": 85,
+          "tn": 44,
+          "fp": 0,
+          "fn": 1
+        },
+        "avgMsPerImage": 83.04352392307734,
+        "totalMs": 10795.658110000055,
+        "hardCaseFp": 0,
+        "hardCaseN": 6,
+        "lexicaTp": 47,
+        "lexicaN": 48,
+        "lexicaTpr": 0.9791666666666666
+      },
+      "hardCases": [
+        {
+          "file": "real/hardcases/hard_boxes_bedroom.jpg",
+          "confidence": 0.0006,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 80.55
+        },
+        {
+          "file": "real/hardcases/hard_group_indoor.jpg",
+          "confidence": 0.0018,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 81.26
+        },
+        {
+          "file": "real/hardcases/hard_indoor_objects.jpg",
+          "confidence": 0.0159,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 79.22
+        },
+        {
+          "file": "real/hardcases/hard_people_table.jpg",
+          "confidence": 0.183,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 77.78
+        },
+        {
+          "file": "real/hardcases/hard_product_shelf.jpg",
+          "confidence": 0.0017,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 77.61
+        },
+        {
+          "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+          "confidence": 0.0008,
+          "predAt065": "real",
+          "predAtProduct": "real",
+          "ms": 73.4
+        }
+      ],
+      "soylent": {
+        "file": "real/hardcases/hard_soylent_boxes_bedroom.jpg",
+        "label": "real",
+        "hardCase": true,
+        "confidence": 0.0008094600580759743,
+        "preprocessMs": 6.426833999998053,
+        "inferMs": 66.97054000000207,
+        "totalMs": 73.39737400000013
+      }
+    }
+  ]
+}

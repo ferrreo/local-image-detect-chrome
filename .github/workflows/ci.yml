@@ -39,7 +39,7 @@ jobs:
       - name: Build extension (stub-friendly)
         run: npm run build
         env:
-          TRUEPIXEL_STUB_INFERENCE: "1"
+          NEOPIXEL_STUB_INFERENCE: "1"
       - name: Run Playwright against Chromium (MV3 extension host)
         run: xvfb-run --auto-servernum npm run test:integration
         env:
@@ -61,5 +61,29 @@ jobs:
       - run: npm run build
       - uses: actions/upload-artifact@v4
         with:
-          name: truepixel-extension
+          name: neopixel-extension
           path: dist/
+
+  eval-suite:
+    name: Offline eval suite (CPU / WASM)
+    runs-on: ubuntu-latest
+    needs: unit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install chromium --with-deps
+      - run: sudo apt-get update && sudo apt-get install -y xvfb
+      - run: npm run setup:models
+      - name: Run limited offline suite
+        run: npm run eval:suite:ci
+        env:
+          CI: "1"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-suite-report
+          path: benchmark/eval-suite/
