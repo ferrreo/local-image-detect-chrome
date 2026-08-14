@@ -170,6 +170,7 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
           backend: { kind: "none" },
           gpuAvailable: false,
           visualEngine: "none",
+          error: msg,
         };
         console.warn("offscreen-reset failed:", msg);
         sendResponse(failure);

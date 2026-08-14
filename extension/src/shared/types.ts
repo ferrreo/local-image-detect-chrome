@@ -113,6 +113,8 @@ export type GetStatusResponse = {
   requestId: string;
   models: ModelStatus;
   backend: InferenceBackend;
+  /** Last offscreen ORT warm failure (empty when backend is live). */
+  backendError?: string;
   autoScan: boolean;
   /** AI label floor (P(AI) ≥ this → AI). */
   threshold: number;
@@ -241,6 +243,8 @@ export type OffscreenResetResponse = {
   backend: InferenceBackend;
   gpuAvailable: boolean;
   visualEngine: VisualEngineId;
+  /** Present when warm failed and backend is none. */
+  error?: string;
 };
 
 export type ExtensionOptions = {

@@ -35,6 +35,7 @@ const OFFSCREEN_REASONS = [
 
 let optionsCache: ExtensionOptions = { ...DEFAULT_OPTIONS };
 let backendCache: InferenceBackend = { kind: "none" };
+let backendErrorCache = "";
 let modelStatusCache: ModelStatus = { kind: "missing" };
 let gpuAvailableCache = false;
 /** Deduped offscreen create (Proofmark pattern — no fixed sleep race). */
@@ -331,6 +332,7 @@ async function detectFromBytes(args: {
   });
   if (offscreen && offscreen.result.label.kind !== "error") {
     backendCache = offscreen.result.backend;
+    backendErrorCache = "";
     return {
       ...offscreen.result,
       label: relabel(
@@ -397,6 +399,7 @@ async function analyzeImage(
     });
     if (offscreen && offscreen.result.label.kind !== "error") {
       backendCache = offscreen.result.backend;
+      backendErrorCache = "";
       const result = {
         ...offscreen.result,
         label: relabel(
@@ -514,6 +517,7 @@ async function handleRequest(
         requestId: request.requestId,
         models: modelStatusCache,
         backend: backendCache,
+        ...(backendErrorCache ? { backendError: backendErrorCache } : {}),
         autoScan: options.autoScan,
         threshold: options.threshold,
         realThreshold: options.realThreshold,
@@ -591,6 +595,7 @@ async function handleRequest(
       }
       if (reset && reset.backend.kind !== "none") {
         backendCache = reset.backend;
+        backendErrorCache = "";
         gpuAvailableCache = reset.gpuAvailable;
         return {
           kind: "reset-visual-result",
@@ -601,11 +606,13 @@ async function handleRequest(
         };
       }
       const detail =
-        lastError instanceof Error
+        reset?.error ||
+        (lastError instanceof Error
           ? lastError.message
           : lastError
             ? String(lastError)
-            : "offscreen warm returned no backend";
+            : "offscreen warm returned no backend");
+      backendErrorCache = detail;
       return {
         kind: "error",
         requestId: request.requestId,

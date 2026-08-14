@@ -85,6 +85,9 @@ function copyStatic() {
         (file.endsWith(".wasm") || file.endsWith(".mjs"))
       ) {
         cpSync(path.join(ortPkg, file), path.join(ortOut, file));
+        // Also next to offscreen.js — ORT's default import.meta.url resolver
+        // looks beside the bundle when wasmPaths/wasmBinary is late or ignored.
+        cpSync(path.join(ortPkg, file), path.join(outdir, file));
       }
     }
   }

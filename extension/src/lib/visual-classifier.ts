@@ -39,6 +39,8 @@ type OrtModule = {
   env: {
     wasm: {
       wasmPaths: string | Record<string, string>;
+      /** Prefetched bytes — skips chrome-extension MIME / streaming failures. */
+      wasmBinary?: ArrayBuffer;
       numThreads: number;
       simd: boolean;
       proxy?: boolean;
@@ -244,6 +246,14 @@ function wasmThreadCount(): number {
   return Math.max(1, Math.min(8, hc));
 }
 
+async function fetchOrtWasmBinary(url: string): Promise<ArrayBuffer> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`ORT wasm fetch ${res.status} for ${url}`);
+  }
+  return res.arrayBuffer();
+}
+
 async function assertOrtWasmAssets(base: string): Promise<void> {
   // Silent 404s surface as ORT's opaque "both async and sync fetching of the
   // wasm failed". Probe the files we ship under dist/ort/ up front.
@@ -275,7 +285,21 @@ async function configureOrt(ort: OrtModule): Promise<void> {
     typeof chrome !== "undefined" &&
     typeof chrome.runtime?.getURL === "function";
   const base = inExtension ? chrome.runtime.getURL("ort/") : "/ort/";
-  ort.env.wasm.wasmPaths = base;
+  // WebGPU entry pulls the JSEP wasm build. Point every resolver at the
+  // packaged file — string prefix alone still lets emscripten fall back to
+  // import.meta.url next to offscreen.js (404 → "both async and sync failed").
+  const jsepWasm = `${base}ort-wasm-simd-threaded.jsep.wasm`;
+  const jsepMjs = `${base}ort-wasm-simd-threaded.jsep.mjs`;
+  ort.env.wasm.wasmPaths = {
+    wasm: jsepWasm,
+    mjs: jsepMjs,
+    "ort-wasm-simd-threaded.jsep.wasm": jsepWasm,
+    "ort-wasm-simd-threaded.jsep.mjs": jsepMjs,
+    "ort-wasm-simd-threaded.wasm": `${base}ort-wasm-simd-threaded.wasm`,
+    "ort-wasm-simd-threaded.mjs": `${base}ort-wasm-simd-threaded.mjs`,
+    "ort-wasm-simd-threaded.asyncify.wasm": `${base}ort-wasm-simd-threaded.asyncify.wasm`,
+    "ort-wasm-simd-threaded.asyncify.mjs": `${base}ort-wasm-simd-threaded.asyncify.mjs`,
+  };
   // Extension offscreen: threaded ORT workers break (Failed to fetch /
   // chrome is not defined). Stay single-threaded; Node eval can use more.
   wasmThreadCountUsed = inExtension ? 1 : wasmThreadCount();
@@ -285,6 +309,10 @@ async function configureOrt(ort: OrtModule): Promise<void> {
   ort.env.wasm.proxy = false;
   if (inExtension) {
     await assertOrtWasmAssets(base);
+    // chrome-extension:// responses often lack Content-Type: application/wasm,
+    // so instantiateStreaming fails and the ArrayBuffer fallback can still
+    // miss when locateFile points at offscreen.js. Inject bytes ourselves.
+    ort.env.wasm.wasmBinary = await fetchOrtWasmBinary(jsepWasm);
   }
   if (ort.env.webgpu) {
     ort.env.webgpu.powerPreference = "high-performance";

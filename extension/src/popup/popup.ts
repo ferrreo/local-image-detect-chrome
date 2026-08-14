@@ -53,10 +53,14 @@ async function refresh(): Promise<void> {
 
   if (modelStatusEl) modelStatusEl.textContent = formatModels(response.models);
   if (backendStatusEl) {
-    backendStatusEl.textContent =
-      response.backend.kind === "none"
-        ? "none (ORT not warmed — reload unpacked dist/ after npm run build; check Errors)"
-        : response.backend.kind;
+    if (response.backend.kind === "none") {
+      const detail = response.backendError?.trim();
+      backendStatusEl.textContent = detail
+        ? `none (${detail})`
+        : "none (ORT not warmed — reload unpacked dist/ after npm run build; check Errors)";
+    } else {
+      backendStatusEl.textContent = response.backend.kind;
+    }
   }
   if (thresholdStatusEl) {
     const aiPct = (response.threshold * 100).toFixed(2);
