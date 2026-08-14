@@ -37,6 +37,11 @@ type TrackedImage = {
   revealed: boolean;
   /** True after a successful score on a fully decoded frame of `src`. */
   scoredComplete: boolean;
+  /**
+   * Hard analyze failure (ORT/offscreen). Do not rediscover-retry — that
+   * caused blur ↔ clear flicker until the tab died.
+   */
+  fatalError?: boolean;
 };
 
 const tracked = new Map<string, TrackedImage>();
@@ -462,6 +467,24 @@ async function requestAnalyze(
   return response.result;
 }
 
+function isFatalAnalyzeError(result: DetectionResult): boolean {
+  if (result.label.kind !== "error") return false;
+  const msg = result.label.message.toLowerCase();
+  return (
+    msg.includes("wasm") ||
+    msg.includes("ort") ||
+    msg.includes("onnx") ||
+    msg.includes("aborted") ||
+    msg.includes("session") ||
+    msg.includes("offscreen") ||
+    msg.includes("both async and sync") ||
+    msg.includes("instantiate") ||
+    msg.includes("visual inference unavailable") ||
+    msg.includes("distilled visual") ||
+    msg.includes("missing from cache")
+  );
+}
+
 /**
  * Realtime distilled often scores Lexica-class AI near zero (labeled real).
  * Refine any non-AI first paint so the Proofmark accurate head can recover.
@@ -548,6 +571,11 @@ async function analyze(
 
     entry.result = fast;
     entry.scoredComplete = imageDecodeReady(img);
+    if (isFatalAnalyzeError(fast)) {
+      entry.fatalError = true;
+      renderResult(img, fast);
+      return;
+    }
     renderResult(img, fast);
 
     const canUpgrade = Boolean(fullUrl && fullUrl !== fastUrl);
@@ -606,21 +634,31 @@ async function analyze(
     const message = error instanceof Error ? error.message : String(error);
     entry.scoredComplete = false;
     requeueAfter = false;
-    renderResult(img, {
+    const fail: DetectionResult = {
       imageId: id,
       label: { kind: "error", message },
       confidence: asAiConfidence(0.5),
       tiers: [],
       backend: { kind: "none" },
       elapsedMs: 0,
-    });
+    };
+    entry.fatalError = isFatalAnalyzeError(fail);
+    renderResult(img, fail);
   } finally {
     const current = tracked.get(id);
     if (current) {
       current.inFlight = false;
-      applyConcealment(current);
       if (requeueAfter && current.element.isConnected) {
+        // Stay pending visually — flashing clear between queue hops looked
+        // like blur ↔ unblur until the tab melted.
+        ensureVeil(current.element, id, "blur");
+        current.element.setAttribute(STATE_ATTR, "pending");
         enqueueAnalyze(img, id, bypassCache);
+      } else {
+        if (current.result && isFatalAnalyzeError(current.result)) {
+          current.fatalError = true;
+        }
+        applyConcealment(current);
       }
     }
   }
@@ -645,10 +683,13 @@ function armLoadRescore(img: HTMLImageElement, id: string): void {
     const srcChanged = entry.src !== nextSrc;
     const needsFirstComplete =
       !entry.scoredComplete && imageDecodeReady(img);
-    const softFail = entry.result?.label.kind === "error";
-    if (!srcChanged && !needsFirstComplete && !softFail) return;
+    // Do not auto-retry hard ORT/offscreen failures — rediscover was looping
+    // blur → error → clear → blur until the page died.
+    if (entry.fatalError && !srcChanged) return;
+    if (!srcChanged && !needsFirstComplete) return;
     entry.src = nextSrc;
     entry.scoredComplete = false;
+    entry.fatalError = false;
     delete entry.result;
     entry.revealed = false;
     enqueueAnalyze(img, id, true);
@@ -757,17 +798,20 @@ function trackAndMaybeAnalyze(img: HTMLImageElement): void {
     !existing.inFlight &&
     existing.scoredComplete
   ) {
-    // Retry transient fetch/offscreen errors on rediscover.
+    // Keep hard failures sticky. Endless rediscover retries blurred forever.
     if (existing.result.label.kind === "error") {
-      delete existing.result;
-      existing.scoredComplete = false;
-    } else {
-      // Parent may have been recreated by the site — re-paint overlays.
       renderResult(img, existing.result);
       return;
     }
+    // Parent may have been recreated by the site — re-paint overlays.
+    renderResult(img, existing.result);
+    return;
   }
   if (existing?.inFlight) return;
+  if (existing?.fatalError && existing.src === src) {
+    if (existing.result) renderResult(img, existing.result);
+    return;
+  }
 
   const entry: TrackedImage = {
     id,
@@ -776,6 +820,7 @@ function trackAndMaybeAnalyze(img: HTMLImageElement): void {
     inFlight: false,
     revealed: false,
     scoredComplete: existing?.scoredComplete === true && existing.src === src,
+    fatalError: existing?.fatalError === true && existing.src === src,
     ...(existing?.result && existing.src === src && existing.scoredComplete
       ? { result: existing.result }
       : {}),

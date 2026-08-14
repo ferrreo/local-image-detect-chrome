@@ -46,10 +46,35 @@ function formatModels(status: GetStatusResponse["models"]): string {
 }
 
 async function refresh(): Promise<void> {
-  const response = (await chrome.runtime.sendMessage({
+  let response = (await chrome.runtime.sendMessage({
     kind: "get-status",
     requestId: newRequestId(),
   })) as GetStatusResponse;
+
+  // Opening the popup used to only read status — ORT never warmed, so Backend
+  // stayed "none" forever even with models ready and no console errors.
+  if (
+    response.backend.kind === "none" &&
+    response.models.kind === "ready"
+  ) {
+    setMessage("Warming on-device ORT…");
+    const warm = (await chrome.runtime.sendMessage({
+      kind: "reset-visual",
+      requestId: newRequestId(),
+      warm: true,
+    })) as
+      | { kind: "reset-visual-result"; backend: { kind: string } }
+      | { kind: "error"; message: string };
+    if (warm.kind === "error") {
+      setMessage(warm.message, "error");
+    } else if (warm.backend.kind !== "none") {
+      setMessage(`Backend ready (${warm.backend.kind}).`, "ok");
+    }
+    response = (await chrome.runtime.sendMessage({
+      kind: "get-status",
+      requestId: newRequestId(),
+    })) as GetStatusResponse;
+  }
 
   if (modelStatusEl) modelStatusEl.textContent = formatModels(response.models);
   if (backendStatusEl) {
@@ -57,7 +82,7 @@ async function refresh(): Promise<void> {
       const detail = response.backendError?.trim();
       backendStatusEl.textContent = detail
         ? `none (${detail})`
-        : "none (ORT not warmed — reload unpacked dist/ after npm run build; check Errors)";
+        : "none (ORT warm failed — see message / Errors)";
     } else {
       backendStatusEl.textContent = response.backend.kind;
     }
