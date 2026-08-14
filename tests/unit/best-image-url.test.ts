@@ -264,4 +264,28 @@ describe("fuseDetection small-source hold", () => {
     expect(out.label.kind).not.toBe("ai");
     expect(out.tiers.at(-1)?.detail).toMatch(/chart-infographic|digital-graphic|ui-no-real/);
   });
+
+  it("holds tweet-framed LLM bench charts even with maxed distilled", () => {
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.25),
+      visual: tier("visual", 0.98),
+      visualSecondary: tier("visual", 0.97),
+      spectralFeatures: {
+        // Dark social chrome + white KPI card: diluted topShare, strong bars.
+        highFreqEnergyRatio: 0.32,
+        laplacianVariance: 2200,
+        chromaFlatness: 0.62,
+        blockiness: 0.14,
+        axisAlignedEdgeRatio: 0.64,
+        quantizedColorCount: 58,
+        topColorShare: 0.36,
+        frameAxisAlignedEdgeRatio: 0.78,
+        frameTopColorShare: 0.7,
+      },
+      sourceMinSide: 1000,
+    });
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(/chart-infographic|digital-graphic|ui-no-real/);
+  });
 });

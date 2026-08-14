@@ -159,25 +159,8 @@ export function fuseDetection(input: FusionInput): FusionOutput {
       detail = `small-source-hold(side=${input.sourceMinSide},thr=${threshold.toFixed(2)})`;
     }
   } else if (
-    // Neon CGI subjects first — never bury digital heads under UI holds.
-    feats &&
-    looksLikeNeonAiSubject(feats) &&
-    distilled < 0.92 &&
-    (forensics === undefined || forensics < accurateFloor)
-  ) {
-    confidence = asAiConfidence(
-      Math.max(
-        accurateFloor,
-        Math.min(0.95, Math.max(0.72, distilled, spectral, forensics ?? 0)),
-      ),
-    );
-    detail = "neon-ai-subject";
-    labelThreshold = accurateFloor;
-  } else if (
-    // Always hold digital UI under the AI floor — even when heads are soft.
-    // Soft heads + stock-ai-floor was FPing Activity Monitor / dashboards at ~72%.
-    // Neon CGI can trip weak axis heuristics — only skip the hold when CGI
-    // is clear AND the frame is not chrome/table/card-strong.
+    // UI / flat / chart holds BEFORE neon promote — otherwise maxed distilled
+    // (AI 98% on KPI cards) skips past a late chart hold that never matched.
     feats &&
     looksLikeDigitalUi(feats) &&
     !looksLikeNeonAiSubject(feats) &&
@@ -194,8 +177,6 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     );
     detail = `digital-graphic-hold(axis=${feats.axisAlignedEdgeRatio.toFixed(2)},colors=${feats.quantizedColorCount},flat=${feats.chromaFlatness.toFixed(2)})`;
   } else if (
-    // Flat brand / geometric design-system posters (ePaper swatch grids).
-    // Hold even when accurate head is elevated — these are not generative CGI.
     feats &&
     looksLikeFlatGraphic(feats) &&
     !looksLikeSyntheticCgi(feats) &&
@@ -210,6 +191,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     detail = `digital-graphic-hold(axis=${feats.axisAlignedEdgeRatio.toFixed(2)},colors=${feats.quantizedColorCount},flat=${feats.chromaFlatness.toFixed(2)})`;
   } else if (
     // Bar charts / KPI infographics — heads often FP these as AI ~90%+.
+    // Must beat distilled-near-threshold (observed AI 98% on LLM bench cards).
     feats &&
     looksLikeChartOrInfographic(feats) &&
     !looksLikeNeonAiSubject(feats)
@@ -221,6 +203,21 @@ export function fuseDetection(input: FusionInput): FusionOutput {
         : held,
     );
     detail = `chart-infographic-hold(axis=${feats.axisAlignedEdgeRatio.toFixed(2)},colors=${feats.quantizedColorCount},share=${feats.topColorShare.toFixed(2)})`;
+  } else if (
+    // Neon CGI subjects — after UI/chart holds so toast/chart FPs win.
+    feats &&
+    looksLikeNeonAiSubject(feats) &&
+    distilled < 0.92 &&
+    (forensics === undefined || forensics < accurateFloor)
+  ) {
+    confidence = asAiConfidence(
+      Math.max(
+        accurateFloor,
+        Math.min(0.95, Math.max(0.72, distilled, spectral, forensics ?? 0)),
+      ),
+    );
+    detail = "neon-ai-subject";
+    labelThreshold = accurateFloor;
   } else if (
     // Both heads elevated but not decisive — real indoor / product / group
     // photos land here (observed AI 72% and AI 81% FPs).

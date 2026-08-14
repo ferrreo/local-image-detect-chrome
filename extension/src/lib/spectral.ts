@@ -508,6 +508,7 @@ export function looksLikeFlatGraphic(features: {
 /**
  * Bar / line charts and KPI infographics: strong H/V bars + page fill +
  * compact palette. Visual heads often score these as AI ~90%+.
+ * Includes social screenshots where a dark chrome frame lowers topColorShare.
  */
 export function looksLikeChartOrInfographic(features: {
   axisAlignedEdgeRatio: number;
@@ -517,18 +518,58 @@ export function looksLikeChartOrInfographic(features: {
   highFreqEnergyRatio: number;
   laplacianVariance: number;
   blockiness?: number;
+  frameAxisAlignedEdgeRatio?: number;
+  frameTopColorShare?: number;
 }): boolean {
   const block = features.blockiness ?? 0;
+  const axis = features.axisAlignedEdgeRatio;
+  const colors = features.quantizedColorCount;
+  const share = features.topColorShare;
+  const chroma = features.chromaFlatness;
+  const hf = features.highFreqEnergyRatio;
+  const lap = features.laplacianVariance;
+  if (colors <= 0 || block > 0.5) return false;
+
+  // Clean light-bg chart / KPI card (tight axis so mid-axis neon heads miss).
+  if (
+    axis >= 0.55 &&
+    colors <= 90 &&
+    share >= 0.5 &&
+    chroma >= 0.42 &&
+    hf <= 0.5 &&
+    lap >= 60 &&
+    lap <= 18_000
+  ) {
+    return true;
+  }
+
+  // Tweet / dark-UI framed chart: surround dilutes topShare; bars keep axis high.
+  // Color ceiling stays below busy neon CGI palettes (~95–140).
+  if (
+    axis >= 0.58 &&
+    colors <= 80 &&
+    share >= 0.22 &&
+    share < 0.5 &&
+    chroma >= 0.4 &&
+    hf <= 0.45 &&
+    lap >= 150 &&
+    lap <= 16_000
+  ) {
+    return true;
+  }
+
+  // Frame-only cue when the card is centered in dark chrome.
+  const frameAxis = features.frameAxisAlignedEdgeRatio ?? 0;
+  const frameShare = features.frameTopColorShare ?? 0;
   return (
-    features.axisAlignedEdgeRatio >= 0.52 &&
-    features.quantizedColorCount > 0 &&
-    features.quantizedColorCount <= 100 &&
-    features.topColorShare >= 0.52 &&
-    features.chromaFlatness >= 0.48 &&
-    features.highFreqEnergyRatio <= 0.48 &&
-    features.laplacianVariance >= 80 &&
-    features.laplacianVariance <= 14_000 &&
-    block <= 0.45
+    frameAxis >= 0.7 &&
+    frameShare >= 0.55 &&
+    axis >= 0.5 &&
+    colors <= 100 &&
+    chroma >= 0.42 &&
+    hf <= 0.5 &&
+    lap >= 80 &&
+    lap <= 16_000
   );
 }
 
