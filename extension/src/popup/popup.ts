@@ -14,6 +14,12 @@ const setupBtn = document.querySelector<HTMLButtonElement>("#setupBtn");
 const rescanBtn = document.querySelector<HTMLButtonElement>("#rescanBtn");
 const autoScanEl = document.querySelector<HTMLInputElement>("#autoScan");
 const aiConcealEl = document.querySelector<HTMLSelectElement>("#aiConceal");
+const extVersionEl = document.querySelector("#extVersion");
+
+if (extVersionEl instanceof HTMLElement) {
+  const manifest = chrome.runtime.getManifest();
+  extVersionEl.textContent = `v${manifest.version}`;
+}
 
 function setMessage(text: string, kind: "ok" | "error" | "" = ""): void {
   if (!(messageEl instanceof HTMLElement)) return;
