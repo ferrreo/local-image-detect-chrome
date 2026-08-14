@@ -99,13 +99,14 @@ describe("fuseDetection", () => {
       visual: tier("visual", 0.55),
       visualSecondary: tier("visual", 0.9),
       spectralFeatures: {
-        highFreqEnergyRatio: 0.35,
-        laplacianVariance: 900,
-        chromaFlatness: 0.45,
-        axisAlignedEdgeRatio: 0.4,
-        quantizedColorCount: 200,
-        topColorShare: 0.4,
-        blockiness: 0.2,
+        // Generative / Lexica-like — not a camera JPEG scene.
+        highFreqEnergyRatio: 0.28,
+        laplacianVariance: 480,
+        chromaFlatness: 0.7,
+        axisAlignedEdgeRatio: 0.32,
+        quantizedColorCount: 55,
+        topColorShare: 0.5,
+        blockiness: 0.14,
       },
     });
     expect(out.confidence).toBeGreaterThanOrEqual(AI_LABEL_THRESHOLD);
@@ -134,7 +135,7 @@ describe("fuseDetection", () => {
     expect(out.tiers.at(-1)?.detail).toBe("photo-evidence-hold");
   });
 
-  it("does not photo-hold mid accurate scores on photographic frames", () => {
+  it("holds soft-distilled camera scenes even with mid accurate scores", () => {
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
       spectral: tier("spectral", 0.32),
@@ -150,9 +151,35 @@ describe("fuseDetection", () => {
         blockiness: 0.35,
       },
     });
-    expect(out.confidence).toBeGreaterThanOrEqual(AI_LABEL_THRESHOLD);
-    expect(out.label.kind).toBe("ai");
-    expect(out.tiers.at(-1)?.detail).toBe("accurate-head");
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toBe("photo-evidence-hold");
+  });
+
+  it("holds outdoor JPEG photos of devices (iPad screen) as camera, not AI", () => {
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.48),
+      visual: tier("visual", 0.45),
+      visualSecondary: tier("visual", 0.99),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.15,
+        laplacianVariance: 821,
+        chromaFlatness: 0.81,
+        axisAlignedEdgeRatio: 0.91,
+        quantizedColorCount: 89,
+        topColorShare: 0.73,
+        centerTopColorShare: 0.89,
+        frameAxisAlignedEdgeRatio: 0.89,
+        frameTopColorShare: 0.85,
+        frameQuantizedColorCount: 55,
+        blockiness: 0.255,
+        windowChromeScore: 0,
+      },
+    });
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toBe("photo-evidence-hold");
   });
 
   it("still promotes Lexica-style AI when spectral is not photographic", () => {

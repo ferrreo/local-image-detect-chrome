@@ -663,8 +663,61 @@ export function looksPhotographic(features: {
     features.laplacianVariance >= 800 &&
     features.chromaFlatness <= 0.47 &&
     features.quantizedColorCount >= 100 &&
-    block >= 0.25 &&
+    // Real JPEG / phone noise often sits ~0.20–0.28; 0.25 was stranding
+    // camera captures outside photo-evidence-hold so accurate-head FPed them.
+    block >= 0.2 &&
     block <= 0.55
+  );
+}
+
+/**
+ * Broader camera-capture prior than looksPhotographic: outdoor / lifestyle
+ * photos with mild bokeh still count. Used to veto accurate-head false
+ * promotes — not to label Real by itself.
+ *
+ * Also covers JPEG photos of devices (iPad/laptop in a real scene): the
+ * screen drives axis/chroma into "UI" territory, but JPEG blockiness +
+ * natural texture + non-solid page fill still read as a camera capture.
+ */
+export function looksLikeCameraCapture(features: {
+  highFreqEnergyRatio: number;
+  laplacianVariance: number;
+  chromaFlatness: number;
+  quantizedColorCount: number;
+  topColorShare: number;
+  axisAlignedEdgeRatio: number;
+  blockiness?: number;
+  windowChromeScore?: number;
+}): boolean {
+  if (looksPhotographic(features)) return true;
+  if ((features.windowChromeScore ?? 0) >= 0.7) return false;
+  if (looksLikeNeonAiSubject(features) || looksLikeSyntheticCgi(features)) {
+    return false;
+  }
+  const block = features.blockiness ?? 0;
+  // Phone / camera JPEG of a mixed scene (device screen + surroundings).
+  // Pure UI / billing cards miss via tiny palette, near-solid fill, or
+  // blockiness outside the camera-JPEG band.
+  if (
+    block >= 0.18 &&
+    block <= 0.42 &&
+    features.laplacianVariance >= 600 &&
+    features.laplacianVariance <= 12_000 &&
+    features.quantizedColorCount >= 70 &&
+    features.topColorShare <= 0.82 &&
+    features.chromaFlatness < 0.9
+  ) {
+    return true;
+  }
+  return (
+    features.quantizedColorCount >= 80 &&
+    features.laplacianVariance >= 350 &&
+    features.highFreqEnergyRatio >= 0.22 &&
+    features.chromaFlatness < 0.62 &&
+    features.topColorShare <= 0.88 &&
+    features.axisAlignedEdgeRatio < 0.78 &&
+    block >= 0.12 &&
+    block <= 0.7
   );
 }
 

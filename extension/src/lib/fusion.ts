@@ -9,6 +9,7 @@ import {
 } from "../shared/types";
 import { aiThresholdBumpForSourceSide } from "./best-image-url";
 import {
+  looksLikeCameraCapture,
   looksLikeNeonAiSubject,
   looksLikeNonPhotoGraphic,
   looksLikeSyntheticCgi,
@@ -157,6 +158,21 @@ export function fuseDetection(input: FusionInput): FusionOutput {
       detail = `small-source-hold(side=${input.sourceMinSide},thr=${threshold.toFixed(2)})`;
     }
   } else if (
+    // Soft distilled + camera JPEG scene (incl. photos of devices outdoors):
+    // accurate head often maxes while distilled stays mid/real. Hold BEFORE
+    // digital-graphic so an iPad screen in a real yard does not inherit
+    // billing-card / screenshot treatment.
+    feats &&
+    !smallSource &&
+    distilled < 0.55 &&
+    spectral < 0.55 &&
+    looksLikeCameraCapture(feats) &&
+    !looksLikeNeonAiSubject(feats) &&
+    !looksLikeSyntheticCgi(feats)
+  ) {
+    confidence = asAiConfidence(Math.min(baseline, MILD_HOLD_CAP));
+    detail = "photo-evidence-hold";
+  } else if (
     // Structured digital graphics (UI / charts / laptop screens / code cards)
     // BEFORE neon promote — otherwise maxed distilled (AI 98% on KPI cards)
     // skips past narrow holds that miss busy legends or laptop bezels.
@@ -237,18 +253,20 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     forensics >= 0.92 &&
     distilled < 0.4 &&
     spectral < 0.4 &&
-    looksPhotographic(feats)
+    looksLikeCameraCapture(feats)
   ) {
     confidence = asAiConfidence(Math.min(baseline, MILD_HOLD_CAP));
     detail = "photo-evidence-hold";
   } else if (
     // Proofmark-class accurate head: trust it when it clears the AI floor
     // even if distilled is near-zero (Lexica / modern generator misses).
-    // Never override structured digital graphics (chart/laptop FPs).
+    // Never override structured digital graphics (chart/laptop FPs) or
+    // camera JPEG scenes (outdoor lifestyle / device-in-hand photos).
     forensics !== undefined &&
     forensics >= accurateFloor &&
     distilled < 0.88 &&
-    !(feats && looksLikeNonPhotoGraphic(feats))
+    !(feats && looksLikeNonPhotoGraphic(feats)) &&
+    !(feats && looksLikeCameraCapture(feats))
   ) {
     confidence = asAiConfidence(Math.max(forensics, accurateFloor));
     detail = "accurate-head";
@@ -260,7 +278,7 @@ export function fuseDetection(input: FusionInput): FusionOutput {
     forensics < accurateFloor &&
     distilled < 0.88 &&
     feats &&
-    !looksPhotographic(feats) &&
+    !looksLikeCameraCapture(feats) &&
     !looksLikeNonPhotoGraphic(feats)
   ) {
     confidence = asAiConfidence(accurateFloor);
