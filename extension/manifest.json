@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "NeoPixel AI Image Detector",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Detect AI-generated images entirely in your browser with WebGPU/WASM. No cloud inference.",
   "minimum_chrome_version": "121",
   "icons": {
@@ -45,11 +45,5 @@
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; worker-src 'self'"
-  },
-  "cross_origin_embedder_policy": {
-    "value": "require-corp"
-  },
-  "cross_origin_opener_policy": {
-    "value": "same-origin"
   }
 }

@@ -52,7 +52,12 @@ async function refresh(): Promise<void> {
   })) as GetStatusResponse;
 
   if (modelStatusEl) modelStatusEl.textContent = formatModels(response.models);
-  if (backendStatusEl) backendStatusEl.textContent = response.backend.kind;
+  if (backendStatusEl) {
+    backendStatusEl.textContent =
+      response.backend.kind === "none"
+        ? "none (ORT not warmed — check extension Errors)"
+        : response.backend.kind;
+  }
   if (thresholdStatusEl) {
     const aiPct = (response.threshold * 100).toFixed(2);
     const realPct = ((response.realThreshold ?? 0.4099) * 100).toFixed(2);
