@@ -1,4 +1,1573 @@
 {
-  "generatedAt": null,
-  "models": []
+  "version": 1,
+  "updatedAt": "2026-08-13T13:07:30.440Z",
+  "models": {
+    "bytedance-seed/seedream-5-0-pro": {
+      "status": "ok",
+      "name": "ByteDance Seed: Seedream 5.0 Pro",
+      "seenAt": "2026-08-13T13:00:15.685Z",
+      "files": [
+        {
+          "name": "kitchen_window.jpg",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "41be29c2ed8c9c50c51527041e97f3ce2260be54296b78dac8a30a2f05c6b4a1",
+          "bytes": 330125,
+          "request": {
+            "model": "bytedance-seed/seedream-5-0-pro",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 34,
+            "completion_tokens": 4096,
+            "total_tokens": 4130,
+            "cost": 0.045,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.045,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.045
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4096
+            }
+          }
+        }
+      ]
+    },
+    "x-ai/grok-imagine-image-2.0": {
+      "status": "ok",
+      "name": "xAI: Grok Imagine Image 2.0",
+      "seenAt": "2026-08-13T13:01:23.243Z",
+      "files": [
+        {
+          "name": "kitchen_window.jpg",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "2e66087b0a375657944c6f8c743a011f5f0d6d698c6f5a126edff4c8e0bd0889",
+          "bytes": 284947,
+          "request": {
+            "model": "x-ai/grok-imagine-image-2.0",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K",
+            "quality": "low"
+          },
+          "usage": {
+            "prompt_tokens": 34,
+            "completion_tokens": 4175,
+            "total_tokens": 4209,
+            "cost": 0.04,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.04,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.04
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "microsoft/mai-image-2.5-pro": {
+      "status": "ok",
+      "name": "Microsoft: MAI-Image-2.5 Pro",
+      "seenAt": "2026-08-13T13:01:56.148Z",
+      "files": [
+        {
+          "name": "kitchen_window.png",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "984a76c1c35dae234824c02a1d5a5d448ac79c0bbf99477cd6a49d9a644b9223",
+          "bytes": 1611170,
+          "request": {
+            "model": "microsoft/mai-image-2.5-pro",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 25,
+            "completion_tokens": 1024,
+            "total_tokens": 1049,
+            "cost": 0.110717,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.110717,
+              "upstream_inference_prompt_cost": 0.000125,
+              "upstream_inference_completions_cost": 0.110592
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 1024
+            }
+          }
+        }
+      ]
+    },
+    "qwen/qwen-image-3-pro": {
+      "status": "ok",
+      "name": "Qwen: Qwen Image 3 Pro",
+      "seenAt": "2026-08-13T13:02:07.820Z",
+      "files": [
+        {
+          "name": "park_dog.png",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "b9e529436049f55e1a45a04a5aff139c0c6ddff4964ada8f5d94a6ded7ea2a94",
+          "bytes": 1920688,
+          "request": {
+            "model": "qwen/qwen-image-3-pro",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 33,
+            "completion_tokens": 4175,
+            "total_tokens": 4208,
+            "cost": 0.04,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.04,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.04
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "qwen/qwen-image-3": {
+      "status": "ok",
+      "name": "Qwen: Qwen Image 3",
+      "seenAt": "2026-08-13T13:02:11.520Z",
+      "files": [
+        {
+          "name": "street_cafe.png",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "9d037c26979ffe3b70578c75b764636b2a54b54d436fee0b7cff2b78e5d2f588",
+          "bytes": 1836936,
+          "request": {
+            "model": "qwen/qwen-image-3",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 40,
+            "completion_tokens": 4175,
+            "total_tokens": 4215,
+            "cost": 0.03,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.03,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.03
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "krea/krea-2-medium-turbo": {
+      "status": "ok",
+      "name": "Krea: Krea 2 Medium Turbo",
+      "seenAt": "2026-08-13T13:02:20.702Z",
+      "files": [
+        {
+          "name": "kitchen_window.png",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "8ddf02bcb495974b7c787399b438b80bb8afd6e86e2c90b2c70387aef6e218dd",
+          "bytes": 1192024,
+          "request": {
+            "model": "krea/krea-2-medium-turbo",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 34,
+            "completion_tokens": 4175,
+            "total_tokens": 4209,
+            "cost": 0.015,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.015,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.015
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "krea/krea-2-medium": {
+      "status": "ok",
+      "name": "Krea: Krea 2 Medium",
+      "seenAt": "2026-08-13T13:02:21.103Z",
+      "files": [
+        {
+          "name": "street_cafe.png",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "ac2e99da948b34702e015927b886b013365bc9efc8458d623709e020323755d2",
+          "bytes": 1440772,
+          "request": {
+            "model": "krea/krea-2-medium",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 40,
+            "completion_tokens": 4175,
+            "total_tokens": 4215,
+            "cost": 0.03,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.03,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.03
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "krea/krea-2-large": {
+      "status": "ok",
+      "name": "Krea: Krea 2 Large",
+      "seenAt": "2026-08-13T13:02:22.855Z",
+      "files": [
+        {
+          "name": "park_dog.png",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "ac3dbd82da25ee6df40721c4a9401e42f520a94f67b021a084cbf5d019c0fb69",
+          "bytes": 1969027,
+          "request": {
+            "model": "krea/krea-2-large",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 33,
+            "completion_tokens": 4175,
+            "total_tokens": 4208,
+            "cost": 0.06,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.06,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.06
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "google/gemini-3.1-flash-lite-image": {
+      "status": "ok",
+      "name": "Google: Nano Banana 2 Lite (Gemini 3.1 Flash Lite Image)",
+      "seenAt": "2026-08-13T13:02:23.965Z",
+      "files": [
+        {
+          "name": "park_dog.jpg",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "eef84978ab0cc41f7ef295206fbc53164a9cea7364e1809894fd1342f5ad9376",
+          "bytes": 905193,
+          "request": {
+            "model": "google/gemini-3.1-flash-lite-image",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K"
+          },
+          "usage": {
+            "prompt_tokens": 26,
+            "completion_tokens": 1547,
+            "total_tokens": 1573,
+            "cost": 0.034247,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.034247,
+              "upstream_inference_prompt_cost": 0.0000065,
+              "upstream_inference_completions_cost": 0.0342405
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 1120
+            }
+          }
+        }
+      ]
+    },
+    "openai/gpt-image-1": {
+      "status": "ok",
+      "name": "OpenAI: GPT Image 1",
+      "seenAt": "2026-08-13T13:02:37.306Z",
+      "files": [
+        {
+          "name": "park_dog.png",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "635dfadf437e87c34c45f0f34a2fde3aa5b6147c54adeb23ad8f8e93044545f9",
+          "bytes": 1449835,
+          "request": {
+            "model": "openai/gpt-image-1",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "quality": "low"
+          },
+          "usage": {
+            "prompt_tokens": 31,
+            "completion_tokens": 272,
+            "total_tokens": 303,
+            "cost": 0.011035,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.011035,
+              "upstream_inference_prompt_cost": 0.000155,
+              "upstream_inference_completions_cost": 0.01088
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 272
+            }
+          }
+        }
+      ]
+    },
+    "openai/gpt-image-1-mini": {
+      "status": "ok",
+      "name": "OpenAI: GPT Image 1 Mini",
+      "seenAt": "2026-08-13T13:02:39.700Z",
+      "files": [
+        {
+          "name": "kitchen_window.png",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "f7a57072bcdd9ddfa81fc067b16c477bef31ca38113b0dbf0f762992f506e173",
+          "bytes": 1433115,
+          "request": {
+            "model": "openai/gpt-image-1-mini",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "quality": "low"
+          },
+          "usage": {
+            "prompt_tokens": 31,
+            "completion_tokens": 272,
+            "total_tokens": 303,
+            "cost": 0.002238,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.002238,
+              "upstream_inference_prompt_cost": 0.000062,
+              "upstream_inference_completions_cost": 0.002176
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 272
+            }
+          }
+        }
+      ]
+    },
+    "google/gemini-3.1-flash-image": {
+      "status": "ok",
+      "name": "Google: Nano Banana 2 (Gemini 3.1 Flash Image)",
+      "seenAt": "2026-08-13T13:02:47.101Z",
+      "files": [
+        {
+          "name": "street_cafe.jpg",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "f5e103b2b95ccd8251eae157f57103e34888eabfe710beb2e48b993ecc45a180",
+          "bytes": 955546,
+          "request": {
+            "model": "google/gemini-3.1-flash-image",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K"
+          },
+          "usage": {
+            "prompt_tokens": 36,
+            "completion_tokens": 1612,
+            "total_tokens": 1648,
+            "cost": 0.068694,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.068694,
+              "upstream_inference_prompt_cost": 0.000018,
+              "upstream_inference_completions_cost": 0.068676
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 1120
+            }
+          }
+        }
+      ]
+    },
+    "openai/gpt-image-2": {
+      "status": "ok",
+      "name": "OpenAI: GPT Image 2",
+      "seenAt": "2026-08-13T13:02:49.297Z",
+      "files": [
+        {
+          "name": "street_cafe.png",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "f85ec17fef2a448b1d1c3244b3bddb9517e6a1a6b2e4edc7b3b5600120a2b279",
+          "bytes": 1570829,
+          "request": {
+            "model": "openai/gpt-image-2",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "quality": "low"
+          },
+          "usage": {
+            "prompt_tokens": 42,
+            "completion_tokens": 196,
+            "total_tokens": 238,
+            "cost": 0.00609,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.00609,
+              "upstream_inference_prompt_cost": 0.00021,
+              "upstream_inference_completions_cost": 0.00588
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 196
+            }
+          }
+        }
+      ]
+    },
+    "google/gemini-3-pro-image": {
+      "status": "ok",
+      "name": "Google: Nano Banana Pro (Gemini 3 Pro Image)",
+      "seenAt": "2026-08-13T13:02:56.417Z",
+      "files": [
+        {
+          "name": "kitchen_window.jpg",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "2ab6e74220d2d123600690f8ec2cefc0eb6ef937e45866a5beaaafc20284356a",
+          "bytes": 756928,
+          "request": {
+            "model": "google/gemini-3-pro-image",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K"
+          },
+          "usage": {
+            "prompt_tokens": 26,
+            "completion_tokens": 1238,
+            "total_tokens": 1264,
+            "cost": 0.135868,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.135868,
+              "upstream_inference_prompt_cost": 0.000052,
+              "upstream_inference_completions_cost": 0.135816
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 1120
+            }
+          }
+        }
+      ]
+    },
+    "sourceful/riverflow-v2.5-fast": {
+      "status": "ok",
+      "name": "Sourceful: Riverflow V2.5 Fast",
+      "seenAt": "2026-08-13T13:03:12.750Z",
+      "files": [
+        {
+          "name": "street_cafe.jpg",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "537619126bc6572ed5a19c5c3b5ce25e7bf0ff73f1151ed8ebf3674d1ab07cb8",
+          "bytes": 658027,
+          "request": {
+            "model": "sourceful/riverflow-v2.5-fast",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K",
+            "output_format": "jpeg"
+          },
+          "usage": {
+            "prompt_tokens": 40,
+            "completion_tokens": 4175,
+            "total_tokens": 4215,
+            "cost": 0.020833,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.020833,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.020833
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "microsoft/mai-image-2.5": {
+      "status": "ok",
+      "name": "Microsoft: MAI-Image-2.5",
+      "seenAt": "2026-08-13T13:03:15.789Z",
+      "files": [
+        {
+          "name": "kitchen_window.png",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "46850d066a1a99c22c2261b52210b3cbe6b95de56b80ebd9ab2effd55c651e8c",
+          "bytes": 1658420,
+          "request": {
+            "model": "microsoft/mai-image-2.5",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 25,
+            "completion_tokens": 1024,
+            "total_tokens": 1049,
+            "cost": 0.048253,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.048253,
+              "upstream_inference_prompt_cost": 0.000125,
+              "upstream_inference_completions_cost": 0.048128
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 1024
+            }
+          }
+        }
+      ]
+    },
+    "recraft/recraft-v4.1-pro-vector": {
+      "status": "skipped",
+      "reason": "vector-output-not-useful-for-photo-detector-eval",
+      "name": "Recraft: Recraft V4.1 Pro Vector",
+      "seenAt": "2026-08-13T13:03:16.041Z",
+      "files": []
+    },
+    "recraft/recraft-v4.1-vector": {
+      "status": "skipped",
+      "reason": "vector-output-not-useful-for-photo-detector-eval",
+      "name": "Recraft: Recraft V4.1 Vector",
+      "seenAt": "2026-08-13T13:03:16.291Z",
+      "files": []
+    },
+    "x-ai/grok-imagine-image-quality": {
+      "status": "ok",
+      "name": "SpaceXAI: Grok Imagine Image Quality",
+      "seenAt": "2026-08-13T13:03:17.946Z",
+      "files": [
+        {
+          "name": "park_dog.jpg",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "0c08801513821fe87cfe9f57124d6ff01783c1252fc9d7732a0df9454a9bb50c",
+          "bytes": 419659,
+          "request": {
+            "model": "x-ai/grok-imagine-image-quality",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K"
+          },
+          "usage": {
+            "prompt_tokens": 33,
+            "completion_tokens": 4175,
+            "total_tokens": 4208,
+            "cost": 0.05,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.05,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.05
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "recraft/recraft-v4.1-utility": {
+      "status": "ok",
+      "name": "Recraft: Recraft V4.1 Utility",
+      "seenAt": "2026-08-13T13:03:30.545Z",
+      "files": [
+        {
+          "name": "street_cafe.webp",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "57fd66c0fb3aca2eeaa5abf55a03e791bbd0ea581fb85eb9f699cfd186261d60",
+          "bytes": 1448190,
+          "request": {
+            "model": "recraft/recraft-v4.1-utility",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 40,
+            "completion_tokens": 4175,
+            "total_tokens": 4215,
+            "cost": 0.035,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.035,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.035
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "recraft/recraft-v4.1-utility-pro": {
+      "status": "ok",
+      "name": "Recraft: Recraft V4.1 Utility Pro",
+      "seenAt": "2026-08-13T13:03:31.816Z",
+      "files": [
+        {
+          "name": "park_dog.webp",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "a8dd5a565beef5e71b2fe9a0538c4d3763633ca36f35548612247a0e118db18e",
+          "bytes": 5578648,
+          "request": {
+            "model": "recraft/recraft-v4.1-utility-pro",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 33,
+            "completion_tokens": 4175,
+            "total_tokens": 4208,
+            "cost": 0.21,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.21,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.21
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "recraft/recraft-v4.1": {
+      "status": "ok",
+      "name": "Recraft: Recraft V4.1",
+      "seenAt": "2026-08-13T13:03:38.100Z",
+      "files": [
+        {
+          "name": "park_dog.webp",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "31246663f8aaccdef1fc74837893e395c997d58650954b6217cedb02a90bcb95",
+          "bytes": 1410538,
+          "request": {
+            "model": "recraft/recraft-v4.1",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 33,
+            "completion_tokens": 4175,
+            "total_tokens": 4208,
+            "cost": 0.035,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.035,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.035
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "recraft/recraft-v4-pro-vector": {
+      "status": "skipped",
+      "reason": "vector-output-not-useful-for-photo-detector-eval",
+      "name": "Recraft: Recraft V4 Pro Vector",
+      "seenAt": "2026-08-13T13:03:38.351Z",
+      "files": []
+    },
+    "recraft/recraft-v4-vector": {
+      "status": "skipped",
+      "reason": "vector-output-not-useful-for-photo-detector-eval",
+      "name": "Recraft: Recraft V4 Vector",
+      "seenAt": "2026-08-13T13:03:38.602Z",
+      "files": []
+    },
+    "recraft/recraft-v4.1-pro": {
+      "status": "ok",
+      "name": "Recraft: Recraft V4.1 Pro",
+      "seenAt": "2026-08-13T13:03:42.489Z",
+      "files": [
+        {
+          "name": "kitchen_window.webp",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "6b2b77542f7303be1d06351552360f22bc7bc35df3e59d323b69cf4a95c76f91",
+          "bytes": 5613678,
+          "request": {
+            "model": "recraft/recraft-v4.1-pro",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 34,
+            "completion_tokens": 4175,
+            "total_tokens": 4209,
+            "cost": 0.21,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.21,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.21
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "recraft/recraft-v4": {
+      "status": "ok",
+      "name": "Recraft: Recraft V4",
+      "seenAt": "2026-08-13T13:03:54.340Z",
+      "files": [
+        {
+          "name": "street_cafe.webp",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "d39fb82a2c05f4480a6600397a9dfd0883f3633250eac05a1bf4d5201b3bd38e",
+          "bytes": 1472254,
+          "request": {
+            "model": "recraft/recraft-v4",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 40,
+            "completion_tokens": 4175,
+            "total_tokens": 4215,
+            "cost": 0.04,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.04,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.04
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "recraft/recraft-v4-pro": {
+      "status": "ok",
+      "name": "Recraft: Recraft V4 Pro",
+      "seenAt": "2026-08-13T13:03:54.382Z",
+      "files": [
+        {
+          "name": "park_dog.webp",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "a9371432401002627e167b8be6122bec5d8e9395b5801e1cbb1a5cab352ac489",
+          "bytes": 6455742,
+          "request": {
+            "model": "recraft/recraft-v4-pro",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 33,
+            "completion_tokens": 4175,
+            "total_tokens": 4208,
+            "cost": 0.25,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.25,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.25
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "recraft/recraft-v3": {
+      "status": "ok",
+      "name": "Recraft: Recraft V3",
+      "seenAt": "2026-08-13T13:03:58.343Z",
+      "files": [
+        {
+          "name": "kitchen_window.webp",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "6a3678d542fc9e5ecd50c1e5a02cf1e7ed5f5d3c987e309986eae870fd68d49a",
+          "bytes": 1219700,
+          "request": {
+            "model": "recraft/recraft-v3",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 34,
+            "completion_tokens": 4175,
+            "total_tokens": 4209,
+            "cost": 0.04,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.04,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.04
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "google/gemini-3.1-flash-image-preview": {
+      "status": "ok",
+      "name": "Google: Nano Banana 2 (Gemini 3.1 Flash Image Preview)",
+      "seenAt": "2026-08-13T13:04:06.066Z",
+      "files": [
+        {
+          "name": "street_cafe.jpg",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "8291e4c00a0fbc1bda1f42ed432ff9574f1a26d8f38ae2ff8a4e9943fb35ef84",
+          "bytes": 1004670,
+          "request": {
+            "model": "google/gemini-3.1-flash-image-preview",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K"
+          },
+          "usage": {
+            "prompt_tokens": 36,
+            "completion_tokens": 1592,
+            "total_tokens": 1628,
+            "cost": 0.068634,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.068634,
+              "upstream_inference_prompt_cost": 0.000018,
+              "upstream_inference_completions_cost": 0.068616
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 1120
+            }
+          }
+        }
+      ]
+    },
+    "openai/gpt-5.4-image-2": {
+      "status": "ok",
+      "name": "OpenAI: GPT-5.4 Image 2",
+      "seenAt": "2026-08-13T13:04:29.322Z",
+      "files": [
+        {
+          "name": "park_dog.png",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "fd6983693a6a5dd7338bc5e4d6fe7e8285483316eda39b734f10b0f86a73c654",
+          "bytes": 2439689,
+          "request": {
+            "model": "openai/gpt-5.4-image-2",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "quality": "low"
+          },
+          "usage": {
+            "prompt_tokens": 31,
+            "completion_tokens": 158,
+            "total_tokens": 189,
+            "cost": 0.004988,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.004988,
+              "upstream_inference_prompt_cost": 0.000248,
+              "upstream_inference_completions_cost": 0.00474
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 158
+            }
+          }
+        }
+      ]
+    },
+    "sourceful/riverflow-v2-pro": {
+      "status": "ok",
+      "name": "Sourceful: Riverflow V2 Pro",
+      "seenAt": "2026-08-13T13:04:59.668Z",
+      "files": [
+        {
+          "name": "kitchen_window.webp",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "c97f891c724e470f9b7046ef8ad18911c9d5a25ab62e2315f5029eb607cd2d31",
+          "bytes": 77738,
+          "request": {
+            "model": "sourceful/riverflow-v2-pro",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K"
+          },
+          "usage": {
+            "prompt_tokens": 34,
+            "completion_tokens": 4175,
+            "total_tokens": 4209,
+            "cost": 0.15,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.15,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.15
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "black-forest-labs/flux.2-klein-4b": {
+      "status": "ok",
+      "name": "Black Forest Labs: FLUX.2 Klein 4B",
+      "seenAt": "2026-08-13T13:05:03.723Z",
+      "files": [
+        {
+          "name": "street_cafe.png",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "b86132b4b3722bd8adcdaf1c2c876fd788bf71cdcb14eb0c566dfeae86c0af91",
+          "bytes": 2004120,
+          "request": {
+            "model": "black-forest-labs/flux.2-klein-4b",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "output_format": "png",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 40,
+            "completion_tokens": 4096,
+            "total_tokens": 4136,
+            "cost": 0.014,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.014,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.014
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4096
+            }
+          }
+        }
+      ]
+    },
+    "bytedance-seed/seedream-4.5": {
+      "status": "ok",
+      "name": "ByteDance Seed: Seedream 4.5",
+      "seenAt": "2026-08-13T13:07:30.440Z",
+      "files": [
+        {
+          "name": "kitchen_window.jpg",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "39d8e09f45ddd1fb5057371bfe01a770f09e12fe360becc9b22bc7a61a158f85",
+          "bytes": 786351,
+          "request": {
+            "model": "bytedance-seed/seedream-4.5",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "2K",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 34,
+            "completion_tokens": 16384,
+            "total_tokens": 16418,
+            "cost": 0.04,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.04,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.04
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 16384
+            }
+          }
+        }
+      ]
+    },
+    "sourceful/riverflow-v2-fast": {
+      "status": "ok",
+      "name": "Sourceful: Riverflow V2 Fast",
+      "seenAt": "2026-08-13T13:05:04.345Z",
+      "files": [
+        {
+          "name": "park_dog.webp",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "1872310d16bc6eb280a7d69a1c5b2cb633a7b0267ac39c4f1b98049d2c08bc49",
+          "bytes": 71844,
+          "request": {
+            "model": "sourceful/riverflow-v2-fast",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K"
+          },
+          "usage": {
+            "prompt_tokens": 33,
+            "completion_tokens": 4175,
+            "total_tokens": 4208,
+            "cost": 0.02,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.02,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.02
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    },
+    "black-forest-labs/flux.2-flex": {
+      "status": "ok",
+      "name": "Black Forest Labs: FLUX.2 Flex",
+      "seenAt": "2026-08-13T13:05:17.957Z",
+      "files": [
+        {
+          "name": "street_cafe.png",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "287c6467418ce89cb0b7974b4bd44c1f7ddea669adc7ab7cf4713b5a62c139ff",
+          "bytes": 1750318,
+          "request": {
+            "model": "black-forest-labs/flux.2-flex",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "output_format": "png",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 40,
+            "completion_tokens": 4096,
+            "total_tokens": 4136,
+            "cost": 0.05,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.05,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.05
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4096
+            }
+          }
+        }
+      ]
+    },
+    "black-forest-labs/flux.2-max": {
+      "status": "ok",
+      "name": "Black Forest Labs: FLUX.2 Max",
+      "seenAt": "2026-08-13T13:05:28.733Z",
+      "files": [
+        {
+          "name": "park_dog.png",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "d8463272e63f20830d9d9e8bc03966a649e064929c39bf1dbb7d7d13ff79a8b9",
+          "bytes": 1926287,
+          "request": {
+            "model": "black-forest-labs/flux.2-max",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "output_format": "png",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 33,
+            "completion_tokens": 4096,
+            "total_tokens": 4129,
+            "cost": 0.07,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.07,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.07
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4096
+            }
+          }
+        }
+      ]
+    },
+    "black-forest-labs/flux.2-pro": {
+      "status": "ok",
+      "name": "Black Forest Labs: FLUX.2 Pro",
+      "seenAt": "2026-08-13T13:05:30.251Z",
+      "files": [
+        {
+          "name": "kitchen_window.png",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "ed435afd0f0fd05a77d8470a51cbfdadf1c93eb950dbf33cf567e421e1281aa6",
+          "bytes": 1490242,
+          "request": {
+            "model": "black-forest-labs/flux.2-pro",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "output_format": "png",
+            "seed": 42
+          },
+          "usage": {
+            "prompt_tokens": 34,
+            "completion_tokens": 4096,
+            "total_tokens": 4130,
+            "cost": 0.03,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.03,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.03
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4096
+            }
+          }
+        }
+      ]
+    },
+    "google/gemini-3-pro-image-preview": {
+      "status": "ok",
+      "name": "Google: Nano Banana Pro (Gemini 3 Pro Image Preview)",
+      "seenAt": "2026-08-13T13:05:44.789Z",
+      "files": [
+        {
+          "name": "park_dog.jpg",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "f7011451a0204ff1fbaba8d86a355044906f13b922c3605bf0c9ab3848c0320f",
+          "bytes": 921444,
+          "request": {
+            "model": "google/gemini-3-pro-image-preview",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K"
+          },
+          "usage": {
+            "prompt_tokens": 26,
+            "completion_tokens": 1232,
+            "total_tokens": 1258,
+            "cost": 0.135796,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.135796,
+              "upstream_inference_prompt_cost": 0.000052,
+              "upstream_inference_completions_cost": 0.135744
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 1120
+            }
+          }
+        }
+      ]
+    },
+    "openai/gpt-5-image-mini": {
+      "status": "ok",
+      "name": "OpenAI: GPT-5 Image Mini",
+      "seenAt": "2026-08-13T13:05:48.570Z",
+      "files": [
+        {
+          "name": "street_cafe.png",
+          "promptId": "street_cafe",
+          "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+          "sha256": "f464e2d6b764dbe8c03624ad26b7fa61d4fba4c0da4454edf579a1df43a53982",
+          "bytes": 2087488,
+          "request": {
+            "model": "openai/gpt-5-image-mini",
+            "prompt": "Photorealistic handheld photo of a busy street cafe terrace at golden hour, natural skin tones, slight motion blur, Canon EOS R5, 35mm lens, documentary style",
+            "n": 1,
+            "quality": "low"
+          },
+          "usage": {
+            "prompt_tokens": 42,
+            "completion_tokens": 400,
+            "total_tokens": 442,
+            "cost": 0.003305,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.003305,
+              "upstream_inference_prompt_cost": 0.000105,
+              "upstream_inference_completions_cost": 0.0032
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 400
+            }
+          }
+        }
+      ]
+    },
+    "google/gemini-2.5-flash-image": {
+      "status": "ok",
+      "name": "Google: Nano Banana (Gemini 2.5 Flash Image)",
+      "seenAt": "2026-08-13T13:05:54.826Z",
+      "files": [
+        {
+          "name": "park_dog.png",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "ac3a5af904ce77ac7ff07739c1166fecb3aff62413f6c3e615539a57a2c0a40c",
+          "bytes": 1956422,
+          "request": {
+            "model": "google/gemini-2.5-flash-image",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1"
+          },
+          "usage": {
+            "prompt_tokens": 25,
+            "completion_tokens": 1290,
+            "total_tokens": 1315,
+            "cost": 0.0387075,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0,
+              "video_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.0387075,
+              "upstream_inference_prompt_cost": 0.0000075,
+              "upstream_inference_completions_cost": 0.0387
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 1290
+            }
+          }
+        }
+      ]
+    },
+    "openai/gpt-5-image": {
+      "status": "ok",
+      "name": "OpenAI: GPT-5 Image",
+      "seenAt": "2026-08-13T13:06:06.988Z",
+      "files": [
+        {
+          "name": "kitchen_window.png",
+          "promptId": "kitchen_window",
+          "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+          "sha256": "88be609c20fdfd81e96f7cef59c5d126d565069e90513772e7a6e0a2f02402e9",
+          "bytes": 2132061,
+          "request": {
+            "model": "openai/gpt-5-image",
+            "prompt": "Candid photograph of a person chopping vegetables by a kitchen window, soft daylight, realistic fabric texture, no text, no watermark",
+            "n": 1,
+            "quality": "low"
+          },
+          "usage": {
+            "prompt_tokens": 31,
+            "completion_tokens": 400,
+            "total_tokens": 431,
+            "cost": 0.01631,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.01631,
+              "upstream_inference_prompt_cost": 0.00031,
+              "upstream_inference_completions_cost": 0.016
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 400
+            }
+          }
+        }
+      ]
+    },
+    "sourceful/riverflow-v2.5-pro": {
+      "status": "ok",
+      "name": "Sourceful: Riverflow V2.5 Pro",
+      "seenAt": "2026-08-13T13:06:26.420Z",
+      "files": [
+        {
+          "name": "park_dog.png",
+          "promptId": "park_dog",
+          "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+          "sha256": "4d8d0e4f43031f06872abb9c65cddd932c224dab0dfe3d93e5d457b0387a8b93",
+          "bytes": 2731546,
+          "request": {
+            "model": "sourceful/riverflow-v2.5-pro",
+            "prompt": "Natural outdoor photograph of a mixed-breed dog running through autumn park leaves, shallow depth of field, authentic noise, unposed",
+            "n": 1,
+            "aspect_ratio": "1:1",
+            "resolution": "1K",
+            "output_format": "png"
+          },
+          "usage": {
+            "prompt_tokens": 33,
+            "completion_tokens": 4175,
+            "total_tokens": 4208,
+            "cost": 0.246033,
+            "is_byok": false,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "cost_details": {
+              "upstream_inference_cost": 0.246033,
+              "upstream_inference_prompt_cost": 0,
+              "upstream_inference_completions_cost": 0.246033
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "image_tokens": 4175
+            }
+          }
+        }
+      ]
+    }
+  }
 }

@@ -10,9 +10,10 @@ models/**
 !models/opensynthid-detect/
 !models/opensynthid-detect/manifest.json
 !models/opensynthid-detect/model_quantized.onnx
-# Eval image corpora — fetch locally, never commit binaries
+# Eval image corpora — scrape/holdout stays local; OpenRouter AI samples are committed
 benchmark/distill-corpus/
-benchmark/openrouter/ai/
+benchmark/openrouter/ai/lexica__holdout/
+benchmark/openrouter/ai/lexica__feed/
 benchmark/openrouter/real/
 benchmark/openrouter/lexica-split.json
 coverage/

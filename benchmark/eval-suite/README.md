@@ -13,6 +13,6 @@ npm run eval:suite
 npm run eval:suite:ci
 ```
 
-If `benchmark/openrouter` has no images on disk, the harness uses `tests/fixtures/images/` instead.
+If `benchmark/openrouter/real/` is missing, the harness still scores committed OpenRouter AI samples and/or `tests/fixtures/images/`.
 
 Reports land in `benchmark/eval-suite/` when you run the suite (not committed).

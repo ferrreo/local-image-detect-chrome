@@ -60,19 +60,21 @@ npm run setup:models
 | Debug mode | Also show Real and `?` badges |
 | Thresholds | AI floor / Real ceiling |
 
-## Eval (optional, local images)
+## Eval (optional)
 
-Eval **binaries are not in git**. Synthetic fixtures under `tests/fixtures/images/` are enough for smoke runs. For a real multi-model corpus:
+Committed under `benchmark/openrouter/ai/`: OpenRouter API samples we generated for this project.
+
+Real photos are optional and gitignored:
 
 ```bash
 # .env: OPENROUTER_API_KEY=...
-npm run fetch:openrouter
-npm run fetch:real
+npm run fetch:openrouter   # refresh AI samples
+npm run fetch:real         # Unsplash/Picsum into real/ (local only)
 npm run eval:local
 npm run eval:suite
 ```
 
-`benchmark/openrouter/ai/` and `real/` stay gitignored — fetch for your machine only.
+Synthetic fixtures under `tests/fixtures/images/` cover unit/CI smoke without a full corpus.
 
 Accurate-head training (Python) is optional and documented under `benchmark/model-survey/`. Shipped forensics weights live in `models/neopixel-accurate-v1/`.
 

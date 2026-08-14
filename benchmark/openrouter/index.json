@@ -1,6 +1,311 @@
 {
-  "generatedAt": null,
-  "count": 0,
-  "images": [],
-  "note": "Images are not shipped in-repo. Run npm run fetch:openrouter locally."
+  "generatedAt": "2026-08-14T12:44:21.071Z",
+  "count": 38,
+  "images": [
+    {
+      "file": "ai/bytedance-seed__seedream-5-0-pro/kitchen_window.jpg",
+      "label": "ai",
+      "model": "bytedance-seed/seedream-5-0-pro",
+      "modelName": "ByteDance Seed: Seedream 5.0 Pro",
+      "promptId": "kitchen_window",
+      "sha256": "41be29c2ed8c9c50c51527041e97f3ce2260be54296b78dac8a30a2f05c6b4a1"
+    },
+    {
+      "file": "ai/x-ai__grok-imagine-image-2.0/kitchen_window.jpg",
+      "label": "ai",
+      "model": "x-ai/grok-imagine-image-2.0",
+      "modelName": "xAI: Grok Imagine Image 2.0",
+      "promptId": "kitchen_window",
+      "sha256": "2e66087b0a375657944c6f8c743a011f5f0d6d698c6f5a126edff4c8e0bd0889"
+    },
+    {
+      "file": "ai/microsoft__mai-image-2.5-pro/kitchen_window.png",
+      "label": "ai",
+      "model": "microsoft/mai-image-2.5-pro",
+      "modelName": "Microsoft: MAI-Image-2.5 Pro",
+      "promptId": "kitchen_window",
+      "sha256": "984a76c1c35dae234824c02a1d5a5d448ac79c0bbf99477cd6a49d9a644b9223"
+    },
+    {
+      "file": "ai/qwen__qwen-image-3-pro/park_dog.png",
+      "label": "ai",
+      "model": "qwen/qwen-image-3-pro",
+      "modelName": "Qwen: Qwen Image 3 Pro",
+      "promptId": "park_dog",
+      "sha256": "b9e529436049f55e1a45a04a5aff139c0c6ddff4964ada8f5d94a6ded7ea2a94"
+    },
+    {
+      "file": "ai/qwen__qwen-image-3/street_cafe.png",
+      "label": "ai",
+      "model": "qwen/qwen-image-3",
+      "modelName": "Qwen: Qwen Image 3",
+      "promptId": "street_cafe",
+      "sha256": "9d037c26979ffe3b70578c75b764636b2a54b54d436fee0b7cff2b78e5d2f588"
+    },
+    {
+      "file": "ai/krea__krea-2-medium-turbo/kitchen_window.png",
+      "label": "ai",
+      "model": "krea/krea-2-medium-turbo",
+      "modelName": "Krea: Krea 2 Medium Turbo",
+      "promptId": "kitchen_window",
+      "sha256": "8ddf02bcb495974b7c787399b438b80bb8afd6e86e2c90b2c70387aef6e218dd"
+    },
+    {
+      "file": "ai/krea__krea-2-medium/street_cafe.png",
+      "label": "ai",
+      "model": "krea/krea-2-medium",
+      "modelName": "Krea: Krea 2 Medium",
+      "promptId": "street_cafe",
+      "sha256": "ac2e99da948b34702e015927b886b013365bc9efc8458d623709e020323755d2"
+    },
+    {
+      "file": "ai/krea__krea-2-large/park_dog.png",
+      "label": "ai",
+      "model": "krea/krea-2-large",
+      "modelName": "Krea: Krea 2 Large",
+      "promptId": "park_dog",
+      "sha256": "ac3dbd82da25ee6df40721c4a9401e42f520a94f67b021a084cbf5d019c0fb69"
+    },
+    {
+      "file": "ai/google__gemini-3.1-flash-lite-image/park_dog.jpg",
+      "label": "ai",
+      "model": "google/gemini-3.1-flash-lite-image",
+      "modelName": "Google: Nano Banana 2 Lite (Gemini 3.1 Flash Lite Image)",
+      "promptId": "park_dog",
+      "sha256": "eef84978ab0cc41f7ef295206fbc53164a9cea7364e1809894fd1342f5ad9376"
+    },
+    {
+      "file": "ai/openai__gpt-image-1/park_dog.png",
+      "label": "ai",
+      "model": "openai/gpt-image-1",
+      "modelName": "OpenAI: GPT Image 1",
+      "promptId": "park_dog",
+      "sha256": "635dfadf437e87c34c45f0f34a2fde3aa5b6147c54adeb23ad8f8e93044545f9"
+    },
+    {
+      "file": "ai/openai__gpt-image-1-mini/kitchen_window.png",
+      "label": "ai",
+      "model": "openai/gpt-image-1-mini",
+      "modelName": "OpenAI: GPT Image 1 Mini",
+      "promptId": "kitchen_window",
+      "sha256": "f7a57072bcdd9ddfa81fc067b16c477bef31ca38113b0dbf0f762992f506e173"
+    },
+    {
+      "file": "ai/google__gemini-3.1-flash-image/street_cafe.jpg",
+      "label": "ai",
+      "model": "google/gemini-3.1-flash-image",
+      "modelName": "Google: Nano Banana 2 (Gemini 3.1 Flash Image)",
+      "promptId": "street_cafe",
+      "sha256": "f5e103b2b95ccd8251eae157f57103e34888eabfe710beb2e48b993ecc45a180"
+    },
+    {
+      "file": "ai/openai__gpt-image-2/street_cafe.png",
+      "label": "ai",
+      "model": "openai/gpt-image-2",
+      "modelName": "OpenAI: GPT Image 2",
+      "promptId": "street_cafe",
+      "sha256": "f85ec17fef2a448b1d1c3244b3bddb9517e6a1a6b2e4edc7b3b5600120a2b279"
+    },
+    {
+      "file": "ai/google__gemini-3-pro-image/kitchen_window.jpg",
+      "label": "ai",
+      "model": "google/gemini-3-pro-image",
+      "modelName": "Google: Nano Banana Pro (Gemini 3 Pro Image)",
+      "promptId": "kitchen_window",
+      "sha256": "2ab6e74220d2d123600690f8ec2cefc0eb6ef937e45866a5beaaafc20284356a"
+    },
+    {
+      "file": "ai/sourceful__riverflow-v2.5-fast/street_cafe.jpg",
+      "label": "ai",
+      "model": "sourceful/riverflow-v2.5-fast",
+      "modelName": "Sourceful: Riverflow V2.5 Fast",
+      "promptId": "street_cafe",
+      "sha256": "537619126bc6572ed5a19c5c3b5ce25e7bf0ff73f1151ed8ebf3674d1ab07cb8"
+    },
+    {
+      "file": "ai/microsoft__mai-image-2.5/kitchen_window.png",
+      "label": "ai",
+      "model": "microsoft/mai-image-2.5",
+      "modelName": "Microsoft: MAI-Image-2.5",
+      "promptId": "kitchen_window",
+      "sha256": "46850d066a1a99c22c2261b52210b3cbe6b95de56b80ebd9ab2effd55c651e8c"
+    },
+    {
+      "file": "ai/x-ai__grok-imagine-image-quality/park_dog.jpg",
+      "label": "ai",
+      "model": "x-ai/grok-imagine-image-quality",
+      "modelName": "SpaceXAI: Grok Imagine Image Quality",
+      "promptId": "park_dog",
+      "sha256": "0c08801513821fe87cfe9f57124d6ff01783c1252fc9d7732a0df9454a9bb50c"
+    },
+    {
+      "file": "ai/recraft__recraft-v4.1-utility/street_cafe.webp",
+      "label": "ai",
+      "model": "recraft/recraft-v4.1-utility",
+      "modelName": "Recraft: Recraft V4.1 Utility",
+      "promptId": "street_cafe",
+      "sha256": "57fd66c0fb3aca2eeaa5abf55a03e791bbd0ea581fb85eb9f699cfd186261d60"
+    },
+    {
+      "file": "ai/recraft__recraft-v4.1-utility-pro/park_dog.webp",
+      "label": "ai",
+      "model": "recraft/recraft-v4.1-utility-pro",
+      "modelName": "Recraft: Recraft V4.1 Utility Pro",
+      "promptId": "park_dog",
+      "sha256": "a8dd5a565beef5e71b2fe9a0538c4d3763633ca36f35548612247a0e118db18e"
+    },
+    {
+      "file": "ai/recraft__recraft-v4.1/park_dog.webp",
+      "label": "ai",
+      "model": "recraft/recraft-v4.1",
+      "modelName": "Recraft: Recraft V4.1",
+      "promptId": "park_dog",
+      "sha256": "31246663f8aaccdef1fc74837893e395c997d58650954b6217cedb02a90bcb95"
+    },
+    {
+      "file": "ai/recraft__recraft-v4.1-pro/kitchen_window.webp",
+      "label": "ai",
+      "model": "recraft/recraft-v4.1-pro",
+      "modelName": "Recraft: Recraft V4.1 Pro",
+      "promptId": "kitchen_window",
+      "sha256": "6b2b77542f7303be1d06351552360f22bc7bc35df3e59d323b69cf4a95c76f91"
+    },
+    {
+      "file": "ai/recraft__recraft-v4/street_cafe.webp",
+      "label": "ai",
+      "model": "recraft/recraft-v4",
+      "modelName": "Recraft: Recraft V4",
+      "promptId": "street_cafe",
+      "sha256": "d39fb82a2c05f4480a6600397a9dfd0883f3633250eac05a1bf4d5201b3bd38e"
+    },
+    {
+      "file": "ai/recraft__recraft-v4-pro/park_dog.webp",
+      "label": "ai",
+      "model": "recraft/recraft-v4-pro",
+      "modelName": "Recraft: Recraft V4 Pro",
+      "promptId": "park_dog",
+      "sha256": "a9371432401002627e167b8be6122bec5d8e9395b5801e1cbb1a5cab352ac489"
+    },
+    {
+      "file": "ai/recraft__recraft-v3/kitchen_window.webp",
+      "label": "ai",
+      "model": "recraft/recraft-v3",
+      "modelName": "Recraft: Recraft V3",
+      "promptId": "kitchen_window",
+      "sha256": "6a3678d542fc9e5ecd50c1e5a02cf1e7ed5f5d3c987e309986eae870fd68d49a"
+    },
+    {
+      "file": "ai/google__gemini-3.1-flash-image-preview/street_cafe.jpg",
+      "label": "ai",
+      "model": "google/gemini-3.1-flash-image-preview",
+      "modelName": "Google: Nano Banana 2 (Gemini 3.1 Flash Image Preview)",
+      "promptId": "street_cafe",
+      "sha256": "8291e4c00a0fbc1bda1f42ed432ff9574f1a26d8f38ae2ff8a4e9943fb35ef84"
+    },
+    {
+      "file": "ai/openai__gpt-5.4-image-2/park_dog.png",
+      "label": "ai",
+      "model": "openai/gpt-5.4-image-2",
+      "modelName": "OpenAI: GPT-5.4 Image 2",
+      "promptId": "park_dog",
+      "sha256": "fd6983693a6a5dd7338bc5e4d6fe7e8285483316eda39b734f10b0f86a73c654"
+    },
+    {
+      "file": "ai/sourceful__riverflow-v2-pro/kitchen_window.webp",
+      "label": "ai",
+      "model": "sourceful/riverflow-v2-pro",
+      "modelName": "Sourceful: Riverflow V2 Pro",
+      "promptId": "kitchen_window",
+      "sha256": "c97f891c724e470f9b7046ef8ad18911c9d5a25ab62e2315f5029eb607cd2d31"
+    },
+    {
+      "file": "ai/black-forest-labs__flux.2-klein-4b/street_cafe.png",
+      "label": "ai",
+      "model": "black-forest-labs/flux.2-klein-4b",
+      "modelName": "Black Forest Labs: FLUX.2 Klein 4B",
+      "promptId": "street_cafe",
+      "sha256": "b86132b4b3722bd8adcdaf1c2c876fd788bf71cdcb14eb0c566dfeae86c0af91"
+    },
+    {
+      "file": "ai/bytedance-seed__seedream-4.5/kitchen_window.jpg",
+      "label": "ai",
+      "model": "bytedance-seed/seedream-4.5",
+      "modelName": "ByteDance Seed: Seedream 4.5",
+      "promptId": "kitchen_window",
+      "sha256": "39d8e09f45ddd1fb5057371bfe01a770f09e12fe360becc9b22bc7a61a158f85"
+    },
+    {
+      "file": "ai/sourceful__riverflow-v2-fast/park_dog.webp",
+      "label": "ai",
+      "model": "sourceful/riverflow-v2-fast",
+      "modelName": "Sourceful: Riverflow V2 Fast",
+      "promptId": "park_dog",
+      "sha256": "1872310d16bc6eb280a7d69a1c5b2cb633a7b0267ac39c4f1b98049d2c08bc49"
+    },
+    {
+      "file": "ai/black-forest-labs__flux.2-flex/street_cafe.png",
+      "label": "ai",
+      "model": "black-forest-labs/flux.2-flex",
+      "modelName": "Black Forest Labs: FLUX.2 Flex",
+      "promptId": "street_cafe",
+      "sha256": "287c6467418ce89cb0b7974b4bd44c1f7ddea669adc7ab7cf4713b5a62c139ff"
+    },
+    {
+      "file": "ai/black-forest-labs__flux.2-max/park_dog.png",
+      "label": "ai",
+      "model": "black-forest-labs/flux.2-max",
+      "modelName": "Black Forest Labs: FLUX.2 Max",
+      "promptId": "park_dog",
+      "sha256": "d8463272e63f20830d9d9e8bc03966a649e064929c39bf1dbb7d7d13ff79a8b9"
+    },
+    {
+      "file": "ai/black-forest-labs__flux.2-pro/kitchen_window.png",
+      "label": "ai",
+      "model": "black-forest-labs/flux.2-pro",
+      "modelName": "Black Forest Labs: FLUX.2 Pro",
+      "promptId": "kitchen_window",
+      "sha256": "ed435afd0f0fd05a77d8470a51cbfdadf1c93eb950dbf33cf567e421e1281aa6"
+    },
+    {
+      "file": "ai/google__gemini-3-pro-image-preview/park_dog.jpg",
+      "label": "ai",
+      "model": "google/gemini-3-pro-image-preview",
+      "modelName": "Google: Nano Banana Pro (Gemini 3 Pro Image Preview)",
+      "promptId": "park_dog",
+      "sha256": "f7011451a0204ff1fbaba8d86a355044906f13b922c3605bf0c9ab3848c0320f"
+    },
+    {
+      "file": "ai/openai__gpt-5-image-mini/street_cafe.png",
+      "label": "ai",
+      "model": "openai/gpt-5-image-mini",
+      "modelName": "OpenAI: GPT-5 Image Mini",
+      "promptId": "street_cafe",
+      "sha256": "f464e2d6b764dbe8c03624ad26b7fa61d4fba4c0da4454edf579a1df43a53982"
+    },
+    {
+      "file": "ai/google__gemini-2.5-flash-image/park_dog.png",
+      "label": "ai",
+      "model": "google/gemini-2.5-flash-image",
+      "modelName": "Google: Nano Banana (Gemini 2.5 Flash Image)",
+      "promptId": "park_dog",
+      "sha256": "ac3a5af904ce77ac7ff07739c1166fecb3aff62413f6c3e615539a57a2c0a40c"
+    },
+    {
+      "file": "ai/openai__gpt-5-image/kitchen_window.png",
+      "label": "ai",
+      "model": "openai/gpt-5-image",
+      "modelName": "OpenAI: GPT-5 Image",
+      "promptId": "kitchen_window",
+      "sha256": "88be609c20fdfd81e96f7cef59c5d126d565069e90513772e7a6e0a2f02402e9"
+    },
+    {
+      "file": "ai/sourceful__riverflow-v2.5-pro/park_dog.png",
+      "label": "ai",
+      "model": "sourceful/riverflow-v2.5-pro",
+      "modelName": "Sourceful: Riverflow V2.5 Pro",
+      "promptId": "park_dog",
+      "sha256": "4d8d0e4f43031f06872abb9c65cddd932c224dab0dfe3d93e5d457b0387a8b93"
+    }
+  ],
+  "note": "OpenRouter-generated AI samples (API). Lexica scrape not included."
 }

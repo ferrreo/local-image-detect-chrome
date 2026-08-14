@@ -1,22 +1,26 @@
-# Eval corpus (local only)
+# Eval corpus
 
-Image samples are **not** stored in git. Fetch them onto your machine when you want to run offline evals.
+## AI samples (in git)
 
-## Fetch
+`ai/<model-slug>/` — one image per OpenRouter raster model, generated via the API for this project. Safe to keep in-repo.
 
-Needs `OPENROUTER_API_KEY` in `.env` for AI samples:
+Refresh incrementally (needs `OPENROUTER_API_KEY` in `.env`):
 
 ```bash
-npm run fetch:openrouter   # AI gens into ai/<model-slug>/
-npm run fetch:real         # Unsplash/Picsum reals into real/
+npm run fetch:openrouter   # only models not already in registry.json
 ```
 
-`index.json` / `real-index.json` / `registry.json` are rewritten by those scripts.
+## Real photos (local only)
 
-## License note
+`real/` is gitignored. Fetch Unsplash/Picsum samples when you want a balanced eval:
 
-Fetched images are for **local evaluation only**. Do not commit them — they are gitignored. Redistribution rights vary by model vendor and photo source.
+```bash
+npm run fetch:real
+```
 
-## Without a corpus
+## Not included
 
-Unit tests and CI use synthetic fixtures under `tests/fixtures/images/` (generated noise/gradients). `loadOpenRouterCorpus` falls back to those when this folder has no images on disk.
+- Lexica scraped feeds / holdouts — not redistributed here
+- Distill train corpora under `benchmark/distill-corpus/`
+
+Without `real/` on disk, eval harnesses still run against the committed AI samples plus synthetic fixtures as needed.
