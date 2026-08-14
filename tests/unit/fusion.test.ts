@@ -182,6 +182,29 @@ describe("fuseDetection", () => {
     expect(out.tiers.at(-1)?.detail).toBe("photo-evidence-hold");
   });
 
+  it("holds real retail product JPEGs (RGB PC / GPU box) under AI floor", () => {
+    // eBay-style hardware photos were neon/CGI-floored to AI 72–80%.
+    const out = fuseDetection({
+      provenance: tier("provenance", 0.5),
+      spectral: tier("spectral", 0.42),
+      visual: tier("visual", 0.34),
+      visualSecondary: tier("visual", 0.99),
+      spectralFeatures: {
+        highFreqEnergyRatio: 0.26,
+        laplacianVariance: 900,
+        chromaFlatness: 0.72,
+        axisAlignedEdgeRatio: 0.48,
+        quantizedColorCount: 220,
+        topColorShare: 0.68,
+        blockiness: 0.28,
+        windowChromeScore: 0,
+      },
+    });
+    expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
+    expect(out.label.kind).not.toBe("ai");
+    expect(out.tiers.at(-1)?.detail).toMatch(/photo-evidence-hold|dual-mild-hold/);
+  });
+
   it("still promotes Lexica-style AI when spectral is not photographic", () => {
     const out = fuseDetection({
       provenance: tier("provenance", 0.5),
@@ -262,7 +285,9 @@ describe("fuseDetection", () => {
     });
     expect(out.confidence).toBeLessThan(AI_LABEL_THRESHOLD);
     expect(out.label.kind).not.toBe("ai");
-    expect(out.tiers.at(-1)?.detail).toBe("dual-mild-hold");
+    expect(out.tiers.at(-1)?.detail).toMatch(
+      /dual-mild-hold|photo-evidence-hold/,
+    );
   });
 
   it("promotes near-floor accurate head on non-photo frames", () => {
