@@ -360,10 +360,14 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
   const entry = tracked.get(result.imageId);
   if (entry) entry.result = result;
 
-  // Real / uncertain are debug-only — default UI only shows AI (+ confidence).
+  // Default UI only shows AI (+ confidence). Real / uncertain / analyze errors
+  // stay silent — "n/a" error badges were leaking onto every failed Twitter
+  // tile and looked like a product state.
   // Keep blur while analyze() still has inFlight (e.g. accurate refine).
   if (
-    (result.label.kind === "real" || result.label.kind === "uncertain") &&
+    (result.label.kind === "real" ||
+      result.label.kind === "uncertain" ||
+      result.label.kind === "error") &&
     !options.debug
   ) {
     removeBadge(result.imageId);
@@ -428,12 +432,17 @@ function renderResult(img: HTMLImageElement, result: DetectionResult): void {
       badge.textContent = `? ${pct}%`;
       badge.title = `NeoPixel: below AI threshold (${pct}% AI confidence). Blur/blank only applies to AI labels.${timingHint}`;
       break;
-    case "error":
+    case "error": {
       badge.classList.add("neopixel-error");
-      badge.classList.add("neopixel-clickable");
-      badge.textContent = entry?.revealed ? "n/a · hide" : "n/a";
+      const short =
+        result.label.message.length > 48
+          ? `${result.label.message.slice(0, 45)}…`
+          : result.label.message;
+      badge.textContent = "err";
       badge.title = `NeoPixel error: ${result.label.message}`;
+      badge.setAttribute("aria-label", short);
       break;
+    }
     default: {
       const _exhaustive: never = result.label;
       void _exhaustive;
